@@ -13,7 +13,8 @@
         {% from "_formhelpers.html" import render_field %}
         <form method=post>
             <dl>
-                {{ render_field(form.phone_number) }}
+                <dt>{{ render_field(form.phone_number) }}</dt>
+                <dt>{{ render_field(form.target_price) }}</dt>
             </dl>
             <input type=submit value=Submit>
         </form>
