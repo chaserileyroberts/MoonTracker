@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,26 +8,43 @@
     </head>
 
     <body>
-        <h1>MoonTracker</h1>
+        <div class="container">
+            <div class="page-header">
+                <h1>MoonTracker</h1>
+            </div>
 
-        {% from "_formhelpers.html" import render_field %}
-        <form method=post>
-            <dl>
-                <dt>{{ render_field(form.phone_number) }}</dt>
-                <dt>{{ render_field(form.target_price) }}</dt>
-            </dl>
-            <input type=submit value=Submit>
-        </form>
+            <div class="form-group">
+                <form method=post>
+                    <dl>{% macro render_field(field) %}<dt>
+                            {{ field.label }}
+                        </dt>
+                        <dd>
+                            {{ field(class="form-control", **kwargs)|safe }}
+                            {% if field.errors %}
+                                <ul>
+                                {% for error in field.errors %}
+                                    <li class="alert alert-danger">{{ error }}</li>
+                                {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </dd>{% endmacro %}
+                        {{ render_field(form.phone_number) }}
+                        {{ render_field(form.target_price) }}
+                    </dl>
+                    <input type=submit class="btn btn-primary" value=Submit>
+                </form>
+            </div>
 
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class=flashes>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                    {% for message in messages %}
+                        <li class="alert alert-info">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
