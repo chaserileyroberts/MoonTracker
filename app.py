@@ -1,5 +1,5 @@
-from flask import Flask, request, render_template, flash
-from wtforms import Form, StringField, IntegerField, validators
+from flask import Flask, request, render_template, flash, g
+from wtforms import Form, StringField, IntegerField, SelectField, validators
 
 from twilio.rest import Client as TwilioClient
 from coinbase.wallet.client import Client as CoinbaseClient
@@ -23,8 +23,22 @@ db_conn.commit()
 class PhoneNumberForm(Form):
     phone_number = StringField('Phone Number', [validators.Length(min=10)])
     target_price = IntegerField('Bitcoin Target Price', [validators.optional()])
+    less_more = SelectField('', choices=[(1, 'above'), (0, 'below')], coerce=int)
 
 app = Flask(__name__)
+
+# I'm not sure if this is needed yet
+# def get_db():
+#     db = getattr(g, '_database', None)
+#     if db is None:
+#         db = g._database = sqlite3.connect('') # path to database
+#     return db
+
+# @app.teardown_appcontext
+# def close_connection(exception):
+#     db = getattr(g, '_database', None)
+#     if db is not None:
+#         db.close()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -32,9 +46,10 @@ def index():
     if request.method == 'POST' and form.validate():
         phone_number = form.phone_number.data
         target_price = form.target_price.data
+        less_more = form.less_more.data
 
         # Store in database
-        query = "INSERT INTO alerts VALUES ('{0}', {1}, {2}, '{3}')".format('BTC', target_price, 1, phone_number)
+        query = "INSERT INTO alerts VALUES ('{0}', {1}, {2}, '{3}')".format('BTC', target_price, less_more, phone_number)
         db_cursor.execute(query)
         db_conn.commit()
 
