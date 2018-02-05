@@ -23,7 +23,7 @@ db_conn.commit()
 class PhoneNumberForm(Form):
     phone_number = StringField('Phone Number', [validators.Length(min=10)])
     target_price = IntegerField('Bitcoin Target Price', [validators.optional()])
-    less_more = SelectField('', choices=[('True', 'above'), ('False', 'below')])
+    less_more = SelectField('', choices=[('1', 'above'), ('0', 'below')])
 
 app = Flask(__name__)
 
@@ -46,10 +46,10 @@ def index():
     if request.method == 'POST' and form.validate():
         phone_number = form.phone_number.data
         target_price = form.target_price.data
-        less_more = form.less_more.data
+        less_more = int(form.less_more.data)
 
         # Store in database
-        query = "INSERT INTO alerts VALUES ('{0}', {1}, {2}, '{3}')".format('BTC', target_price, 1, phone_number)
+        query = "INSERT INTO alerts VALUES ('{0}', {1}, {2}, '{3}')".format('BTC', target_price, less_more, phone_number)
         db_cursor.execute(query)
         db_conn.commit()
 
