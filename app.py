@@ -46,10 +46,10 @@ def index():
     if request.method == 'POST' and form.validate():
         phone_number = form.phone_number.data
         target_price = form.target_price.data
-        less_more = form.less_more.data
+        less_more = 1 if form.less_more.data == 'True' else 0
 
         # Store in database
-        query = "INSERT INTO alerts VALUES ('{0}', {1}, {2}, '{3}')".format('BTC', target_price, 1, phone_number)
+        query = "INSERT INTO alerts VALUES ('{0}', {1}, {2}, '{3}')".format('BTC', target_price, less_more, phone_number)
         db_cursor.execute(query)
         db_conn.commit()
 
