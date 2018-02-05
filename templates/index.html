@@ -13,9 +13,7 @@
                 <h1>MoonTracker</h1>
             </div>
             <div class="form-group">
-                <dl>{% macro render_field(field) %}<dt>
-                        {{ field.label }}
-                    </dt>
+                <dl>{% macro render_field(field) %}
                     <dd>
                         {{ field(class="form-control", **kwargs)|safe }}
                         {% if field.errors %}
@@ -28,9 +26,17 @@
                     </dd>{% endmacro %}
                 </dl>
                 <form method=post>
+                    {{ form.phone_number.label }}
                     {{ render_field(form.phone_number) }}
-                    {{ render_field(form.target_price) }}
-                    {{ render_field(form.less_more) }}
+                    {{ form.target_price.label }}
+                    <div class="row">
+                        <div class="col-2">
+                           {{ render_field(form.less_more) }} 
+                        </div>
+                        <div class="col-10">
+                            {{ render_field(form.target_price) }}
+                        </div>
+                    </div>
                     <input type=submit class="btn btn-primary" value=Submit>
                 </form>
             </div>
