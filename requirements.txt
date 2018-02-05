@@ -3,4 +3,4 @@ twilio
 coinbase
 flask
 wtforms
-sqlite3
+pytest
