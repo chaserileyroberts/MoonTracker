@@ -12,6 +12,14 @@ coinbase_client = CoinbaseClient(coinbase_auth, coinbase_secret,
 
 twilio_client = TwilioClient(twilio_sid, twilio_auth)
 
+db_conn = sqlite3.connect('moontracker_database.db')
+db_cursor = db_conn.cursor()
+
+db_cursor.execute('''CREATE TABLE IF NOT EXISTS alerts
+                (symbol text, price real, above integer, phone_number text)''')
+
+db_conn.commit()
+
 class PhoneNumberForm(Form):
     phone_number = StringField('Phone Number', [validators.Length(min=10)])
     target_price = IntegerField('Bitcoin Target Price', [validators.optional()])
@@ -35,16 +43,22 @@ def close_connection(exception):
 def index():
     form = PhoneNumberForm(request.form)
     if request.method == 'POST' and form.validate():
-        # need to store in database and send notification when
-        # target price is reached
         phone_number = form.phone_number.data
         target_price = form.target_price.data
-        price = coinbase_client.get_spot_price(currency='USD')
-        twilio_client.api.account.messages.create(
-            to=phone_number,
-            from_="+15072003597",
-            body="Bitcoin price is: " + price.amount)
-        flash("Sent to " + form.phone_number.data)
+
+        # Store in database
+        query = "INSERT INTO alerts VALUES ('{0}', {1}, {2}, '{3}')".format('BTC', target_price, 1, phone_number)
+        db_cursor.execute(query)
+        db_conn.commit()
+
+        # need to send notification when
+        # target price is reached
+        # price = coinbase_client.get_spot_price(currency='USD')
+        # twilio_client.api.account.messages.create(
+        #     to=phone_number,
+        #     from_="+15072003597",
+        #     body="Bitcoin price is: " + price.amount)
+        # flash("Sent to " + form.phone_number.data)
     
     return render_template('index.html', form=form)
 

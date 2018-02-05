@@ -1,4 +1,6 @@
+setuptools
 twilio
 coinbase
 flask
 wtforms
+sqlite3

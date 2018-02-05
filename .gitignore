@@ -1,3 +1,4 @@
 api_keys.py
 *.pyc
 __pycache__
+*.db
