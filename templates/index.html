@@ -13,30 +13,38 @@
                 <h1>MoonTracker</h1>
             </div>
             <div class="form-group">
-                <dl>{% macro render_field(field) %}
-                    <dd>
-                        {{ field(class="form-control", **kwargs)|safe }}
-                        {% if field.errors %}
-                            <ul>
-                            {% for error in field.errors %}
-                                <li class="alert alert-danger">{{ error }}</li>
-                            {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </dd>{% endmacro %}
-                </dl>
+                {% macro render_field(field) %}
+                    {{ field(class="form-control", **kwargs)|safe }}
+                    {% if field.errors %}
+                        <ul>
+                        {% for error in field.errors %}
+                            <li class="alert alert-danger">{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endmacro %}
                 <form method=post>
-                    {{ form.phone_number.label }}
-                    {{ render_field(form.phone_number) }}
-                    {{ form.target_price.label }}
-                    <div class="row">
-                        <div class="col-2">
-                           {{ render_field(form.less_more) }} 
-                        </div>
-                        <div class="col-10">
-                            {{ render_field(form.target_price) }}
-                        </div>
-                    </div>
+                    <dl>
+                        <dt>
+                            {{ form.phone_number.label }}
+                        </dt>
+                        <dd>
+                            {{ render_field(form.phone_number) }}
+                        </dd>
+                        <dt>
+                            {{ form.target_price.label }}
+                        </dt>
+                        <dd>
+                            <div class="row">
+                                <div class="col-2">
+                                   {{ render_field(form.less_more) }} 
+                                </div>
+                                <div class="col-10">
+                                    {{ render_field(form.target_price) }}
+                                </div>
+                            </div>
+                        </dd>
+                    </dl>
                     <input type=submit class="btn btn-primary" value=Submit>
                 </form>
             </div>
