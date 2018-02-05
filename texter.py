@@ -28,7 +28,7 @@ def text_loop(cb_client, twilio_client, db_connection):
       print("Invalid number %s", s[0])
   # Delete values we sent texts to.
   # TODO(Chase): This will cause race condition.
-  db_cursor.execute('DELETE FROM alerts where price > 0')
+  db_cursor.execute('DELETE FROM alerts where price < %s' % price.amount)
   db_connection.commit()
 
 if __name__ == '__main__':
