@@ -102,3 +102,6 @@ venv.bak/
 /site
 
 # mypy
+
+*.db
+api_keys.py
