@@ -4,3 +4,4 @@ coinbase
 flask
 wtforms
 pytest
+pycodestyle
