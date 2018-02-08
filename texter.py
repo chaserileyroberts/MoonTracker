@@ -51,24 +51,20 @@ def text_loop(cb_client, send_message, db_connection, coin):
         currency_code)
     db_cursor = db_connection.cursor()
     # Get all of the prices that are less than the current amount
-    stuff = db_cursor.execute(
-        ('SELECT phone_number, price, symbol '
-         'FROM alerts where symbol = \'%s\' and price < %s and above = 1')
-        % (base_code, price.amount))
+    cmd = ('SELECT phone_number, price, symbol '
+           'FROM alerts where symbol = ? and price < ? and above = 1')
+    stuff = db_cursor.execute(cmd, (base_code, price.amount))
     text_greater_than(send_message, stuff, price)
-    stuff = db_cursor.execute(
-        ('SELECT phone_number, price, symbol '
-         'FROM alerts where symbol = \'%s\' and price > %s and above = 0')
-        % (base_code, price.amount))
+    cmd = ('SELECT phone_number, price, symbol '
+           'FROM alerts where symbol = ? and price > ? and above = 0')
+    stuff = db_cursor.execute(cmd, (base_code, price.amount))
     text_less_than(send_message, stuff, price)
     # Delete values we sent texts to.
     # TODO(Chase): This will cause race condition.
-    db_cursor.execute(
-        'DELETE FROM alerts where symbol = \'%s\' and price > %s and above = 0'
-        % (base_code, price.amount))
-    db_cursor.execute(
-        'DELETE FROM alerts where symbol = \'%s\' and price < %s and above = 1'
-        % (base_code, price.amount))
+    cmd = 'DELETE FROM alerts where symbol = ? and price > ? and above = 0'
+    db_cursor.execute(cmd, (base_code, price.amount))
+    cmd = 'DELETE FROM alerts where symbol = ? and price < ? and above = 1'
+    db_cursor.execute(cmd, (base_code, price.amount))
     db_connection.commit()
 
 
@@ -83,6 +79,7 @@ if __name__ == '__main__':
     send_message = twilio_client.api.account.messages.create
     db_connection = sqlite3.connect('moontracker_database.db')
     coins = ['BTC', 'ETH', 'LTC']
+    print("Begining texting service...")
     while True:
         for i in range(len(coins)):
             text_loop(coinbase_client, send_message, db_connection, coins[i])
