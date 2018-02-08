@@ -43,9 +43,10 @@ def index():
         less_more = form.less_more.data
 
         # Store in database
-        query = "INSERT INTO alerts VALUES ('{0}', {1}, {2}, '{3}')".format(
-            asset, target_price, less_more, phone_number)
-        db_cursor.execute(query)
+        cmd = "INSERT INTO alerts VALUES (?, ?, ?, ?)"
+
+        db_cursor.execute(
+            cmd, (asset, target_price, less_more, phone_number))
         db_conn.commit()
 
         # need to send notification when
