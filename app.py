@@ -2,17 +2,7 @@ from flask import Flask, request, render_template, flash, g
 from wtforms import (Form, StringField, IntegerField,
                      SelectField, validators)
 
-from twilio.rest import Client as TwilioClient
-from coinbase.wallet.client import Client as CoinbaseClient
-from api_keys import (coinbase_auth, coinbase_secret,
-                      twilio_sid, twilio_auth, app_secret)
-
 import sqlite3
-
-coinbase_client = CoinbaseClient(coinbase_auth, coinbase_secret,
-                                 api_version='2017-08-07')
-
-twilio_client = TwilioClient(twilio_sid, twilio_auth)
 
 db_conn = sqlite3.connect('moontracker_database.db')
 db_cursor = db_conn.cursor()
@@ -49,16 +39,7 @@ def index():
             cmd, (asset, target_price, less_more, phone_number))
         db_conn.commit()
 
-        # need to send notification when
-        # target price is reached
-        # price = coinbase_client.get_spot_price(currency='USD')
-        # twilio_client.api.account.messages.create(
-        #     to=phone_number,
-        #     from_="+15072003597",
-        #     body="Bitcoin price is: " + price.amount)
-        # flash("Sent to " + form.phone_number.data)
-
     return render_template('index.html', form=form)
 
 
-app.secret_key = app_secret
+app.secret_key = '000000'
