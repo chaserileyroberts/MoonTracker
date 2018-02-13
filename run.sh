@@ -5,3 +5,5 @@ trap 'kill $BGPID; exit' SIGINT
 python3 ./texter.py &
 BGPID=$!
 python3 app.py
+
+kill $BGPID
