@@ -20,7 +20,7 @@ def text_greater_than(send_message, clients, price):
                     % (s[2], s[1], price.amount)))
         except twilio.base.exceptions.TwilioRestException:
             # Catch errors.
-            print("Invalid number %s", s[0])
+            print("Invalid number:", s[0])
 
 
 def text_less_than(send_message, clients, price):
@@ -37,7 +37,7 @@ def text_less_than(send_message, clients, price):
                     % (s[2], s[1], price.amount)))
         except twilio.base.exceptions.TwilioRestException:
             # Catch errors.
-            print("Invalid number %s", s[0])
+            print("Invalid number:", s[0])
 
 
 def text_loop(cb_client, send_message, db_connection, coin):

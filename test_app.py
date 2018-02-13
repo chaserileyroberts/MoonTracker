@@ -1,7 +1,17 @@
 import flask
 import app
+import os
+
 
 test_client = app.app.test_client()
+
+
+def setup():
+    app.WebsiteServer.set_database('test.db')
+
+
+def teardown():
+    os.remove('test.db')
 
 
 def test_response_elems():
@@ -11,3 +21,6 @@ def test_response_elems():
     assert "Phone Number" in page
     assert "Coin" in page
     assert "Target Price" in page
+
+
+# TODO(Chase): Add more unit tests
