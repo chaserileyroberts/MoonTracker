@@ -20,7 +20,7 @@ def test_response_elems():
     page = str(response.data)
     assert "Phone Number" in page
     assert "Coin" in page
-    assert "Target Price" in paged
+    assert "Target Price" in page
 
 
 def test_post_to_db():
