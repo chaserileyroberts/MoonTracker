@@ -22,6 +22,7 @@ def test_response_elems():
     assert "Coin" in page
     assert "Target Price" in page
 
+
 def test_post_to_db():
     response = test_client.post(
         '/',
@@ -30,7 +31,7 @@ def test_post_to_db():
             asset='BTC',
             less_more='1',
             target_price='100'
-            ))
+        ))
     assert response.status_code == 200
     db_connection = sqlite3.connect('test.db')
     db_cursor = db_connection.cursor()
