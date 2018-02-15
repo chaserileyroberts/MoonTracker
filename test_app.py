@@ -42,7 +42,7 @@ def test_post_to_db():
     assert results[0] == ('5558675309', 100.0, "BTC", 1)
 
 
-def test_post_to_db_bad_number():
+def test_short_phonenumber():
     response = test_client.post(
         '/',
         data=dict(
@@ -62,7 +62,7 @@ def test_post_to_db_bad_number():
     assert len(results) == 0
 
 
-def test_post_to_db_bad_number():
+def test_nonint_phonenumber():
     response = test_client.post(
         '/',
         data=dict(
