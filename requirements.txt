@@ -6,6 +6,7 @@ click==6.7
 coinbase==2.0.7
 Flask==0.12.2
 Flask-APScheduler==1.7.1
+Flask-SQLAlchemy==2.3.2
 idna==2.6
 itsdangerous==0.24
 Jinja2==2.10
@@ -20,6 +21,7 @@ python-dateutil==2.6.1
 pytz==2018.3
 requests==2.18.4
 six==1.11.0
+SQLAlchemy==1.2.2
 twilio==6.10.3
 tzlocal==1.5.1
 urllib3==1.22

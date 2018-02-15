@@ -1,10 +1,7 @@
 from twilio.rest import Client as TwilioClient
 from coinbase.wallet.client import Client as CoinbaseClient
 import twilio
-
-import sqlite3
 import time
-
 from api_keys import (coinbase_auth, coinbase_secret,
                           twilio_sid, twilio_auth, app_secret)
 
@@ -20,35 +17,33 @@ class Texter(object):
         
         self.coins = ['BTC', 'ETH', 'LTC']
 
-    def check_alerts(self, db_conn, db_cursor):
+    def check_alerts(self, db):
         for i in range(len(self.coins)):
-            self.check_alerts_for_coin(self.coins[i], db_conn, db_cursor)
+            self.check_alerts_for_coin(self.coins[i], db)
 
-    def check_alerts_for_coin(self, coin, db_conn, db_cursor):
-        base_code = coin
+    def check_alerts_for_coin(self, coin, db):
+        from app import Alert
+
         currency_code = 'USD'  # can also use EUR, CAD, etc.
         # Make the request
         # price = coinbase_client.get_spot_price(currency=currency_code)
         price = self.cb_client.get_spot_price(
-            currency_pair=base_code +
+            currency_pair=coin +
             '-' +
             currency_code)
+
         # Get all of the prices that are less than the current amount
-        cmd = ('SELECT phone_number, price, symbol '
-               'FROM alerts where symbol = ? and price < ? and above = 1')
-        stuff = db_cursor.execute(cmd, (base_code, price.amount))
+        greater_than = Alert.query.filter(Alert.symbol == coin, Alert.price < price, Alert.above).all()
         self.text_greater_than(stuff, price)
-        cmd = ('SELECT phone_number, price, symbol '
-               'FROM alerts where symbol = ? and price > ? and above = 0')
-        stuff = db_cursor.execute(cmd, (base_code, price.amount))
-        self.text_less_than(stuff, price)
+
+        less_than = Alert.query.filter(Alert.symbol == coin, Alert.price > price, not Alert.above).all()
+        self.text_less_than(less_than, price)
+
         # Delete values we sent texts to.
         # TODO(Chase): This will cause race condition.
-        cmd = 'DELETE FROM alerts where symbol = ? and price > ? and above = 0'
-        db_cursor.execute(cmd, (base_code, price.amount))
-        cmd = 'DELETE FROM alerts where symbol = ? and price < ? and above = 1'
-        db_cursor.execute(cmd, (base_code, price.amount))
-        db_conn.commit()
+        db.session.delete(greater_than)
+        db.session.delete(less_than)
+        db.session.commit()
 
 
     def text_greater_than(self, clients, price):
