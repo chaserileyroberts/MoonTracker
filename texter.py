@@ -40,15 +40,13 @@ def text_less_than(send_message, clients, price):
             print("Invalid number:", s[0])
 
 
-def text_loop(cb_client, send_message, db_connection, coin):
+def text_loop(coinbase_client, send_message, db_connection, coin):
     base_code = coin
     currency_code = 'USD'  # can also use EUR, CAD, etc.
     # Make the request
     # price = coinbase_client.get_spot_price(currency=currency_code)
     price = coinbase_client.get_spot_price(
-        currency_pair=base_code +
-        '-' +
-        currency_code)
+        currency_pair=base_code + '-' + currency_code)
     db_cursor = db_connection.cursor()
     # Get all of the prices that are less than the current amount
     cmd = ('SELECT phone_number, price, symbol '
