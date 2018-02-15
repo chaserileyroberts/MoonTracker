@@ -8,3 +8,4 @@ python3 app.py
 
 # Kill texting service if the website crashes.
 kill $BGPID
+
