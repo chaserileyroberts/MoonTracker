@@ -33,3 +33,7 @@ def test_greater_than_text():
     assert len(t.messages) == 1
     assert "above" in t.messages[0]
     assert 'BTC' in t.messages[0]
+
+def test_text_loop():
+    pass
+    # TODO(Chase): Build this.

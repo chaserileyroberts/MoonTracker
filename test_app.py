@@ -1,8 +1,8 @@
 import flask
 import app
 import os
-
-
+import sqlite3
+import time
 test_client = app.app.test_client()
 
 
@@ -22,5 +22,21 @@ def test_response_elems():
     assert "Coin" in page
     assert "Target Price" in page
 
-
-# TODO(Chase): Add more unit tests
+def test_post_to_db():
+    response = test_client.post(
+        '/',
+        data=dict(
+            phone_number='5558675309',
+            asset='BTC',
+            less_more='1',
+            target_price='100'
+            ))
+    assert response.status_code == 200
+    db_connection = sqlite3.connect('test.db')
+    db_cursor = db_connection.cursor()
+    db_cursor.execute(
+        'SELECT phone_number, price, symbol, above FROM alerts')
+    results = db_cursor.fetchall()
+    print(results)
+    assert len(results) == 1
+    assert results[0] == ('5558675309', 100.0, "BTC", 1)
