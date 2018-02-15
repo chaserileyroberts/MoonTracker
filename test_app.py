@@ -5,12 +5,14 @@ import sqlite3
 import time
 test_client = app.app.test_client()
 
+
 def setup():
     app.WebsiteServer.set_database('test.db')
 
 
 def teardown():
     os.remove('test.db')
+
 
 def test_response_elems():
     response = test_client.get('/')
@@ -39,6 +41,7 @@ def test_post_to_db():
     assert len(results) == 1
     assert results[0] == ('5558675309', 100.0, "BTC", 1)
 
+
 def test_post_to_db_bad_number():
     response = test_client.post(
         '/',
@@ -58,6 +61,7 @@ def test_post_to_db_bad_number():
     results = db_cursor.fetchall()
     assert len(results) == 0
 
+
 def test_post_to_db_bad_number():
     response = test_client.post(
         '/',
@@ -76,6 +80,7 @@ def test_post_to_db_bad_number():
         'SELECT phone_number, price, symbol, above FROM alerts')
     results = db_cursor.fetchall()
     assert len(results) == 0
+
 
 def test_post_to_db_bad_price():
     response = test_client.post(

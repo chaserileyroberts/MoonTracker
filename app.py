@@ -10,9 +10,11 @@ app = Flask(__name__)
 
 class WebsiteServer():
     class PhoneNumberForm(Form):
-        phone_number = StringField('Phone Number', [
-            validators.Length(min=10),
-            validators.Regexp('^[0-9]+$', message="Input characters must be numeric")])
+        phone_number = StringField(
+            'Phone Number', [
+                validators.Length(
+                    min=10), validators.Regexp(
+                    '^[0-9]+$', message="Input characters must be numeric")])
         asset = SelectField(
             'Coin', choices=[('BTC', 'BTC'), ('ETH', 'ETH'), ('LTC', 'LTC')])
         target_price = IntegerField('Target Price', [validators.optional()])
