@@ -4,13 +4,7 @@ from wtforms import (Form, StringField, IntegerField,
                      SelectField, validators)
 
 import sqlite3
-
-
-app = Flask(__name__)
-
-
-def check_alerts():
-    print("CHECK ALERTS")
+from texter import Texter
 
 
 class Config(object):
@@ -19,7 +13,7 @@ class Config(object):
             'id': 'job1',
             'func': 'app:check_alerts',
             'trigger': 'interval',
-            'seconds': 10
+            'seconds': 2
         }
     ]
 
@@ -33,6 +27,30 @@ class AlertForm(Form):
     target_price = IntegerField('Target Price', [validators.optional()])
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
+
+
+class DatabaseManager(object):
+    def __init__(self):
+        self.initialize_database("moontracker_database.db")
+
+    def initialize_database(self, file_name):
+        self.db_conn = sqlite3.connect(file_name)
+        self.db_cursor = self.db_conn.cursor()
+        self.db_cursor.execute(
+            'CREATE TABLE IF NOT EXISTS alerts '
+            '(symbol text, price real, above integer, phone_number text)''')
+        self.db_conn.commit()
+
+
+app = Flask(__name__)
+db_manager = DatabaseManager()
+texter = Texter()
+
+
+def check_alerts():
+    db_conn = sqlite3.connect("moontracker_database.db")
+    db_cursor = db_conn.cursor()
+    texter.check_alerts(db_conn, db_cursor)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -56,12 +74,10 @@ def index():
 
 if __name__ == '__main__':
     app.config.from_object(Config())
-
-    db_manager = DatabaseManager("moontracker_database.db")
+    app.secret_key = '000000'
 
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
 
     app.run()
-
