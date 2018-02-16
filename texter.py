@@ -30,51 +30,50 @@ class Texter(object):
         price = self.cb_client.get_spot_price(
             currency_pair=coin +
             '-' +
-            currency_code)
+            currency_code).amount
 
         # Get all of the prices that are less than the current amount
-        greater_than = Alert.query.filter(Alert.symbol == coin, Alert.price < price, Alert.above).all()
-        self.text_greater_than(stuff, price)
+        greater_than_query = Alert.query.filter(Alert.symbol == coin, Alert.price < price, Alert.above)
+        self.text_greater_than(greater_than_query.all(), price)
+        greater_than_query.delete(False)
 
-        less_than = Alert.query.filter(Alert.symbol == coin, Alert.price > price, not Alert.above).all()
-        self.text_less_than(less_than, price)
+        less_than_query = Alert.query.filter(Alert.symbol == coin, Alert.price > price, not Alert.above)
+        self.text_less_than(less_than_query.all(), price)
+        less_than_query.delete(False)
 
-        # Delete values we sent texts to.
         # TODO(Chase): This will cause race condition.
-        db.session.delete(greater_than)
-        db.session.delete(less_than)
         db.session.commit()
 
 
-    def text_greater_than(self, clients, price):
-        for s in clients:
+    def text_greater_than(self, alerts, price):
+        for alert in alerts:
             # Some logging
-            print("Sending text to %s" % s[0])
+            print("Sending text to %s" % alert.phone_number)
             try:
                 # Send the text
                 self.send_message(
-                    to=s[0],
+                    to=alert.phone_number,
                     from_="+15072003597",
                     body=(
                         "%s price is above your trigger of %s. Current price is %s"
-                        % (s[2], s[1], price.amount)))
+                        % (alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.
                 print("Invalid number:", s[0])
 
 
-    def text_less_than(self, clients, price):
-        for s in clients:
+    def text_less_than(self, alerts, price):
+        for alert in alerts:
             # Some logging
-            print("Sending text to %s" % s[0])
+            print("Sending text to %s" % alert.phone_number)
             try:
                 # Send the text
                 self.send_message(
-                    to=s[0],
+                    to=alert.phone_number,
                     from_="+15072003597",
                     body=(
                         "%s price is below your trigger of %s. Current price is %s"
-                        % (s[2], s[1], price.amount)))
+                        % (alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.
                 print("Invalid number:", s[0])
