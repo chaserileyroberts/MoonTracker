@@ -25,6 +25,9 @@ def teardown():
 
 
 def test_integration_sanity():
+    """
+    Make post request to the website, make sure texter sends the message.
+    """
     response = test_client.post(
         '/',
         data=dict(
