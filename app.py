@@ -49,10 +49,6 @@ class Alert(db.Model):
     above = db.Column(db.Integer, nullable=False)
     phone_number = db.Column(db.String(80), nullable=False)
 
-    def __repr__(self):
-        return "<Alert(id={}, symbol={}, price={}, above={}, phone_number={})>"
-        .format(self.symbol, self.price, self.above, self.phone_number)
-
 
 def check_alerts():
     with app.app_context():
