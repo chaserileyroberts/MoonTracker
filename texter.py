@@ -3,7 +3,7 @@ from coinbase.wallet.client import Client as CoinbaseClient
 import twilio
 import time
 from api_keys import (coinbase_auth, coinbase_secret,
-                          twilio_sid, twilio_auth, app_secret)
+                      twilio_sid, twilio_auth, app_secret)
 
 
 class Texter(object):
@@ -21,7 +21,7 @@ class Texter(object):
             self.send_message = twilio_client.api.account.messages.create
         else:
             self.send_message = send_message
-        
+
         self.coins = ['BTC', 'ETH', 'LTC']
 
     def check_alerts(self, db):
@@ -40,17 +40,20 @@ class Texter(object):
             currency_code).amount
 
         # Get all of the prices that are less than the current amount
-        greater_than_query = Alert.query.filter(Alert.symbol == coin, Alert.price < price, Alert.above)
+        greater_than_query = Alert.query.filter(Alert.symbol == coin,
+                                                Alert.price < price,
+                                                Alert.above)
         self.text_greater_than(greater_than_query.all(), price)
         greater_than_query.delete(False)
 
-        less_than_query = Alert.query.filter(Alert.symbol == coin, Alert.price > price, not Alert.above)
+        less_than_query = Alert.query.filter(Alert.symbol == coin,
+                                             Alert.price > price,
+                                             not Alert.above)
         self.text_less_than(less_than_query.all(), price)
         less_than_query.delete(False)
 
         # TODO(Chase): This will cause race condition.
         db.session.commit()
-
 
     def text_greater_than(self, alerts, price):
         for alert in alerts:
@@ -62,12 +65,12 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "%s price is above your trigger of %s. Current price is %s"
+                        "%s price is above your trigger of %s. \
+                        Current price is %s"
                         % (alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.
                 print("Invalid number:", s[0])
-
 
     def text_less_than(self, alerts, price):
         for alert in alerts:
@@ -79,7 +82,8 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "%s price is below your trigger of %s. Current price is %s"
+                        "%s price is below your trigger of %s. \
+                        Current price is %s"
                         % (alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.

@@ -43,7 +43,8 @@ def test_less_than_text():
     twilio = twilio_fake()
     texter = Texter(cb, twilio.send_message)
 
-    alerts = [Alert(symbol='BTC', price=5.0, above=0, phone_number='555-555-5555')]
+    alerts = [Alert(symbol='BTC', price=5.0, above=0,
+                    phone_number='555-555-5555')]
 
     texter.text_less_than(alerts, price(3.0))
     assert len(twilio.messages) == 1
@@ -58,7 +59,8 @@ def test_greater_than_text():
     twilio = twilio_fake()
     texter = Texter(cb, twilio.send_message)
 
-    alerts = [Alert(symbol='BTC', price=1.0, above=1, phone_number='555-555-5555')]
+    alerts = [Alert(symbol='BTC', price=1.0, above=1,
+                    phone_number='555-555-5555')]
 
     texter.text_greater_than(alerts, price(3.0))
     assert len(twilio.messages) == 1
@@ -73,7 +75,8 @@ def test_LTC():
     twilio = twilio_fake()
     texter = Texter(cb, twilio.send_message)
 
-    alerts = [Alert(symbol='LTC', price=1.0, above=1, phone_number='555-555-5555')]
+    alerts = [Alert(symbol='LTC', price=1.0, above=1,
+                    phone_number='555-555-5555')]
 
     texter.text_greater_than(alerts, price(3.0))
     assert len(twilio.messages) == 1
@@ -95,7 +98,8 @@ def test_single_text_loop():
     twilio = twilio_fake()
     texter = Texter(cb, twilio.send_message)
 
-    alert = Alert(symbol='BTC', price=10.0, above=1, phone_number='555-555-5555')
+    alert = Alert(symbol='BTC', price=10.0, above=1,
+                  phone_number='555-555-5555')
     db.session.add(alert)
     db.session.commit()
 
@@ -112,7 +116,8 @@ def test_single_entry_no_text():
     twilio = twilio_fake()
     texter = Texter(cb, twilio.send_message)
 
-    alert = Alert(symbol='BTC', price=100.0, above=0, phone_number='555-555-5555')
+    alert = Alert(symbol='BTC', price=100.0, above=0,
+                  phone_number='555-555-5555')
     db.session.add(alert)
     db.session.commit()
 

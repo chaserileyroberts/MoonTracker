@@ -35,7 +35,8 @@ class AlertForm(Form):
                     min=10), validators.Regexp(
                     '^[0-9]+$', message="Input characters must be numeric")])
     asset = SelectField(
-        'Coin', choices=[('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('LTC', 'Litecoin')])
+        'Coin',
+        choices=[('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('LTC', 'Litecoin')])
     target_price = IntegerField('Target Price', [validators.optional()])
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
@@ -49,8 +50,8 @@ class Alert(db.Model):
     phone_number = db.Column(db.String(80), nullable=False)
 
     def __repr__(self):
-        return "<Alert(id={}, symbol={}, price={}, above={}, phone_number={})>".format(
-            self.symbol, self.price, self.above, self.phone_number)
+        return "<Alert(id={}, symbol={}, price={}, above={}, phone_number={})>"
+        .format(self.symbol, self.price, self.above, self.phone_number)
 
 
 def check_alerts():
@@ -67,7 +68,8 @@ def index():
         less_more = form.less_more.data
         phone_number = form.phone_number.data
 
-        alert = Alert(symbol=asset, price=target_price, above=less_more, phone_number=phone_number)
+        alert = Alert(symbol=asset, price=target_price,
+                      above=less_more, phone_number=phone_number)
         db.session.add(alert)
         db.session.commit()
 
