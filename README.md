@@ -22,11 +22,13 @@ First you'll need Python 3, pip, and SQLite, if you don't have them already.
 
 It's recommended you build the application from a virtual environment, to ensure the Python packages used for the project are isolated from the rest of the system, to avoid version conflicts. You can skip this step if you're fine with overwriting the versions of any packages you already have that the application uses.
 
+`sudo apt install python3-venv`
 `python3 -m venv .`
 
 To automatically use the virtual environment every time you cd into the directory, use autoenv.
 
-`pip3 install autoenv`
+`sudo pip3 install setuptools`
+`sudo pip3 install autoenv`
 ```echo "source `which activate.sh`" >> ~/.bashrc```
 `source ~/.bashrc`
 
@@ -40,6 +42,10 @@ Now, whenever you cd into MoonTracker, you'll automatically enter the virtual en
 You can automatically install all of the Python packages used by the project with pip and the requirements.txt.
 
 `pip install -r requirements.txt`
+
+### Adding api_keys.py to the Project
+
+Next, add api_keys.py to the root directory of the project.
 
 ### Running
 
