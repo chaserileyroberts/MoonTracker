@@ -29,7 +29,11 @@ texter = Texter()
 
 
 class AlertForm(Form):
-    phone_number = StringField('Phone Number', [validators.Length(min=10)])
+    phone_number = StringField(
+            'Phone Number', [
+                validators.Length(
+                    min=10), validators.Regexp(
+                    '^[0-9]+$', message="Input characters must be numeric")])
     asset = SelectField(
         'Coin', choices=[('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('LTC', 'Litecoin')])
     target_price = IntegerField('Target Price', [validators.optional()])

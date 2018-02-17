@@ -7,13 +7,20 @@ from api_keys import (coinbase_auth, coinbase_secret,
 
 
 class Texter(object):
-    def __init__(self):
-        self.cb_client = CoinbaseClient(
-            coinbase_auth,
-            coinbase_secret,
-            api_version='2017-05-19')
-        self.twilio_client = TwilioClient(twilio_sid, twilio_auth)
-        self.send_message = self.twilio_client.api.account.messages.create
+    def __init__(self, cb_client=None, send_message=None):
+        if cb_client is None:
+            self.cb_client = CoinbaseClient(
+                coinbase_auth,
+                coinbase_secret,
+                api_version='2017-05-19')
+        else:
+            self.cb_client = cb_client
+
+        if send_message is None:
+            twilio_client = TwilioClient(twilio_sid, twilio_auth)
+            self.send_message = twilio_client.api.account.messages.create
+        else:
+            self.send_message = send_message
         
         self.coins = ['BTC', 'ETH', 'LTC']
 

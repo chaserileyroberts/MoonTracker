@@ -1,17 +1,17 @@
 import flask
 import app
+from app import Alert, db
 import os
-import sqlite3
 import time
 test_client = app.app.test_client()
 
 
 def setup():
-    app.WebsiteServer.set_database('test.db')
+    db.create_all()
 
 
 def teardown():
-    os.remove('test.db')
+    os.remove('moontracker_database.db')
 
 
 def test_response_elems():
@@ -33,13 +33,11 @@ def test_post_to_db():
             target_price='100'
         ))
     assert response.status_code == 200
-    db_connection = sqlite3.connect('test.db')
-    db_cursor = db_connection.cursor()
-    db_cursor.execute(
-        'SELECT phone_number, price, symbol, above FROM alerts')
-    results = db_cursor.fetchall()
+    
+    results = Alert.query.filter(Alert.phone_number == '5558675309',
+        Alert.symbol == 'BTC', Alert.price == 100.0, Alert.above).all()
+    
     assert len(results) == 1
-    assert results[0] == ('5558675309', 100.0, "BTC", 1)
 
 
 def test_short_phonenumber():
@@ -54,11 +52,8 @@ def test_short_phonenumber():
     assert response.status_code == 200
     page = str(response.data)
     assert 'Field must be at least 10 characters long' in page
-    db_connection = sqlite3.connect('test.db')
-    db_cursor = db_connection.cursor()
-    db_cursor.execute(
-        'SELECT phone_number, price, symbol, above FROM alerts')
-    results = db_cursor.fetchall()
+    results = Alert.query.filter(Alert.phone_number == '3',
+        Alert.symbol == 'BTC', Alert.price == 100.0, Alert.above).all()
     assert len(results) == 0
 
 
@@ -74,11 +69,8 @@ def test_nonint_phonenumber():
     assert response.status_code == 200
     page = str(response.data)
     assert 'Input characters must be numeric' in page
-    db_connection = sqlite3.connect('test.db')
-    db_cursor = db_connection.cursor()
-    db_cursor.execute(
-        'SELECT phone_number, price, symbol, above FROM alerts')
-    results = db_cursor.fetchall()
+    results = Alert.query.filter(Alert.phone_number == 'aaaaa',
+        Alert.symbol == 'BTC', Alert.price == 100.0, Alert.above).all()
     assert len(results) == 0
 
 
@@ -94,9 +86,6 @@ def test_post_to_db_bad_price():
     assert response.status_code == 200
     page = str(response.data)
     assert 'Not a valid integer value' in page
-    db_connection = sqlite3.connect('test.db')
-    db_cursor = db_connection.cursor()
-    db_cursor.execute(
-        'SELECT phone_number, price, symbol, above FROM alerts')
-    results = db_cursor.fetchall()
+    results = Alert.query.filter(Alert.phone_number == '5558675309',
+        Alert.symbol == 'BTC', Alert.price == 'aaaaa', Alert.above).all()
     assert len(results) == 0

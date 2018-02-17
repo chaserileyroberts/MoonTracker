@@ -5,10 +5,10 @@ Make sure posts from the website causes texts to be sent.
 
 import flask
 import app
+from app import db
 import time
-import texter
+from texter import Texter
 import pytest
-import sqlite3
 import os
 import test_texter
 
@@ -16,12 +16,11 @@ test_client = app.app.test_client()
 
 
 def setup():
-    # TODO(Chase): Setup tempfile.
-    app.WebsiteServer.set_database('test.db')
+    db.create_all()
 
 
 def teardown():
-    os.remove('test.db')
+    os.remove('moontracker_database.db')
 
 
 def test_integration_sanity():
@@ -39,8 +38,9 @@ def test_integration_sanity():
     assert response.status_code == 200
     cb = test_texter.coinbase_fake("45.00")
     twilio = test_texter.twilio_fake()
-    db_connection = sqlite3.connect('test.db')
-    texter.text_loop(cb, twilio.send_message, db_connection, "BTC")
+    texter = Texter(cb, twilio.send_message)
+
+    texter.check_alerts(app.db)
     assert len(twilio.messages) == 1
     assert len(twilio.to) == 1
     assert 'above' in twilio.messages[0]

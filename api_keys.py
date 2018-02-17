@@ -1,0 +1,5 @@
+coinbase_auth = "0" 
+coinbase_secret = "0"
+twilio_sid = "0"
+twilio_auth = "0"
+app_secret = "0"
