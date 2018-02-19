@@ -3,6 +3,11 @@ import time
 
 
 class Market:
+    def get_name():
+        return ""
+
+    def get_products():
+        return []
 
     def get_ticker(self, product):
         pass
@@ -48,15 +53,19 @@ class CoinbaseMarket(Market):
     def __init__(self):
         pass
 
+    def get_name():
+        return "Coinbase"
+
+    def get_products(self):
+        return ['btc-usd', 'eth-usd', 'ltc-usd']
+
     def get_spot_price(self, product):
-        if product == 'btc-usd':
-            response = requests.get(
-                'https://api.coinbase.com/v2/prices/BTC-USD/spot',
-                data={'CB-VERSION': '2018-02-01'})
+        if product in ['btc-usd', 'eth-usd', 'ltc-usd']:
+            url = 'https://api.coinbase.com/v2/prices/' + product + '/spot'
+            response = requests.get(url,
+                                    data={'CB-VERSION': '2018-02-01'})
             if response.status_code != 200:
-                raise RuntimeError(
-                    'GET https://api.coinbase.com/v2/prices/BTC-USD/spot {}'
-                    .format(response.status_code))
+                raise RuntimeError('GET url {}'.format(response.status_code))
             response = response.json()
             return response['data']['amount']
 
