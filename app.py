@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, flash, g
+from flask_wtf import RecaptchaField
 from wtforms import (Form, StringField, IntegerField,
                      SelectField, validators)
 
@@ -6,6 +7,12 @@ import sqlite3
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] ='secret123'
+app.config['RECAPTCHA_PUBLIC_KEY']='6LdlS0UUAAAAAFFKI4GQFkn0hjGL0V4lRzMX-RQI'
+app.config['RECAPTCHA_PRIVATE_KEY']='6LdlS0UUAAAAABPFnRRuJHmxCSapZ4BOaH91Iutk'
+## app.config['TESTING'] = True  I
+## enable this if you want to diable the recaptcha for testing if it ends up making us fill out pictures
+
 
 
 class WebsiteServer():
@@ -16,6 +23,9 @@ class WebsiteServer():
         target_price = IntegerField('Target Price', [validators.optional()])
         less_more = SelectField(
             '', choices=[(1, 'above'), (0, 'below')], coerce=int)
+        recaptcha = RecaptchaField()
+
+   
 
     @staticmethod
     def set_database(file_name):
@@ -37,7 +47,7 @@ class WebsiteServer():
             asset = form.asset.data
             target_price = form.target_price.data
             less_more = form.less_more.data
-
+    
             # Store in database
             cmd = "INSERT INTO alerts VALUES (?, ?, ?, ?)"
 
@@ -46,8 +56,11 @@ class WebsiteServer():
             WebsiteServer.db_conn.commit()
 
         return render_template('index.html', form=form)
+            
+    
 
 
 if __name__ == '__main__':
     WebsiteServer.set_database('moontracker_database.db')
     app.run()
+    

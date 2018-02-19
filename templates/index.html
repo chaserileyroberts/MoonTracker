@@ -5,8 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Moon Tracker</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <script src='https://www.google.com/recaptcha/api.js'></script>
+        
     </head>
+ls
 
     <body>
         <div class="container">
@@ -52,8 +53,16 @@
                             </div>
                         </dd>
                     </dl>
-                    <div class="g-recaptcha" data-sitekey="6LdlS0UUAAAAAFFKI4GQFkn0hjGL0V4lRzMX-RQI"></div>
+                    {{form.recaptcha}}
+                    {% for error in form.recaptcha.errors %}
+                    <ul>
+                        <li style="color:red;">{{error}}</li>
+                        {% endfor %}
+                    </ul>
+
                     <input type=submit class="btn btn-primary" value=Submit>
+
+                  
 
                 </form>
             </div>
