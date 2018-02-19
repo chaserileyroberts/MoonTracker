@@ -8,8 +8,8 @@ Moon tracker SD&amp;D Project
 To get the source, you can either git clone or just download the zip file and extract it somewhere.
 
 ```bash
-git clone https://github.com/Thenerdstation/MoonTracker.git`
-cd MoonTracker`
+git clone https://github.com/Thenerdstation/MoonTracker.git
+cd MoonTracker
 ```
 ### Installing Dependencies
 
@@ -31,8 +31,8 @@ python3 -m venv .
 To automatically use the virtual environment every time you cd into the directory, use autoenv.
 
 ```
-sudo pip3 install setuptools`
-sudo pip3 install autoenv`
+sudo pip3 install setuptools
+sudo pip3 install autoenv
 echo "source `which activate.sh`" >> ~/.bashrc
 source ~/.bashrc
 ```
@@ -48,7 +48,7 @@ cd MoonTracker
 
 You can automatically install all of the Python packages used by the project with pip and the requirements.txt.
 
-`pip install -r requirements.txt`
+`pip install -r requirements.txt
 
 ### Adding api_keys.py to the Project
 
