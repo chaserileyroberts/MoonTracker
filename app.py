@@ -162,7 +162,7 @@ class ProductsForm(Form):
                                validators=phone_number_validators)
 
     product_choices = [(product, products[product]['name'])
-                      for product in app_products]
+                       for product in app_products]
     product_validators = [validators.InputRequired()]
     product = SelectField('Product',
                           choices=[('', '')] + product_choices,
