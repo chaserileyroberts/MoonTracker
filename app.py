@@ -30,10 +30,10 @@ texter = Texter()
 
 class AlertForm(Form):
     phone_number = StringField(
-            'Phone Number', [
-                validators.Length(
-                    min=10), validators.Regexp(
-                    '^[0-9]+$', message="Input characters must be numeric")])
+        'Phone Number', [
+            validators.Length(
+                min=10), validators.Regexp(
+                '^[0-9]+$', message="Input characters must be numeric")])
     asset = SelectField(
         'Coin',
         choices=[('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('LTC', 'Litecoin')])
@@ -73,10 +73,9 @@ def index():
 
 
 if __name__ == '__main__':
+    texter.set_clients()
     db.create_all()
-
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
-
-    app.run()
+    app.run(host='0.0.0.0')

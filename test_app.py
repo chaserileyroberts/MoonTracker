@@ -7,11 +7,12 @@ test_client = app.app.test_client()
 
 
 def setup():
+    db.drop_all()
     db.create_all()
 
 
 def teardown():
-    os.remove('moontracker_database.db')
+    db.drop_all()
 
 
 def test_response_elems():
@@ -37,6 +38,24 @@ def test_post_to_db():
     results = Alert.query.filter(Alert.phone_number == '5558675309',
                                  Alert.symbol == 'BTC', Alert.price == 100.0,
                                  Alert.above).all()
+
+    assert len(results) == 1
+
+
+def test_post_to_db_below():
+    response = test_client.post(
+        '/',
+        data=dict(
+            phone_number='5558675309',
+            asset='BTC',
+            less_more='0',
+            target_price='100'
+        ))
+    assert response.status_code == 200
+
+    results = Alert.query.filter(Alert.phone_number == '5558675309',
+                                 Alert.symbol == 'BTC', Alert.price == 100.0,
+                                 Alert.above == 0).all()
 
     assert len(results) == 1
 
