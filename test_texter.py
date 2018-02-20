@@ -199,3 +199,5 @@ def test_invalid_number_below(capsys):
     db.session.add(alert)
     db.session.commit()
     texter.check_alerts(db)
+    out, err = capsys.readouterr()
+    assert "Invalid number" in out
