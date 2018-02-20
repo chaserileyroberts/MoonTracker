@@ -76,14 +76,14 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script type="text/javascript">
             $('#market').on('change', function (event) {
-                app_markets = {{ app_markets|safe }};
+                app_markets = {{ app_markets_json|safe }};
                 var productElem = $('#product');
                 if (event.target.value !== '') {
                     productElem.prop('disabled', false);
                     productElem.empty();
                     products = app_markets[event.target.value].products
                     $.each(products, function (index, product) {
-                        productElem.append($("<option />").val(product).text(product));
+                        productElem.append($("<option />").val(product[0]).text(product[1]));
                     });
                 } else {
                     productElem.prop('disabled', true);

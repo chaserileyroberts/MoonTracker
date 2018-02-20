@@ -77,7 +77,11 @@ def index():
 app_markets = {
     'coinbase': {
         'name': 'Coinbase',
-        'products': ['btc-usd', 'eth-usd', 'ltc-usd']
+        'products': [
+            ('btc-usd', 'Bitcoin/USD'),
+            ('eth-usd', 'Ethereum/USD'),
+            ('ltc-usd', 'Litecoin/USD')
+        ]
     }
 }
 
@@ -111,7 +115,7 @@ def markets():
         # TODO: add to database
 
     return render_template('markets.html', form=form,
-                           app_markets=json.dumps(app_markets))
+                           app_markets_json=json.dumps(app_markets))
 
 
 if __name__ == '__main__':
