@@ -6,6 +6,8 @@ import time
 
 class Texter(object):
     def __init__(self, cb_client=None, send_message=None):
+        self.cb_client = None
+        self.send_message = None
         self.coins = ['BTC', 'ETH', 'LTC']
 
     def set_clients(self, cb_client=None, send_message=None):
