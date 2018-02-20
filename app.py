@@ -28,26 +28,24 @@ db = SQLAlchemy(app)
 texter = Texter()
 
 def add_assets():
-    # parse file
     choices = []
     file = open('assets.txt', 'r')
-    for line in file.readline():
-        pass
+    for line in file:
+        line = line.strip()
+        field_label = line.split(', ')
+        choices.append((field_label[0], field_label[1]))
+    file.close()
     return choices
 
-assets = add_assets()
-for i in range(len(assets)):
-    print(assets[i])
-
 class AlertForm(Form):
+    assets = add_assets()
     phone_number = StringField(
         'Phone Number', [
             validators.Length(
                 min=10), validators.Regexp(
                 '^[0-9]+$', message="Input characters must be numeric")])
     asset = SelectField(
-        'Coin',
-        choices=[('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('LTC', 'Litecoin')])
+        'Coin', choices=assets)
     target_price = IntegerField('Target Price', [validators.optional()])
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
