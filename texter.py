@@ -56,13 +56,13 @@ class Texter(object):
         # Get all of the prices that are less than the current amount
         greater_than_query = Alert.query.filter(Alert.symbol == coin,
                                                 Alert.price < price,
-                                                Alert.above)
+                                                Alert.above != 0)
         self.text_greater_than(greater_than_query.all(), price)
         greater_than_query.delete(False)
 
         less_than_query = Alert.query.filter(Alert.symbol == coin,
                                              Alert.price > price,
-                                             not Alert.above)
+                                             Alert.above == 0)
         self.text_less_than(less_than_query.all(), price)
         less_than_query.delete(False)
 
