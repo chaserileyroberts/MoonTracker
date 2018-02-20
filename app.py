@@ -152,6 +152,63 @@ def route_markets():
                            products_json=json.dumps(products))
 
 
+class ProductsForm(Form):
+    phone_number_validators = [
+        validators.Length(min=10),
+        validators.Regexp('^[0-9]+$',
+                          message="Input characters must be numeric")
+    ]
+    phone_number = StringField('Phone Number',
+                               validators=phone_number_validators)
+
+    product_choices = [(product, products[product]['name'])
+                      for product in app_products]
+    product_validators = [validators.InputRequired()]
+    product = SelectField('Product',
+                          choices=[('', '')] + product_choices,
+                          default='',
+                          validators=product_validators)
+
+    market_validators = [validators.InputRequired()]
+    market = SelectField('Market', choices=[('', '')],
+                         default='', validators=market_validators)
+
+    target_price_validators = [validators.InputRequired()]
+    target_price = IntegerField('Target Price',
+                                validators=target_price_validators)
+
+    less_more_choices = [(1, 'above'), (0, 'below')]
+    less_more = SelectField('', choices=less_more_choices, coerce=int)
+
+
+@app.route('/products', methods=['GET', 'POST'])
+def route_products():
+    form = ProductsForm(request.form)
+    if request.method == 'POST':
+        phone_number = form.phone_number.data
+        product = form.product.data
+        market = form.market.data
+        target_price = form.target_price.data
+        less_more = form.less_more.data
+
+        if product:
+            market_choices = []
+            for market in markets:
+                if product in market['products']:
+                    market_choices.append(market)
+
+            form.market.choices = [('', '')] + market_choices
+
+        if form.validate():
+            # TODO: add to database
+            pass
+
+    return render_template('products.html', form=form,
+                           markets_json=json.dumps(markets),
+                           products_json=json.dumps(products),
+                           app_markets_json=json.dumps(app_markets))
+
+
 if __name__ == '__main__':
     db.create_all()
 
