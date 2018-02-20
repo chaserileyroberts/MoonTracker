@@ -36,7 +36,7 @@ def test_integration_sanity():
             target_price='1'
         ))
     assert response.status_code == 200
-    cb = test_texter.coinbase_fake("45.00")
+    cb = test_texter.coinbase_fake("45")
     twilio = test_texter.twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -44,5 +44,29 @@ def test_integration_sanity():
     assert len(twilio.messages) == 1
     assert len(twilio.to) == 1
     assert 'above' in twilio.messages[0]
+    assert 'BTC' in twilio.messages[0]
+    assert twilio.to[0] == '5558675309'
+
+def test_integration_below():
+    """
+    Make post request to the website, make sure texter sends the message.
+    """
+    response = test_client.post(
+        '/',
+        data=dict(
+            phone_number='5558675309',
+            asset='BTC',
+            less_more='0',
+            target_price='100'
+        ))
+    assert response.status_code == 200
+    cb = test_texter.coinbase_fake("45")
+    twilio = test_texter.twilio_fake()
+    texter = Texter()
+    texter.set_clients(cb, twilio.send_message)
+    texter.check_alerts(app.db)
+    assert len(twilio.messages) == 1
+    assert len(twilio.to) == 1
+    assert 'below' in twilio.messages[0]
     assert 'BTC' in twilio.messages[0]
     assert twilio.to[0] == '5558675309'
