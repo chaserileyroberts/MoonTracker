@@ -47,6 +47,7 @@ def test_integration_sanity():
     assert 'BTC' in twilio.messages[0]
     assert twilio.to[0] == '5558675309'
 
+
 def test_integration_below():
     """
     Make post request to the website, make sure texter sends the message.

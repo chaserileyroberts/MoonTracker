@@ -116,6 +116,7 @@ def test_single_text_loop():
     assert 'BTC' in twilio.messages[0]
     assert twilio.to[0] == '555-555-5555'
 
+
 def test_single_text_loop_below():
     cb = coinbase_fake("5")
     assert cb.get_spot_price('btc-usd').amount == 5
@@ -134,6 +135,7 @@ def test_single_text_loop_below():
     assert 'below' in twilio.messages[0]
     assert 'BTC' in twilio.messages[0]
     assert twilio.to[0] == '555-555-5555'
+
 
 def test_single_entry_no_text():
     cb = coinbase_fake("45")

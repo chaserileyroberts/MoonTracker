@@ -59,6 +59,7 @@ def test_post_to_db_below():
 
     assert len(results) == 1
 
+
 def test_short_phonenumber():
     response = test_client.post(
         '/',
