@@ -6,6 +6,8 @@ from wtforms import (Form, StringField, IntegerField,
 from texter import Texter
 from flask_wtf import RecaptchaField
 
+import json
+
 
 class Config(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///moontracker_database.db'
@@ -28,18 +30,16 @@ app.config.from_object(Config)
 app.config['SECRET_KEY'] ='secret123'
 app.config['RECAPTCHA_PUBLIC_KEY']='6LdlS0UUAAAAAFFKI4GQFkn0hjGL0V4lRzMX-RQI'
 app.config['RECAPTCHA_PRIVATE_KEY']='6LdlS0UUAAAAABPFnRRuJHmxCSapZ4BOaH91Iutk'
-## app.config['TESTING'] = True  I
-## enable this if you want to diable the recaptcha for testing if it ends up making us fill out pictures
 db = SQLAlchemy(app)
 texter = Texter()
 
 
 class AlertForm(Form):
     phone_number = StringField(
-            'Phone Number', [
-                validators.Length(
-                    min=10), validators.Regexp(
-                    '^[0-9]+$', message="Input characters must be numeric")])
+        'Phone Number', [
+            validators.Length(
+                min=10), validators.Regexp(
+                '^[0-9]+$', message="Input characters must be numeric")])
     asset = SelectField(
         'Coin',
         choices=[('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('LTC', 'Litecoin')])
@@ -47,7 +47,6 @@ class AlertForm(Form):
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
     recaptcha = RecaptchaField()
-
 
 
 class Alert(db.Model):
@@ -78,6 +77,67 @@ def index():
         db.session.commit()
 
     return render_template('index.html', form=form)
+
+
+app_markets = {
+    'coinbase': {
+        'name': 'Coinbase',
+        'products': [
+            ('btc-usd', 'Bitcoin/USD'),
+            ('eth-usd', 'Ethereum/USD'),
+            ('ltc-usd', 'Litecoin/USD')
+        ]
+    }
+}
+
+
+class MarketsForm(Form):
+    phone_number_validators = [
+        validators.Length(min=10),
+        validators.Regexp('^[0-9]+$',
+                          message="Input characters must be numeric")
+    ]
+    phone_number = StringField('Phone Number',
+                               validators=phone_number_validators)
+
+    market_choices = [(market_key, market['name'])
+                      for market_key, market in app_markets.items()]
+    market_validators = [validators.InputRequired()]
+    market = SelectField('Market', choices=[('', '')] + market_choices,
+                         default='', validators=market_validators)
+
+    product_validators = [validators.InputRequired()]
+    product = SelectField('Product', choices=[('', '')], default='',
+                          validators=product_validators)
+
+    target_price_validators = [validators.InputRequired()]
+    target_price = IntegerField('Target Price',
+                                validators=target_price_validators)
+
+    less_more_choices = [(1, 'above'), (0, 'below')]
+    less_more = SelectField('', choices=less_more_choices, coerce=int)
+
+
+@app.route('/markets', methods=['GET', 'POST'])
+def markets():
+    form = MarketsForm(request.form)
+    if request.method == 'POST':
+        phone_number = form.phone_number.data
+        market = form.market.data
+        product = form.product.data
+        target_price = form.target_price.data
+        less_more = form.less_more.data
+
+        if market:
+            product_choices = app_markets[market]['products']
+            form.product.choices = [('', '')] + product_choices
+
+        if form.validate():
+            # TODO: add to database
+            pass
+
+    return render_template('markets.html', form=form,
+                           app_markets_json=json.dumps(app_markets))
 
 
 if __name__ == '__main__':
