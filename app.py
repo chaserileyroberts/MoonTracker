@@ -74,16 +74,32 @@ def index():
     return render_template('index.html', form=form)
 
 
-app_markets = {
+markets = {
     'coinbase': {
         'name': 'Coinbase',
         'products': [
-            ('btc-usd', 'Bitcoin/USD'),
-            ('eth-usd', 'Ethereum/USD'),
-            ('ltc-usd', 'Litecoin/USD')
+            'btc-usd',
+            'eth-usd',
+            'ltc-usd'
         ]
     }
 }
+
+products = {
+    'btc-usd': {
+        'name': 'Bitcoin/USD'
+    },
+    'eth-usd': {
+        'name': 'Ethereum/USD'
+    },
+    'ltc-usd': {
+        'name': 'Litecoin/USD'
+    }
+}
+
+app_markets = ['coinbase']
+
+app_products = ['btc-usd', 'eth-usd', 'ltc-usd']
 
 
 class MarketsForm(Form):
@@ -95,8 +111,8 @@ class MarketsForm(Form):
     phone_number = StringField('Phone Number',
                                validators=phone_number_validators)
 
-    market_choices = [(market_key, market['name'])
-                      for market_key, market in app_markets.items()]
+    market_choices = [(market, markets[market]['name'])
+                      for market in app_markets]
     market_validators = [validators.InputRequired()]
     market = SelectField('Market', choices=[('', '')] + market_choices,
                          default='', validators=market_validators)
@@ -114,7 +130,7 @@ class MarketsForm(Form):
 
 
 @app.route('/markets', methods=['GET', 'POST'])
-def markets():
+def route_markets():
     form = MarketsForm(request.form)
     if request.method == 'POST':
         phone_number = form.phone_number.data
@@ -132,7 +148,8 @@ def markets():
             pass
 
     return render_template('markets.html', form=form,
-                           app_markets_json=json.dumps(app_markets))
+                           markets_json=json.dumps(markets),
+                           products_json=json.dumps(products))
 
 
 if __name__ == '__main__':
