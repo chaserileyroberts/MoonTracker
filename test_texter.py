@@ -6,6 +6,7 @@ from unittest.mock import MagicMock as Mock
 import twilio
 import pytest
 
+
 class twilio_fake():
 
     def __init__(self):
@@ -89,6 +90,20 @@ def test_LTC():
     assert 'LTC' in twilio.messages[0]
 
 
+def test_ETH():
+    cb = coinbase_fake("45")
+    twilio = twilio_fake()
+    texter = Texter()
+    texter.set_clients(cb, twilio.send_message)
+
+    alerts = [Alert(symbol='ETH', price=1.0, above=1,
+                    phone_number='555-555-5555')]
+
+    texter.text_greater_than(alerts, price(3.0))
+    assert len(twilio.messages) == 1
+    assert 'ETH' in twilio.messages[0]
+
+
 def test_empty_text_loop():
     cb = coinbase_fake("45")
     twilio = twilio_fake()
@@ -158,7 +173,7 @@ def test_invalid_number(capsys):
     cb = coinbase_fake("45")
     send_message = Mock()
     send_message.side_effect = (twilio.base.exceptions
-        .TwilioRestException(Mock(), Mock()))
+                                .TwilioRestException(Mock(), Mock()))
     texter = Texter()
     texter.set_clients(cb, send_message)
     alert = Alert(symbol='BTC', price=10.0, above=1,
@@ -170,11 +185,13 @@ def test_invalid_number(capsys):
     assert "Invalid number" in out
 
 # @pytest.mark.timeout(1)
+
+
 def test_invalid_number_below(capsys):
     cb = coinbase_fake("45")
     send_message = Mock()
     send_message.side_effect = (twilio.base.exceptions
-        .TwilioRestException(Mock(), Mock()))
+                                .TwilioRestException(Mock(), Mock()))
     texter = Texter()
     texter.set_clients(cb, send_message)
     alert = Alert(symbol='BTC', price=100.0, above=0,
