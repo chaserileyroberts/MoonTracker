@@ -27,12 +27,13 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 texter = Texter()
 
+
 class AlertForm(Form):
     phone_number = StringField(
-            'Phone Number', [
-                validators.Length(
-                    min=10), validators.Regexp(
-                    '^[0-9]+$', message="Input characters must be numeric")])
+        'Phone Number', [
+            validators.Length(
+                min=10), validators.Regexp(
+                '^[0-9]+$', message="Input characters must be numeric")])
     asset = SelectField(
         'Coin',
         choices=[('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('LTC', 'Litecoin')])

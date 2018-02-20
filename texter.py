@@ -25,7 +25,6 @@ class Texter(object):
         else:
             self.send_message = send_message
 
-
     def check_alerts(self, db):
         if self.cb_client is None:
             from api_keys import coinbase_auth, coinbase_secret
