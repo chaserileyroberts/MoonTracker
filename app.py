@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_apscheduler import APScheduler
 from wtforms import (Form, StringField, IntegerField,
@@ -20,6 +20,7 @@ class Config(object):
     ]
 
     SCHEDULER_API_ENABLED = True
+    SECRET_KEY = "0"  # Not a big deal for now
 
 
 app = Flask(__name__)
@@ -59,6 +60,7 @@ def check_alerts():
 def index():
     form = AlertForm(request.form)
     if request.method == 'POST' and form.validate():
+        flash("Success!")
         asset = form.asset.data
         target_price = form.target_price.data
         less_more = form.less_more.data
