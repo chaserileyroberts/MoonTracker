@@ -5,6 +5,8 @@ from wtforms import (Form, StringField, IntegerField,
                      SelectField, validators)
 from texter import Texter
 
+import json
+
 
 class Config(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///moontracker_database.db'
@@ -30,10 +32,10 @@ texter = Texter()
 
 class AlertForm(Form):
     phone_number = StringField(
-            'Phone Number', [
-                validators.Length(
-                    min=10), validators.Regexp(
-                    '^[0-9]+$', message="Input characters must be numeric")])
+        'Phone Number', [
+            validators.Length(
+                min=10), validators.Regexp(
+                '^[0-9]+$', message="Input characters must be numeric")])
     asset = SelectField(
         'Coin',
         choices=[('BTC', 'Bitcoin'), ('ETH', 'Ethereum'), ('LTC', 'Litecoin')])
@@ -70,6 +72,46 @@ def index():
         db.session.commit()
 
     return render_template('index.html', form=form)
+
+
+app_markets = {
+    'coinbase': {
+        'name': 'Coinbase',
+        'products': ['btc-usd', 'eth-usd', 'ltc-usd']
+    }
+}
+
+
+class MarketsForm(Form):
+    phone_number = StringField(
+        'Phone Number', [
+            validators.Length(
+                min=10), validators.Regexp(
+                '^[0-9]+$', message="Input characters must be numeric")])
+    market_choices = [(market_key, market['name'])
+                      for market_key, market in app_markets.items()]
+    market = SelectField('Market', choices=[('', '')] + market_choices,
+                         default='')
+    product = SelectField('Product', choices=[('', '')], default='')
+    target_price = IntegerField('Target Price', [validators.optional()])
+    less_more = SelectField(
+        '', choices=[(1, 'above'), (0, 'below')], coerce=int)
+
+
+@app.route('/markets', methods=['GET', 'POST'])
+def markets():
+    form = MarketsForm(request.form)
+    if request.method == 'POST' and form.validate():
+        phone_number = form.phone_number.data
+        market = form.market.data
+        product = form.product.data
+        target_price = form.target_price.data
+        less_more = form.less_more.data
+
+        # TODO: add to database
+
+    return render_template('markets.html', form=form,
+                           app_markets=json.dumps(app_markets))
 
 
 if __name__ == '__main__':
