@@ -2,7 +2,9 @@ from texter import Texter
 from app import Alert, db
 import pytest
 import os
-
+from unittest.mock import MagicMock as Mock
+import twilio
+import pytest
 
 class twilio_fake():
 
@@ -150,3 +152,33 @@ def test_single_entry_no_text():
     texter.check_alerts(db)
     assert len(twilio.messages) == 0
     assert len(twilio.to) == 0
+
+
+def test_invalid_number(capsys):
+    cb = coinbase_fake("45")
+    send_message = Mock()
+    send_message.side_effect = (twilio.base.exceptions
+        .TwilioRestException(Mock(), Mock()))
+    texter = Texter()
+    texter.set_clients(cb, send_message)
+    alert = Alert(symbol='BTC', price=10.0, above=1,
+                  phone_number='5555')
+    db.session.add(alert)
+    db.session.commit()
+    texter.check_alerts(db)
+    out, err = capsys.readouterr()
+    assert "Invalid number" in out
+
+# @pytest.mark.timeout(1)
+def test_invalid_number_below(capsys):
+    cb = coinbase_fake("45")
+    send_message = Mock()
+    send_message.side_effect = (twilio.base.exceptions
+        .TwilioRestException(Mock(), Mock()))
+    texter = Texter()
+    texter.set_clients(cb, send_message)
+    alert = Alert(symbol='BTC', price=100.0, above=0,
+                  phone_number='5555')
+    db.session.add(alert)
+    db.session.commit()
+    texter.check_alerts(db)

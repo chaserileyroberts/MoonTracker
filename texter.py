@@ -84,7 +84,7 @@ class Texter(object):
                         % (alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.
-                print("Invalid number:", s[0])
+                print("Invalid number:", alert.phone_number)
 
     def text_less_than(self, alerts, price):
         for alert in alerts:
@@ -101,4 +101,4 @@ class Texter(object):
                         % (alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.
-                print("Invalid number:", s[0])
+                print("Invalid number:", alert.phone_number)
