@@ -27,6 +27,17 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 texter = Texter()
 
+def add_assets():
+    # parse file
+    choices = []
+    file = open('assets.txt', 'r')
+    for line in file.readline():
+        pass
+    return choices
+
+assets = add_assets()
+for i in range(len(assets)):
+    print(assets[i])
 
 class AlertForm(Form):
     phone_number = StringField(
@@ -48,7 +59,6 @@ class Alert(db.Model):
     price = db.Column(db.Float, nullable=False)
     above = db.Column(db.Integer, nullable=False)
     phone_number = db.Column(db.String(80), nullable=False)
-
 
 def check_alerts():
     with app.app_context():
