@@ -48,7 +48,7 @@ cd MoonTracker
 
 You can automatically install all of the Python packages used by the project with pip and the requirements.txt.
 
-`pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 ### Adding api_keys.py to the Project
 
