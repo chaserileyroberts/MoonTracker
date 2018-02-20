@@ -4,9 +4,7 @@ python:
 install:
   - pip install -r requirements.txt
 script:
-  - pytest test_app.py
-  - pytest test_integration.py
-  - pytest test_texter.py
-  - pycodestyle *.py
+  - pytest 
+  - pycodestyle .
 notifications:
   email: false

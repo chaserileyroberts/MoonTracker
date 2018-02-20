@@ -2,13 +2,15 @@ from twilio.rest import Client as TwilioClient
 from coinbase.wallet.client import Client as CoinbaseClient
 import twilio
 import time
-from api_keys import (coinbase_auth, coinbase_secret,
-                      twilio_sid, twilio_auth, app_secret)
 
 
 class Texter(object):
     def __init__(self, cb_client=None, send_message=None):
+        self.coins = ['BTC', 'ETH', 'LTC']
+
+    def set_clients(self, cb_client=None, send_message=None):
         if cb_client is None:
+            from api_keys import coinbase_auth, coinbase_secret
             self.cb_client = CoinbaseClient(
                 coinbase_auth,
                 coinbase_secret,
@@ -17,14 +19,24 @@ class Texter(object):
             self.cb_client = cb_client
 
         if send_message is None:
+            from api_keys import twilio_sid, twilio_auth
             twilio_client = TwilioClient(twilio_sid, twilio_auth)
             self.send_message = twilio_client.api.account.messages.create
         else:
             self.send_message = send_message
 
-        self.coins = ['BTC', 'ETH', 'LTC']
-
     def check_alerts(self, db):
+        if self.cb_client is None:
+            from api_keys import coinbase_auth, coinbase_secret
+            self.cb_client = CoinbaseClient(
+                coinbase_auth,
+                coinbase_secret,
+                api_version='2017-05-19')
+        if self.send_message is None:
+            from api_keys import twilio_sid, twilio_auth
+            twilio_client = TwilioClient(twilio_sid, twilio_auth)
+            self.send_message = twilio_client.api.account.messages.create
+
         for i in range(len(self.coins)):
             self.check_alerts_for_coin(self.coins[i], db)
 

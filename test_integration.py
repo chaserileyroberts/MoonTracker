@@ -38,8 +38,8 @@ def test_integration_sanity():
     assert response.status_code == 200
     cb = test_texter.coinbase_fake("45.00")
     twilio = test_texter.twilio_fake()
-    texter = Texter(cb, twilio.send_message)
-
+    texter = Texter()
+    texter.set_clients(cb, twilio.send_message)
     texter.check_alerts(app.db)
     assert len(twilio.messages) == 1
     assert len(twilio.to) == 1
