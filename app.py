@@ -87,32 +87,49 @@ app_markets = {
 
 
 class MarketsForm(Form):
-    phone_number = StringField(
-        'Phone Number', [
-            validators.Length(
-                min=10), validators.Regexp(
-                '^[0-9]+$', message="Input characters must be numeric")])
+    phone_number_validators = [
+        validators.Length(min=10),
+        validators.Regexp('^[0-9]+$',
+                          message="Input characters must be numeric")
+    ]
+    phone_number = StringField('Phone Number',
+                               validators=phone_number_validators)
+
     market_choices = [(market_key, market['name'])
                       for market_key, market in app_markets.items()]
+    market_validators = [validators.InputRequired()]
     market = SelectField('Market', choices=[('', '')] + market_choices,
-                         default='')
-    product = SelectField('Product', choices=[('', '')], default='')
-    target_price = IntegerField('Target Price', [validators.optional()])
-    less_more = SelectField(
-        '', choices=[(1, 'above'), (0, 'below')], coerce=int)
+                         default='', validators=market_validators)
+
+    product_validators = [validators.InputRequired()]
+    product = SelectField('Product', choices=[('', '')], default='',
+                          validators=product_validators)
+
+    target_price_validators = [validators.InputRequired()]
+    target_price = IntegerField('Target Price',
+                                validators=target_price_validators)
+
+    less_more_choices = [(1, 'above'), (0, 'below')]
+    less_more = SelectField('', choices=less_more_choices, coerce=int)
 
 
 @app.route('/markets', methods=['GET', 'POST'])
 def markets():
     form = MarketsForm(request.form)
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST':
         phone_number = form.phone_number.data
         market = form.market.data
         product = form.product.data
         target_price = form.target_price.data
         less_more = form.less_more.data
 
-        # TODO: add to database
+        if market:
+            product_choices = app_markets[market]['products']
+            form.product.choices = [('', '')] + product_choices
+
+        if form.validate():
+            # TODO: add to database
+            pass
 
     return render_template('markets.html', form=form,
                            app_markets_json=json.dumps(app_markets))

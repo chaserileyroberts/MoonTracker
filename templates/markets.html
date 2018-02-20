@@ -41,7 +41,7 @@
                             {{ form.product.label }}
                         </dt>
                         <dd>
-                            {{ render_field(form.product, disabled=True) }}
+                            {{ render_field(form.product, disabled=(form.market.data == '')) }}
                         </dd>
                         <dt>
                             {{ form.target_price.label }}
@@ -81,6 +81,7 @@
                 if (event.target.value !== '') {
                     productElem.prop('disabled', false);
                     productElem.empty();
+                    productElem.append($("<option />").val('').text(''));
                     products = app_markets[event.target.value].products
                     $.each(products, function (index, product) {
                         productElem.append($("<option />").val(product[0]).text(product[1]));
