@@ -27,7 +27,6 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 texter = Texter()
 
-
 class AlertForm(Form):
     phone_number = StringField(
             'Phone Number', [
@@ -73,10 +72,9 @@ def index():
 
 
 if __name__ == '__main__':
+    texter.set_clients()
     db.create_all()
-
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
-
-    app.run(host='0.0.0.0')
+    app.run()

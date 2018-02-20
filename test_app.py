@@ -7,11 +7,12 @@ test_client = app.app.test_client()
 
 
 def setup():
+    db.drop_all()
     db.create_all()
 
 
 def teardown():
-    os.remove('moontracker_database.db')
+    db.drop_all()
 
 
 def test_response_elems():
