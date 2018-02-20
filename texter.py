@@ -6,6 +6,8 @@ import time
 
 class Texter(object):
     def __init__(self, cb_client=None, send_message=None):
+        self.cb_client = None
+        self.send_message = None
         self.coins = ['BTC', 'ETH', 'LTC']
 
     def set_clients(self, cb_client=None, send_message=None):
@@ -54,13 +56,13 @@ class Texter(object):
         # Get all of the prices that are less than the current amount
         greater_than_query = Alert.query.filter(Alert.symbol == coin,
                                                 Alert.price < price,
-                                                Alert.above)
+                                                Alert.above != 0)
         self.text_greater_than(greater_than_query.all(), price)
         greater_than_query.delete(False)
 
         less_than_query = Alert.query.filter(Alert.symbol == coin,
                                              Alert.price > price,
-                                             not Alert.above)
+                                             Alert.above == 0)
         self.text_less_than(less_than_query.all(), price)
         less_than_query.delete(False)
 
@@ -77,8 +79,8 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "%s price is above your trigger of %s. \
-                        Current price is %s"
+                        "%s price is above your trigger of %s. "
+                        "Current price is %s"
                         % (alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.
@@ -94,8 +96,8 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "%s price is below your trigger of %s. \
-                        Current price is %s"
+                        "%s price is below your trigger of %s. "
+                        "Current price is %s"
                         % (alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.
