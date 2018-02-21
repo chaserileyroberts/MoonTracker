@@ -5,8 +5,8 @@ from wtforms import (Form, StringField, IntegerField,
                      SelectField, validators)
 from texter import Texter
 from flask_wtf import RecaptchaField, Recaptcha
-
 import json
+import sys
 
 
 class Config(object):
@@ -231,12 +231,15 @@ def route_products():
 
 
 if __name__ == '__main__':
-    from api_keys import recaptcha_public, recaptcha_private
     texter.set_clients()
-    app.config['RECAPTCHA_PUBLIC_KEY'] = recaptcha_public
-    app.config['RECAPTCHA_PRIVATE_KEY'] = recaptcha_private
+    port = 5000
+    if len(sys.argv) == 2 and sys.argv[1] == '--live':
+        from api_keys import recaptcha_public, recaptcha_private
+        app.config['RECAPTCHA_PUBLIC_KEY'] = recaptcha_public
+        app.config['RECAPTCHA_PRIVATE_KEY'] = recaptcha_private
+        port = 80
     db.create_all()
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=port)
