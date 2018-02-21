@@ -100,5 +100,4 @@ class Texter(object):
                         "Current price is %s"
                         % (alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
-                # Catch errors.
                 print("Invalid number:", alert.phone_number)

@@ -1,12 +1,11 @@
 import flask
 import app
-from app import Alert, db
-import os
-import time
-test_client = app.app.test_client()
+from app import Alert, db, app
+test_client = app.test_client()
 
 
 def setup():
+    app.testing = True
     db.drop_all()
     db.create_all()
 
@@ -31,10 +30,10 @@ def test_post_to_db():
             phone_number='5558675309',
             asset='BTC',
             less_more='1',
-            target_price='100'
+            target_price='100',
         ))
     assert response.status_code == 200
-
+    assert "Please do the recaptcha" not in str(response.data)
     results = Alert.query.filter(Alert.phone_number == '5558675309',
                                  Alert.symbol == 'BTC', Alert.price == 100.0,
                                  Alert.above).all()

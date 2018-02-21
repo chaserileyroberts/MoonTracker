@@ -51,6 +51,13 @@
                             </div>
                         </dd>
                     </dl>
+                    {{form.recaptcha}}
+                    {% for error in form.recaptcha.errors %}
+                    <ul>
+                        <li style="color:red;">{{error}}</li>
+                        {% endfor %}
+                    </ul>
+
                     <input type=submit class="btn btn-primary" value=Submit>
                 </form>
             </div>
