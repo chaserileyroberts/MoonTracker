@@ -4,7 +4,7 @@ from flask_apscheduler import APScheduler
 from wtforms import (Form, StringField, IntegerField,
                      SelectField, validators)
 from texter import Texter
-from flask_wtf import RecaptchaField
+from flask_wtf import RecaptchaField, Recaptcha
 
 import json
 
@@ -46,7 +46,8 @@ class AlertForm(Form):
     target_price = IntegerField('Target Price', [validators.optional()])
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
-    recaptcha = RecaptchaField()
+    recaptcha = RecaptchaField('Recaptcha',
+        validators=[Recaptcha("Please do the recaptcha.")])
 
 
 class Alert(db.Model):
