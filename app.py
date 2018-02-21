@@ -30,9 +30,10 @@ class Config(object):
 
 app = Flask(__name__)
 app.config.from_object(Config)
-app.config['SECRET_KEY'] ='secret123'
-app.config['RECAPTCHA_PUBLIC_KEY']='6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
-app.config['RECAPTCHA_PRIVATE_KEY']='6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+app.config['SECRET_KEY'] = 'secret123'
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+app.config['RECAPTCHA_PRIVATE_KEY'] = (
+    '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe')
 db = SQLAlchemy(app)
 texter = Texter()
 
@@ -60,8 +61,9 @@ class AlertForm(Form):
     target_price = IntegerField('Target Price', [validators.optional()])
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
-    recaptcha = RecaptchaField('Recaptcha',
-        validators=[Recaptcha("Please do the recaptcha.")])
+    recaptcha = RecaptchaField(
+        'Recaptcha', validators=[
+            Recaptcha("Please do the recaptcha.")])
 
 
 class Alert(db.Model):
@@ -93,6 +95,7 @@ def index():
         db.session.commit()
 
     return render_template('index.html', form=form)
+
 
 markets = {
     'coinbase': {
@@ -230,7 +233,10 @@ def route_products():
 
 
 if __name__ == '__main__':
+    from api_keys import recaptcha_public, recaptcha_private
     texter.set_clients()
+    app.config['RECAPTCHA_PUBLIC_KEY'] = recaptcha_public
+    app.config['RECAPTCHA_PRIVATE_KEY'] = recaptcha_private
     db.create_all()
     scheduler = APScheduler()
     scheduler.init_app(app)
