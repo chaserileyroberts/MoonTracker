@@ -1,7 +1,6 @@
 import flask
 import app
 from app import Alert, db, app
-from unittest.mock import MagicMock as Mock
 test_client = app.test_client()
 
 

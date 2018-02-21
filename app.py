@@ -8,8 +8,6 @@ from flask_wtf import RecaptchaField, Recaptcha
 
 import json
 
-import json
-
 
 class Config(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///moontracker_database.db'
