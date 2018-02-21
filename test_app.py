@@ -1,17 +1,18 @@
 import flask
 import app
-from app import Alert, db
-import os
-import time
-test_client = app.app.test_client()
+from app import Alert, db, app
+from unittest.mock import MagicMock as Mock
+test_client = app.test_client()
 
 
 def setup():
+    app.testing = True
+    db.drop_all()
     db.create_all()
 
 
 def teardown():
-    os.remove('moontracker_database.db')
+    db.drop_all()
 
 
 def test_response_elems():
@@ -30,13 +31,31 @@ def test_post_to_db():
             phone_number='5558675309',
             asset='BTC',
             less_more='1',
+            target_price='100',
+        ))
+    assert response.status_code == 200
+    assert "Please do the recaptcha" not in str(response.data)
+    results = Alert.query.filter(Alert.phone_number == '5558675309',
+                                 Alert.symbol == 'BTC', Alert.price == 100.0,
+                                 Alert.above).all()
+
+    assert len(results) == 1
+
+
+def test_post_to_db_below():
+    response = test_client.post(
+        '/',
+        data=dict(
+            phone_number='5558675309',
+            asset='BTC',
+            less_more='0',
             target_price='100'
         ))
     assert response.status_code == 200
 
     results = Alert.query.filter(Alert.phone_number == '5558675309',
                                  Alert.symbol == 'BTC', Alert.price == 100.0,
-                                 Alert.above).all()
+                                 Alert.above == 0).all()
 
     assert len(results) == 1
 
