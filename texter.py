@@ -1,39 +1,22 @@
 from twilio.rest import Client as TwilioClient
-from coinbase.wallet.client import Client as CoinbaseClient
 import twilio
 import time
+from price_tracker import PriceTracker
 
 
 class Texter(object):
-    def __init__(self, cb_client=None, send_message=None):
-        self.cb_client = None
+    def __init__(self):
+        self.price_tracker = None
         self.send_message = None
         self.coins = ['BTC', 'ETH', 'LTC']
 
-    def set_clients(self, cb_client=None, send_message=None):
-        if cb_client is None:
-            from api_keys import coinbase_auth, coinbase_secret
-            self.cb_client = CoinbaseClient(
-                coinbase_auth,
-                coinbase_secret,
-                api_version='2017-05-19')
-        else:
-            self.cb_client = cb_client
-
-        if send_message is None:
-            from api_keys import twilio_sid, twilio_auth
-            twilio_client = TwilioClient(twilio_sid, twilio_auth)
-            self.send_message = twilio_client.api.account.messages.create
-        else:
-            self.send_message = send_message
+    def set_clients(self, price_tracker=None, send_message=None):
+        self.price_tracker = price_tracker
+        self.send_message = send_message
 
     def check_alerts(self, db):
-        if self.cb_client is None:
-            from api_keys import coinbase_auth, coinbase_secret
-            self.cb_client = CoinbaseClient(
-                coinbase_auth,
-                coinbase_secret,
-                api_version='2017-05-19')
+        if self.price_tracker is None:
+            self.price_tracker = PriceTracker()
         if self.send_message is None:
             from api_keys import twilio_sid, twilio_auth
             twilio_client = TwilioClient(twilio_sid, twilio_auth)
@@ -48,10 +31,8 @@ class Texter(object):
         currency_code = 'USD'  # can also use EUR, CAD, etc.
         # Make the request
         # price = coinbase_client.get_spot_price(currency=currency_code)
-        price = self.cb_client.get_spot_price(
-            currency_pair=coin +
-            '-' +
-            currency_code).amount
+        price = self.price_tracker.get_spot_price(
+            asset=coin)
 
         # Get all of the prices that are less than the current amount
         greater_than_query = Alert.query.filter(Alert.symbol == coin,

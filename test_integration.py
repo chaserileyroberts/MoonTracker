@@ -36,7 +36,7 @@ def test_integration_sanity():
             target_price='1'
         ))
     assert response.status_code == 200
-    cb = test_texter.coinbase_fake("45")
+    cb = test_texter.price_tracker_fake("45")
     twilio = test_texter.twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -61,7 +61,7 @@ def test_integration_below():
             target_price='100'
         ))
     assert response.status_code == 200
-    cb = test_texter.coinbase_fake("45")
+    cb = test_texter.price_tracker_fake("45")
     twilio = test_texter.twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)

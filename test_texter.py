@@ -5,6 +5,7 @@ import os
 from unittest.mock import MagicMock as Mock
 import twilio
 import pytest
+from price_tracker import PriceTracker
 
 
 class twilio_fake():
@@ -18,19 +19,13 @@ class twilio_fake():
         self.messages.append(body)
 
 
-class price():
+class price_tracker_fake():
 
     def __init__(self, amount):
-        self.amount = amount
+        self.amount = float(amount)
 
-
-class coinbase_fake():
-
-    def __init__(self, amount):
-        self.amount = int(amount)
-
-    def get_spot_price(self, currency_pair):
-        return price(self.amount)
+    def get_spot_price(self, asset):
+        return self.amount
 
 
 def setup():
@@ -43,7 +38,7 @@ def teardown():
 
 
 def test_less_than_text():
-    cb = coinbase_fake("45")
+    cb = price_tracker_fake("45")
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -51,7 +46,7 @@ def test_less_than_text():
     alerts = [Alert(symbol='BTC', price=50.0, above=0,
                     phone_number='555-555-5555')]
 
-    texter.text_less_than(alerts, price(3.0))
+    texter.text_less_than(alerts, 3.0)
     assert len(twilio.messages) == 1
     assert "below" in twilio.messages[0]
     assert 'BTC' in twilio.messages[0]
@@ -60,7 +55,7 @@ def test_less_than_text():
 
 
 def test_greater_than_text():
-    cb = coinbase_fake("45")
+    cb = price_tracker_fake("45")
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -68,7 +63,7 @@ def test_greater_than_text():
     alerts = [Alert(symbol='BTC', price=1.0, above=1,
                     phone_number='555-555-5555')]
 
-    texter.text_greater_than(alerts, price(3.0))
+    texter.text_greater_than(alerts, 3.0)
     assert len(twilio.messages) == 1
     assert "above" in twilio.messages[0]
     assert 'BTC' in twilio.messages[0]
@@ -77,7 +72,7 @@ def test_greater_than_text():
 
 
 def test_LTC():
-    cb = coinbase_fake("45")
+    cb = price_tracker_fake("45")
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -85,13 +80,13 @@ def test_LTC():
     alerts = [Alert(symbol='LTC', price=1.0, above=1,
                     phone_number='555-555-5555')]
 
-    texter.text_greater_than(alerts, price(3.0))
+    texter.text_greater_than(alerts, 3.0)
     assert len(twilio.messages) == 1
     assert 'LTC' in twilio.messages[0]
 
 
 def test_ETH():
-    cb = coinbase_fake("45")
+    cb = price_tracker_fake("45")
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -99,13 +94,13 @@ def test_ETH():
     alerts = [Alert(symbol='ETH', price=1.0, above=1,
                     phone_number='555-555-5555')]
 
-    texter.text_greater_than(alerts, price(3.0))
+    texter.text_greater_than(alerts, 3.0)
     assert len(twilio.messages) == 1
     assert 'ETH' in twilio.messages[0]
 
 
 def test_empty_text_loop():
-    cb = coinbase_fake("45")
+    cb = price_tracker_fake("45")
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -116,7 +111,7 @@ def test_empty_text_loop():
 
 
 def test_single_text_loop():
-    cb = coinbase_fake("45")
+    cb = price_tracker_fake("45")
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -135,8 +130,7 @@ def test_single_text_loop():
 
 
 def test_single_text_loop_below():
-    cb = coinbase_fake("5")
-    assert cb.get_spot_price('btc-usd').amount == 5
+    cb = price_tracker_fake("5")
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -155,7 +149,7 @@ def test_single_text_loop_below():
 
 
 def test_single_entry_no_text():
-    cb = coinbase_fake("45")
+    cb = price_tracker_fake("45")
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
@@ -170,7 +164,7 @@ def test_single_entry_no_text():
 
 
 def test_invalid_number(capsys):
-    cb = coinbase_fake("45")
+    cb = price_tracker_fake("45")
     send_message = Mock()
     send_message.side_effect = (twilio.base.exceptions
                                 .TwilioRestException(Mock(), Mock()))
@@ -184,11 +178,9 @@ def test_invalid_number(capsys):
     out, err = capsys.readouterr()
     assert "Invalid number" in out
 
-# @pytest.mark.timeout(1)
-
 
 def test_invalid_number_below(capsys):
-    cb = coinbase_fake("45")
+    cb = price_tracker_fake("45")
     send_message = Mock()
     send_message.side_effect = (twilio.base.exceptions
                                 .TwilioRestException(Mock(), Mock()))
@@ -201,3 +193,16 @@ def test_invalid_number_below(capsys):
     texter.check_alerts(db)
     out, err = capsys.readouterr()
     assert "Invalid number" in out
+
+
+def test_price_tracker_integration():
+    cb = PriceTracker()
+    twilio = twilio_fake()
+    texter = Texter()
+    texter.set_clients(cb, twilio.send_message)
+    alert = Alert(symbol='BTC', price=100.0, above=1,
+                  phone_number='555-555-5555')
+    db.session.add(alert)
+    db.session.commit()
+
+    texter.check_alerts(db)
