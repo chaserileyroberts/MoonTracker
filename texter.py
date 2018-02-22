@@ -2,13 +2,15 @@ from twilio.rest import Client as TwilioClient
 import twilio
 import time
 from price_tracker import PriceTracker
+from assets import assets
 
 
 class Texter(object):
     def __init__(self):
         self.price_tracker = None
         self.send_message = None
-        self.coins = ['BTC', 'ETH', 'LTC']
+
+        self.coins = [i[0] for i in assets]
 
     def set_clients(self, price_tracker=None, send_message=None):
         self.price_tracker = price_tracker

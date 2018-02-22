@@ -7,6 +7,7 @@ from texter import Texter
 from flask_wtf import RecaptchaField, Recaptcha
 import json
 import sys
+from assets import assets
 
 
 class Config(object):
@@ -36,19 +37,7 @@ db = SQLAlchemy(app)
 texter = Texter()
 
 
-def add_assets():
-    choices = []
-    file = open('assets.txt', 'r')
-    for line in file:
-        line = line.strip()
-        field_label = line.split(', ')
-        choices.append((field_label[0], field_label[1]))
-    file.close()
-    return choices
-
-
 class AlertForm(Form):
-    assets = add_assets()
     phone_number = StringField(
         'Phone Number', [
             validators.Length(
