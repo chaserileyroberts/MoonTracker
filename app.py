@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, flash
+from flask import Flask, request, render_template, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_apscheduler import APScheduler
 from wtforms import (Form, StringField, IntegerField,
@@ -8,6 +8,7 @@ from flask_wtf import RecaptchaField, Recaptcha
 import json
 import sys
 from assets import assets
+from flask_login import LoginManager, login_user, logout_user, login_required
 
 
 class Config(object):
@@ -35,6 +36,37 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = (
     '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe')
 db = SQLAlchemy(app)
 texter = Texter()
+login = LoginManager(app)
+
+
+class User(): # will be User(db.Model) when we have db table
+
+    # __tablename__ = 'user'
+
+    def __init__(self, username, password, active=True):
+        self.username = username
+        self.password = password
+        self.active = active
+        self.id = 1 # for now
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return self.active
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        # return unicode(self.session_token)
+        return str(self.id) # python2 uses unicode()
+
+
+class LoginForm(Form):
+    username = StringField('Username')
+    password = StringField('Password')
+    phone_number = StringField('Phone Number')
 
 
 class AlertForm(Form):
@@ -82,6 +114,34 @@ def index():
         db.session.commit()
 
     return render_template('index.html', form=form)
+
+#for testing
+user = User('s', '123')
+
+@login.user_loader
+def load_user(session_token):
+    # return User.query.filter_by(session_token=session_token).first()
+    return user
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate(): # validate should be customized I think
+        # to do: login user
+        login_user(user)
+        flash('Logged in successfully.')
+        next = request.args.get('next')
+        # to do: check if url is safe
+        return redirect(next or '/')
+    return render_template('login.html', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')
 
 
 markets = {
