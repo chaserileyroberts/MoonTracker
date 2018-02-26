@@ -7,7 +7,7 @@ import app
 from app import db
 from texter import Texter
 import os
-import test_texter
+from tests import test_texter
 
 test_client = app.app.test_client()
 
