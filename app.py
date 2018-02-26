@@ -221,7 +221,6 @@ def route_products():
 
 if __name__ == '__main__':
     texter.set_clients()
-    port = 8080
     if len(sys.argv) == 2 and sys.argv[1] == '--live':
         from api_keys import recaptcha_public, recaptcha_private
         app.config['RECAPTCHA_PUBLIC_KEY'] = recaptcha_public
@@ -230,4 +229,4 @@ if __name__ == '__main__':
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0')
