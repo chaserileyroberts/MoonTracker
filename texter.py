@@ -1,22 +1,36 @@
+"""Texting Service."""
 from twilio.rest import Client as TwilioClient
 import twilio
-import time
 from price_tracker import PriceTracker
 from assets import assets
 
 
 class Texter(object):
+    """Texting Object."""
+
     def __init__(self):
+        """Object initializer."""
         self.price_tracker = None
         self.send_message = None
 
         self.coins = [i[0] for i in assets]
 
     def set_clients(self, price_tracker=None, send_message=None):
+        """Set Clients. Used for unit testing.
+
+        Args:
+            price_tracker: The price tracking client.
+            send_message: The function to send the text message.
+        """
         self.price_tracker = price_tracker
         self.send_message = send_message
 
     def check_alerts(self, db):
+        """Check alerts for all types of assets.
+
+        Args:
+            db: The db cursor object.
+        """
         if self.price_tracker is None:
             self.price_tracker = PriceTracker()
         if self.send_message is None:
@@ -28,8 +42,15 @@ class Texter(object):
             self.check_alerts_for_coin(self.coins[i], db)
 
     def check_alerts_for_coin(self, coin, db):
-        from app import Alert
+        """Check for alerts.
 
+        Args:
+            coin: The asset to check against.
+                TODO(Chase): Change name.
+            db: The database curson object.
+        """
+        # TODO(Chase): Move Alerts to it's own file.
+        from app import Alert
         currency_code = 'USD'  # can also use EUR, CAD, etc.
         # Make the request
         # price = coinbase_client.get_spot_price(currency=currency_code)
@@ -53,6 +74,12 @@ class Texter(object):
         db.session.commit()
 
     def text_greater_than(self, alerts, price):
+        """Send text message for above triggers.
+
+        Args:
+            alerts: The alerts to send. Should be type Alert.
+            price: The current asset price.
+        """
         for alert in alerts:
             # Some logging
             print("Sending text to %s" % alert.phone_number)
@@ -70,6 +97,12 @@ class Texter(object):
                 print("Invalid number:", alert.phone_number)
 
     def text_less_than(self, alerts, price):
+        """Send text message for above triggers.
+
+        Args:
+            alerts: The alerts to send. Should be type Alert.
+            price: The current asset price.
+        """
         for alert in alerts:
             # Some logging
             print("Sending text to %s" % alert.phone_number)

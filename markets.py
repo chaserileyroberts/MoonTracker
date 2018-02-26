@@ -1,24 +1,37 @@
+"""Various Crypto Market APIs."""
 import requests
-import time
 
 
 class Market:
+    """Market default class."""
+
     def get_name():
+        """Get name of the current market."""
         return ""
 
     def get_products():
+        """Get list of suported products."""
         return []
 
     def get_ticker(self, product):
-        pass
+        """Get ticker of the product."""
 
     def get_spot_price(self, product):
-        pass
+        """Get spot price of the product."""
 
 
 class BitfinexMarket(Market):
+    """Market Client for Bitfinex."""
 
     def get_ticker(self, product):
+        """Get the current ticker.
+
+        Args:
+            product: The coin you want the ticker of.
+        Returns:
+            ticker: The ticker object.
+
+        """
         if product == 'btc-usd':
             ticker = {}
             response = requests.get(
@@ -37,6 +50,14 @@ class BitfinexMarket(Market):
             return ticker
 
     def get_spot_price(self, product):
+        """Get the current coin price.
+
+        Args:
+            product: The coin you want the value of.
+        Returns:
+            price: The current price.
+
+        """
         if product == 'btc-usd':
             response = requests.get(
                 'https://api.bitfinex.com/v1/pubticker/btcusd')
@@ -49,17 +70,28 @@ class BitfinexMarket(Market):
 
 
 class CoinbaseMarket(Market):
+    """Markert Client for Coinbase."""
 
     def __init__(self):
-        pass
+        """Initializer."""
 
     def get_name():
+        """Get the name of the market."""
         return "Coinbase"
 
     def get_products(self):
+        """Get list of supported markets."""
         return ['btc-usd', 'eth-usd', 'ltc-usd']
 
     def get_spot_price(self, product):
+        """Get the current coin price.
+
+        Args:
+            product: The coin you want the value of.
+        Returns:
+            price: The current price.
+
+        """
         if product in ['btc-usd', 'eth-usd', 'ltc-usd']:
             url = 'https://api.coinbase.com/v2/prices/' + product + '/spot'
             response = requests.get(url,
@@ -71,11 +103,20 @@ class CoinbaseMarket(Market):
 
 
 class GdaxMarket(Market):
+    """Market Client for GDAX."""
 
     def __init__(self):
-        pass
+        """Initializer."""
 
     def get_spot_price(self, product):
+        """Get the current coin price.
+
+        Args:
+            product: The coin you want the value of.
+        Returns:
+            price: The current price.
+
+        """
         if product == 'btc-usd':
             response = requests.get(
                 'https://api.gdax.com/products/btc-usd/ticker')
@@ -88,11 +129,20 @@ class GdaxMarket(Market):
 
 
 class GeminiMarket(Market):
+    """Market Client Gemini."""
 
     def __init__(self):
-        pass
+        """Initializer."""
 
     def get_spot_price(self, product):
+        """Get the current coin price.
+
+        Args:
+            product: The coin you want the value of.
+        Returns:
+            price: The current price.
+
+        """
         if product == 'btc-usd':
             response = requests.get(
                 'https://api.gemini.com/v1/pubticker/btcusd')
