@@ -1,10 +1,7 @@
 from texter import Texter
 from app import Alert, db
-import pytest
-import os
 from unittest.mock import MagicMock as Mock
 import twilio
-import pytest
 from price_tracker import PriceTracker
 
 
