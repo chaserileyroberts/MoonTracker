@@ -25,5 +25,5 @@ class PriceTracker():
                 "https://api.iextrading.com/1.0/stock/" +
                 asset +
                 "/quote")
-            price = json.loads(response.text)['latestPrice']
+            price = float(json.loads(response.text)['latestPrice'])
         return price

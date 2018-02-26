@@ -1,6 +1,5 @@
-import flask
-import app
 from app import Alert, db, app
+import app as webserver
 test_client = app.test_client()
 
 
@@ -111,3 +110,6 @@ def test_post_to_db_bad_price():
                                  Alert.symbol == 'BTC', Alert.price == 'aaaaa',
                                  Alert.above).all()
     assert len(results) == 0
+
+def test_check_alerts():
+  webserver.check_alerts()   

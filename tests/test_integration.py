@@ -3,14 +3,11 @@ Integration Test.
 Make sure posts from the website causes texts to be sent.
 """
 
-import flask
 import app
 from app import db
-import time
 from texter import Texter
-import pytest
 import os
-import test_texter
+from tests import test_texter
 
 test_client = app.app.test_client()
 
