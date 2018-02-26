@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, flash, redirect
+from flask import Flask, request, render_template, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_apscheduler import APScheduler
 from wtforms import (Form, StringField, IntegerField,
@@ -7,6 +7,7 @@ from texter import Texter
 from flask_wtf import RecaptchaField, Recaptcha
 import json
 import sys
+from datetime import datetime
 from assets import assets
 from flask_login import LoginManager, login_user, logout_user, login_required
 
@@ -87,32 +88,30 @@ def index():
 
 
 class User(db.Model):
-    # to do: connect to database properly
-    __tablename__ = 'user'
+    __tablename__ = 'users'
     id = db.Column('user_id', db.Integer, primary_key=True)
     username = db.Column('username', db.String(80), unique=True, index=True, nullable=False)
     password = db.Column('password', db.String(80), nullable=False)
     phone_number = db.Column('phone_number', db.String(80), nullable=False)
+    registered_on = db.Column('registered_on' , db.DateTime, nullable=False)
 
-    def __init__(self, username, password, phone_number, active=True):
+    def __init__(self, username, password, phone_number):
         self.username = username
         self.password = password
         self.phone_number = phone_number
-        self.active = active
-        self.id = 1  # for now
+        self.registered_on = datetime.utcnow()
 
     def is_authenticated(self):
         return True
 
     def is_active(self):
-        return self.active
+        return True
 
     def is_anonymous(self):
         return False
 
     def get_id(self):
-        # return unicode(self.session_token)
-        return str(self.id) # python2 uses unicode()
+        return str(self.id)
 
 
 class LoginForm(Form):
@@ -136,25 +135,23 @@ class NewAccountForm(Form):
                 min=10), validators.Regexp(
                 '^[0-9]+$', message="Input characters must be numeric")])
 
-
-#for testing
-user = User('s', '123', '111')
-
 @login.user_loader
-def load_user(session_token):
-    # return User.query.filter_by(session_token=session_token).first()
-    return user
+def load_user(id):
+    return User.query.get(int(id))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate(): # validate should be customized I think
-        # to do: login user
-        login_user(user)
-        flash('Logged in successfully.')
-        next = request.args.get('next')
-        # to do: check if url is safe
-        return redirect(next or '/')
+        username = form.username.data
+        password = form.password.data
+        registered_user = User.query.filter_by(username=username, password=password).first()
+        if registered_user is None:
+            flash('Username or Password is invalid' , 'error')
+            return redirect(url_for('login'))
+        login_user(registered_user)
+        flash('Logged in successfully')
+        return redirect(request.args.get('next') or url_for('index'))
     return render_template('login.html', form=form)
 
 
@@ -169,11 +166,9 @@ def create_account():
     form = NewAccountForm(request.form)
     if request.method == 'POST' and form.validate():
         user = User(form.username.data, form.password.data, form.phone_number.data)
-        login_user(user)
-        flash('Logged in successfully.')
-        next = request.args.get('next')
-        # to do: check if url is safe
-        return redirect(next or '/')
+        db.session.add(user)
+        db.session.commit()
+        return redirect(request.args.get('next') or url_for('index'))
     return render_template('create_account.html', form=form)
 
 
