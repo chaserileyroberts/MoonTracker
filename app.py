@@ -1,3 +1,4 @@
+"""Website server module."""
 from flask import Flask, request, render_template, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exists
@@ -15,6 +16,8 @@ from flask_login import LoginManager, login_user, logout_user, login_required
 
 
 class Config(object):
+    """Configuration for the flask app."""
+
     SQLALCHEMY_DATABASE_URI = 'sqlite:///moontracker_database.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -44,6 +47,8 @@ bcrypt = Bcrypt(app)
 
 
 class AlertForm(Form):
+    """Form object for website."""
+
     phone_number = StringField(
         'Phone Number', [
             validators.Length(
@@ -60,6 +65,8 @@ class AlertForm(Form):
 
 
 class Alert(db.Model):
+    """Object to add to database."""
+
     id = db.Column(db.Integer, primary_key=True)
     symbol = db.Column(db.String(80), nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -68,12 +75,14 @@ class Alert(db.Model):
 
 
 def check_alerts():
+    """Check for alerts on the database."""
     with app.app_context():
         texter.check_alerts(db)
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    """Code for the homepage."""
     form = AlertForm(request.form)
     if request.method == 'POST' and form.validate():
         flash("Success!")
@@ -221,6 +230,8 @@ app_products = ['btc-usd', 'eth-usd', 'ltc-usd']
 
 
 class MarketsForm(Form):
+    """Website forms that includes market with asset."""
+
     phone_number_validators = [
         validators.Length(min=10),
         validators.Regexp('^[0-9]+$',
@@ -249,6 +260,7 @@ class MarketsForm(Form):
 
 @app.route('/markets', methods=['GET', 'POST'])
 def route_markets():
+    """Webpage for the route markets."""
     form = MarketsForm(request.form)
     if request.method == 'POST':
         phone_number = form.phone_number.data
@@ -271,6 +283,8 @@ def route_markets():
 
 
 class ProductsForm(Form):
+    """Website form for the products page."""
+
     phone_number_validators = [
         validators.Length(min=10),
         validators.Regexp('^[0-9]+$',
@@ -301,6 +315,7 @@ class ProductsForm(Form):
 
 @app.route('/products', methods=['GET', 'POST'])
 def route_products():
+    """Webpage for the products page."""
     form = ProductsForm(request.form)
     if request.method == 'POST':
         phone_number = form.phone_number.data
@@ -329,7 +344,6 @@ def route_products():
 
 if __name__ == '__main__':
     texter.set_clients()
-    port = 8080
     if len(sys.argv) == 2 and sys.argv[1] == '--live':
         from api_keys import recaptcha_public, recaptcha_private
         app.config['RECAPTCHA_PUBLIC_KEY'] = recaptcha_public
@@ -338,4 +352,4 @@ if __name__ == '__main__':
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0')

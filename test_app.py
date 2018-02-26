@@ -1,5 +1,3 @@
-import flask
-import app
 from app import Alert, db, app
 test_client = app.test_client()
 
