@@ -1,1 +1,1 @@
-"""Test initialization"""
+"""Test initialization."""
