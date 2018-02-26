@@ -1,3 +1,4 @@
+{% from "_navbar.html" import navbar with context %}
 <!doctype html>
 <html lang="en">
     <head>
@@ -8,18 +9,9 @@
     </head>
 
     <body>
-        <a href="login"><button style='float:right;'>Login</button></a>
-        <a href="create"><button style='float:right;'>Create Account</button></a>
-        <a href="markets"><button style='float:right;'>Go To Markets</button></a>
-        <a href="products"><button style='float:right;'>Go To Products</button></a>
-        
         <div class="container">
-            <div class="navbar navbar-default">
-                <!-- first line should only show up in not logged in -->
-                <a href="{{ url_for('create_account') }}">Create Account</a>
-                <a href="{{ url_for('login') }}">Login</a>
-            </div>
-            <div class="page-header">
+            {{ navbar() }}
+            <div class="page-header text-center">
                 <h1>MoonTracker</h1>
             </div>
             <div class="form-group">

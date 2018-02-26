@@ -1,3 +1,4 @@
+{% from "_navbar.html" import navbar with context %}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -6,15 +7,10 @@
 		<title>Create Account | Moon Tracker</title>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	</head>
-	<body>
-        <Links to each page, just placeholder, could make actual button classes if we want to customize them>
-        <a href="login"><button style='float:right;'>Login</button></a>
-        <a href="markets"><button style='float:right;'>Go To Markets</button></a>
-        <a href="products"><button style='float:right;'>Go To Products</button></a>
-        <a href="/"><button style='float:right;'>MoonTracker</button></a>
-        
+	<body>        
 		<div class="container">
-			<div class="page-header">
+            {{ navbar() }}
+			<div class="page-header text-center">
                 <h1>MoonTracker</h1>
             </div>
             <div class="form-group">
@@ -63,5 +59,8 @@
                 {% endif %}
             {% endwith %}
 		</div>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	</body>
 </html>

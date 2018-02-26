@@ -1,20 +1,17 @@
+{% from "_navbar.html" import navbar with context %}
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Moon Tracker</title>
+        <title>Markets | Moon Tracker</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     </head>
 
     <body>
-        <a href="login"><button style='float:right;'>Login</button></a>
-        <a href="create"><button style='float:right;'>Create Account</button></a>
-        <a href="products"><button style='float:right;'>Go To Products</button></a>
-        <a href="/"><button style='float:right;'>MoonTracker</button></a>
-        
         <div class="container">
-            <div class="page-header">
+            {{ navbar() }}
+            <div class="page-header text-center">
                 <h1>MoonTracker</h1>
             </div>
             <div class="form-group">
