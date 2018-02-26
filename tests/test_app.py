@@ -111,5 +111,6 @@ def test_post_to_db_bad_price():
                                  Alert.above).all()
     assert len(results) == 0
 
+
 def test_check_alerts():
-  webserver.check_alerts()   
+    webserver.check_alerts()
