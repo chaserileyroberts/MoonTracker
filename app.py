@@ -153,7 +153,8 @@ def login():
         password = form.password.data
         registered_user = User.query.filter_by(username=username).first()
 
-        if registered_user is None or not bcrypt.check_password_hash(registered_user.pw_hash, password):
+        if registered_user is None or
+        not bcrypt.check_password_hash(registered_user.pw_hash, password):
             flash('Username or Password is invalid', 'error')
             return redirect(url_for('login'))
 
@@ -178,7 +179,8 @@ def create_account():
         password = form.password.data
         phone_number = form.phone_number.data
 
-        if db.session.query(exists().where(User.username == username)).scalar():
+        if db.session.query(exists().where(User.username
+                                           == username)).scalar():
             flash('Username not available', 'error')
             return redirect(url_for('create_account'))
 
