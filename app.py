@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import exists
 from flask_apscheduler import APScheduler
+from flask_bcrypt import Bcrypt
 from wtforms import (Form, StringField, IntegerField,
                      SelectField, validators)
 from texter import Texter
@@ -38,6 +40,7 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = (
 db = SQLAlchemy(app)
 texter = Texter()
 login = LoginManager(app)
+bcrypt = Bcrypt(app)
 
 
 class AlertForm(Form):
@@ -92,13 +95,13 @@ class User(db.Model):
     id = db.Column('user_id', db.Integer, primary_key=True)
     username = db.Column('username', db.String(80), unique=True, index=True,
                          nullable=False)
-    password = db.Column('password', db.String(80), nullable=False)
+    pw_hash = db.Column('pw_hash', db.String(80), nullable=False)
     phone_number = db.Column('phone_number', db.String(80), nullable=False)
     registered_on = db.Column('registered_on', db.DateTime, nullable=False)
 
-    def __init__(self, username, password, phone_number):
+    def __init__(self, username, pw_hash, phone_number):
         self.username = username
-        self.password = password
+        self.pw_hash = pw_hash
         self.phone_number = phone_number
         self.registered_on = datetime.utcnow()
 
@@ -148,11 +151,12 @@ def login():
     if request.method == 'POST' and form.validate():
         username = form.username.data
         password = form.password.data
-        registered_user = User.query.filter_by(username=username,
-                                               password=password).first()
-        if registered_user is None:
+        registered_user = User.query.filter_by(username=username).first()
+
+        if registered_user is None or not bcrypt.check_password_hash(registered_user.pw_hash, password):
             flash('Username or Password is invalid', 'error')
             return redirect(url_for('login'))
+
         login_user(registered_user)
         flash('Logged in successfully')
         return redirect(request.args.get('next') or url_for('index'))
@@ -170,8 +174,16 @@ def logout():
 def create_account():
     form = NewAccountForm(request.form)
     if request.method == 'POST' and form.validate():
-        user = User(form.username.data, form.password.data,
-                    form.phone_number.data)
+        username = form.username.data
+        password = form.password.data
+        phone_number = form.phone_number.data
+
+        if db.session.query(exists().where(User.username == username)).scalar():
+            flash('Username not available', 'error')
+            return redirect(url_for('create_account'))
+
+        pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        user = User(username, pw_hash, phone_number)
         db.session.add(user)
         db.session.commit()
         return redirect(request.args.get('next') or url_for('index'))
