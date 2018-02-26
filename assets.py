@@ -1,3 +1,4 @@
+"""Asset List."""
 assets = [
     ("BTC", "Bitcoin"),
     ("ETH", "Ethereum"),
