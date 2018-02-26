@@ -90,10 +90,11 @@ def index():
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column('user_id', db.Integer, primary_key=True)
-    username = db.Column('username', db.String(80), unique=True, index=True, nullable=False)
+    username = db.Column('username', db.String(80), unique=True, index=True,
+                         nullable=False)
     password = db.Column('password', db.String(80), nullable=False)
     phone_number = db.Column('phone_number', db.String(80), nullable=False)
-    registered_on = db.Column('registered_on' , db.DateTime, nullable=False)
+    registered_on = db.Column('registered_on', db.DateTime, nullable=False)
 
     def __init__(self, username, password, phone_number):
         self.username = username
@@ -125,7 +126,7 @@ class LoginForm(Form):
 class NewAccountForm(Form):
     username = StringField('Username', [
             validators.Length(
-                min=1, message="Please enter username")]) # query to see if username is in use
+                min=1, message="Please enter username")])
     password = StringField('Password', [
             validators.Length(
                 min=8, message="Password must be at least 8 characters")])
@@ -135,19 +136,22 @@ class NewAccountForm(Form):
                 min=10), validators.Regexp(
                 '^[0-9]+$', message="Input characters must be numeric")])
 
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
-    if request.method == 'POST' and form.validate(): # validate should be customized I think
+    if request.method == 'POST' and form.validate():
         username = form.username.data
         password = form.password.data
-        registered_user = User.query.filter_by(username=username, password=password).first()
+        registered_user = User.query.filter_by(username=username,
+                                               password=password).first()
         if registered_user is None:
-            flash('Username or Password is invalid' , 'error')
+            flash('Username or Password is invalid', 'error')
             return redirect(url_for('login'))
         login_user(registered_user)
         flash('Logged in successfully')
@@ -161,11 +165,13 @@ def logout():
     logout_user()
     return redirect('/')
 
+
 @app.route('/create', methods=['GET', 'POST'])
 def create_account():
     form = NewAccountForm(request.form)
     if request.method == 'POST' and form.validate():
-        user = User(form.username.data, form.password.data, form.phone_number.data)
+        user = User(form.username.data, form.password.data,
+                    form.phone_number.data)
         db.session.add(user)
         db.session.commit()
         return redirect(request.args.get('next') or url_for('index'))
