@@ -6,5 +6,7 @@ install:
 script:
   - python -m pytest
   - pycodestyle .
+  - pydocstyle
+  - flake8 --ignore=F841
 notifications:
   email: false
