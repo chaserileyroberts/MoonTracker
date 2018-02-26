@@ -141,14 +141,15 @@ class NewAccountForm(Form):
 user = User('s', '123', '111')
 
 @login.user_loader
-def load_user(session_token):
+def load_user(session_token): # not really sure what this function's purpose is yet
     # return User.query.filter_by(session_token=session_token).first()
     return user
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
-    if request.method == 'POST' and form.validate(): # validate should be customized I think
+    # to do: write validate function to check if username/password is correct
+    if request.method == 'POST' and form.validate():
         # to do: login user
         login_user(user)
         flash('Logged in successfully.')
