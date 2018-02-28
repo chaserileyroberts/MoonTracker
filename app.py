@@ -100,6 +100,8 @@ def index():
 
 
 class User(db.Model):
+    """Object for user database entries."""
+
     __tablename__ = 'users'
     id = db.Column('user_id', db.Integer, primary_key=True)
     username = db.Column('username', db.String(80), unique=True, index=True,
@@ -109,39 +111,54 @@ class User(db.Model):
     registered_on = db.Column('registered_on', db.DateTime, nullable=False)
 
     def __init__(self, username, pw_hash, phone_number):
+        """Initialize User object.
+
+        Args:
+            username: The username string.
+            pw_hash: Password hash value.
+            phone_number: User's phone number.
+        """
         self.username = username
         self.pw_hash = pw_hash
         self.phone_number = phone_number
         self.registered_on = datetime.utcnow()
 
     def is_authenticated(self):
+        """Authenticate user."""
         return True
 
     def is_active(self):
+        """Check if user is active."""
         return True
 
     def is_anonymous(self):
+        """Check if user is anonymous."""
         return False
 
     def get_id(self):
+        """Get user Id."""
         return str(self.id)
 
 
 class LoginForm(Form):
+    """Login Form object."""
+
     username = StringField('Username', [
-            validators.Length(
-                min=1, message="Please enter username")])
+        validators.Length(
+            min=1, message="Please enter username")])
     password = StringField('Password', [
-            validators.Length(min=8, message="Please enter password")])
+        validators.Length(min=8, message="Please enter password")])
 
 
 class NewAccountForm(Form):
+    """New Account Form object."""
+
     username = StringField('Username', [
-            validators.Length(
-                min=1, message="Please enter username")])
+        validators.Length(
+            min=1, message="Please enter username")])
     password = StringField('Password', [
-            validators.Length(
-                min=8, message="Password must be at least 8 characters")])
+        validators.Length(
+            min=8, message="Password must be at least 8 characters")])
     phone_number = StringField(
         'Phone Number', [
             validators.Length(
@@ -151,19 +168,22 @@ class NewAccountForm(Form):
 
 @login.user_loader
 def load_user(id):
+    """Get the current user's id."""
     return User.query.get(int(id))
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Login page."""
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
         username = form.username.data
         password = form.password.data
         registered_user = User.query.filter_by(username=username).first()
 
-        if (registered_user is None
-                or not bcrypt.check_password_hash(registered_user.pw_hash,
-                                                  password)):
+        if (registered_user is None or
+            not bcrypt.check_password_hash(registered_user.pw_hash,
+                                           password)):
             flash('Username or Password is invalid', 'error')
             return redirect(url_for('login'))
 
@@ -176,20 +196,22 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    """Logout post request."""
     logout_user()
     return redirect('/')
 
 
 @app.route('/create', methods=['GET', 'POST'])
 def create_account():
+    """Create new account page."""
     form = NewAccountForm(request.form)
     if request.method == 'POST' and form.validate():
         username = form.username.data
         password = form.password.data
         phone_number = form.phone_number.data
 
-        if db.session.query(exists().where(User.username
-                                           == username)).scalar():
+        if db.session.query(exists().where(User.username ==
+                                           username)).scalar():
             flash('Username not available', 'error')
             return redirect(url_for('create_account'))
 
