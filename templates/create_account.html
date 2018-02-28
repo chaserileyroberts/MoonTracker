@@ -10,9 +10,6 @@
 	<body>        
 		<div class="container">
             {{ navbar() }}
-			<div class="page-header text-center">
-                <h1>MoonTracker</h1>
-            </div>
             <div class="form-group">
             	{% macro render_field(field) %}
                     {{ field(class="form-control", **kwargs)|safe }}
@@ -36,7 +33,7 @@
                 			{{ form.password.label }}
                 		</dt>
                 		<dd>
-                			{{ render_field(form.password) }}
+                			{{ render_field(form.password, type="password") }}
                 		</dd>
                 		<dt>
                 			{{ form.phone_number.label }}
