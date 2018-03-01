@@ -219,6 +219,8 @@ def create_account():
         user = User(username, pw_hash, phone_number)
         db.session.add(user)
         db.session.commit()
+        login_user(user, True)
+        flash('Successfully created new account for ' + username)
         return redirect(request.args.get('next') or url_for('index'))
     return render_template('create_account.html', form=form)
 
