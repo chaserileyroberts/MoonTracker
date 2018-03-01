@@ -1,4 +1,6 @@
-from app import Alert, db, app
+from app import Alert, db, app, texter
+import app as webserver
+from tests.fake_clients import twilio_fake, price_tracker_fake
 test_client = app.test_client()
 
 
@@ -109,3 +111,8 @@ def test_post_to_db_bad_price():
                                  Alert.symbol == 'BTC', Alert.price == 'aaaaa',
                                  Alert.above).all()
     assert len(results) == 0
+
+
+def test_check_alerts():
+    texter.set_clients(price_tracker_fake("5.00"), twilio_fake())
+    webserver.check_alerts()
