@@ -13,7 +13,7 @@ script:
   - pycodestyle .
   - pydocstyle
   - flake8 --ignore=F841
-  - python -m pytest --cov=./ --cov-report xml --cov-config .coveragerc
+  - python -m pytest --cov=./ --cov-report xml
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
