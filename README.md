@@ -3,6 +3,8 @@ Moon tracker SD&amp;D Project
 
 [![Build Status](https://travis-ci.org/Thenerdstation/MoonTracker.svg?branch=master)](https://travis-ci.org/Thenerdstation/MoonTracker)
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/codeclimate/codeclimate/maintainability)
+
 ## Building
 
 To get the source, you can either git clone or just download the zip file and extract it somewhere.
