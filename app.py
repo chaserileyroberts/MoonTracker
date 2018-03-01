@@ -187,7 +187,7 @@ def login():
             flash('Username or Password is invalid', 'error')
             return redirect(url_for('login'))
 
-        login_user(registered_user)
+        login_user(registered_user, True) # second argument adds remember me cookie
         flash('Logged in successfully')
         return redirect(request.args.get('next') or url_for('index'))
     return render_template('login.html', form=form)
