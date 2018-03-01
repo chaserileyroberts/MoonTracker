@@ -187,7 +187,7 @@ def login():
             flash('Username or Password is invalid', 'error')
             return redirect(url_for('login'))
 
-        login_user(registered_user)
+        login_user(registered_user, True) # second argument adds remember me cookie
         flash('Logged in successfully')
         return redirect(request.args.get('next') or url_for('index'))
     return render_template('login.html', form=form)
@@ -219,6 +219,8 @@ def create_account():
         user = User(username, pw_hash, phone_number)
         db.session.add(user)
         db.session.commit()
+        login_user(user, True)
+        flash('Successfully created new account for ' + username)
         return redirect(request.args.get('next') or url_for('index'))
     return render_template('create_account.html', form=form)
 
