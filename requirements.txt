@@ -36,3 +36,4 @@ Werkzeug==0.14.1
 WTForms==2.1
 flake8==3.5.0
 pydocstyle==2.1.1
+pytest-cov==2.5.1
