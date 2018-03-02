@@ -1,17 +1,7 @@
-from app import Alert, db, app, texter
-import app as webserver
-from tests.fake_clients import twilio_fake, price_tracker_fake
-test_client = app.test_client()
+from flask import current_app
+from moontracker.app import Alert
 
-
-def setup():
-    app.testing = True
-    db.drop_all()
-    db.create_all()
-
-
-def teardown():
-    db.drop_all()
+test_client = current_app.test_client()
 
 
 def test_response_elems():
@@ -51,7 +41,7 @@ def test_post_to_db_below():
             target_price='100'
         ))
     assert response.status_code == 200
-
+    assert "Please do the recaptcha" not in str(response.data)
     results = Alert.query.filter(Alert.phone_number == '5558675309',
                                  Alert.symbol == 'BTC', Alert.price == 100.0,
                                  Alert.above == 0).all()
@@ -111,8 +101,3 @@ def test_post_to_db_bad_price():
                                  Alert.symbol == 'BTC', Alert.price == 'aaaaa',
                                  Alert.above).all()
     assert len(results) == 0
-
-
-def test_check_alerts():
-    texter.set_clients(price_tracker_fake("5.00"), twilio_fake())
-    webserver.check_alerts()

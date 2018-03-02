@@ -1,8 +1,9 @@
 """Texting Service."""
 from twilio.rest import Client as TwilioClient
 import twilio
-from price_tracker import PriceTracker
-from assets import assets
+from moontracker.price_tracker import PriceTracker
+from moontracker.assets import assets
+from moontracker.extensions import db
 
 
 class Texter(object):
@@ -25,32 +26,27 @@ class Texter(object):
         self.price_tracker = price_tracker
         self.send_message = send_message
 
-    def check_alerts(self, db):
-        """Check alerts for all types of assets.
-
-        Args:
-            db: The db cursor object.
-        """
+    def check_alerts(self):
+        """Check alerts for all types of assets."""
         if self.price_tracker is None:
             self.price_tracker = PriceTracker()
         if self.send_message is None:
-            from api_keys import twilio_sid, twilio_auth
+            from moontracker.api_keys import twilio_sid, twilio_auth
             twilio_client = TwilioClient(twilio_sid, twilio_auth)
             self.send_message = twilio_client.api.account.messages.create
 
         for i in range(len(self.coins)):
-            self.check_alerts_for_coin(self.coins[i], db)
+            self.check_alerts_for_coin(self.coins[i])
 
-    def check_alerts_for_coin(self, coin, db):
+    def check_alerts_for_coin(self, coin):
         """Check for alerts.
 
         Args:
             coin: The asset to check against.
                 TODO(Chase): Change name.
-            db: The database curson object.
         """
         # TODO(Chase): Move Alerts to it's own file.
-        from app import Alert
+        from moontracker.app import Alert
         currency_code = 'USD'  # can also use EUR, CAD, etc.
         # Make the request
         # price = coinbase_client.get_spot_price(currency=currency_code)

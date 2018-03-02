@@ -1,15 +1,6 @@
-from app import db, app
-test_client = app.test_client()
+from flask import current_app
 
-
-def setup():
-    app.testing = True
-    db.drop_all()
-    db.create_all()
-
-
-def teardown():
-    db.drop_all()
+test_client = current_app.test_client()
 
 
 def register(username, password, phone_number):

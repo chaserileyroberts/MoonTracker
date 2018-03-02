@@ -1,0 +1,19 @@
+{% macro navbar() %}
+<nav class="navbar navbar-expand-md navbar-light">
+<!-- these lines should only show up if not logged in -->
+<a class="navbar-brand" href="{{ url_for('user.index') }}">MoonTracker</a>
+<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="toggle-nav">|||</button>
+<div class="collapse navbar-collapse justify-content-end" id="menu">
+    <div class="navbar-nav">
+        {% if current_user.is_authenticated == False %}
+            <a href="{{ url_for('user.create_account') }}" class="nav-item nav-link">Create Account</a>
+            <a href="{{ url_for('user.login') }}" class="nav-item nav-link">Login</a> <!-- this should become logout-->
+        {% else%}
+            <a href="{{ url_for('user.logout') }}" class="nav-item nav-link">Logout</a> <!-- this should become logout-->
+        {% endif %}
+        <a href="{{ url_for('user.route_markets') }}" class="nav-item nav-link">Markets</a>
+        <a href="{{ url_for('user.route_products') }}" class="nav-item nav-link">Products</a>
+    </div>
+</div>
+</nav>
+{% endmacro %}
