@@ -33,4 +33,4 @@ if __name__ == '__main__':
     config = ProdConfig if args.prod else DevConfig
 
     app = create_app(config)
-    app.run(host='0.0.0.0', port=args.port)
+    app.run(host='0.0.0.0', port=args.port, use_reloader=False)
