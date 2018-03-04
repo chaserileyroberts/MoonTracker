@@ -1,5 +1,5 @@
 from moontracker.texter import Texter
-from moontracker.app import Alert
+from moontracker.models import Alert
 from moontracker.extensions import db
 from unittest.mock import MagicMock as Mock
 import twilio

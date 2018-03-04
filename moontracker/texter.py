@@ -1,9 +1,11 @@
 """Texting Service."""
 from twilio.rest import Client as TwilioClient
 import twilio
+
 from moontracker.price_tracker import PriceTracker
 from moontracker.assets import assets
 from moontracker.extensions import db
+from moontracker.models import Alert
 
 
 class Texter(object):
@@ -45,8 +47,6 @@ class Texter(object):
             coin: The asset to check against.
                 TODO(Chase): Change name.
         """
-        # TODO(Chase): Move Alerts to it's own file.
-        from moontracker.app import Alert
         currency_code = 'USD'  # can also use EUR, CAD, etc.
         # Make the request
         # price = coinbase_client.get_spot_price(currency=currency_code)

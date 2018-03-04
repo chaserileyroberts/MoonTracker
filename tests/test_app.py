@@ -1,5 +1,5 @@
 from flask import current_app
-from moontracker.app import Alert
+from moontracker.models import Alert
 
 test_client = current_app.test_client()
 

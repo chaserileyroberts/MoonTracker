@@ -11,7 +11,7 @@ class Config(object):
             'id': 'job1',
             'func': 'moontracker.app:check_alerts',
             'trigger': 'interval',
-            'seconds': 5
+            'seconds': 2
         }
     ]
 
