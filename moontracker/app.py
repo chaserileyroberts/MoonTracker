@@ -6,7 +6,8 @@ from flask import Flask
 
 from moontracker.extensions import scheduler, bcrypt, login_manager, db
 from moontracker.texter import Texter
-from moontracker.views.home.home import home_blueprint
+from moontracker.views.home.views import home_blueprint
+from moontracker.views.users.views import users_blueprint
 
 texter = Texter()
 
@@ -37,6 +38,7 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register all blueprints to the Flask application."""
     app.register_blueprint(home_blueprint)
+    app.register_blueprint(users_blueprint)
 
 
 def check_alerts():

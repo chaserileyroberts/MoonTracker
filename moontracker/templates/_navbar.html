@@ -6,10 +6,10 @@
 <div class="collapse navbar-collapse justify-content-end" id="menu">
     <div class="navbar-nav">
         {% if current_user.is_authenticated == False %}
-            <a href="{{ url_for('home.create_account') }}" class="nav-item nav-link">Create Account</a>
-            <a href="{{ url_for('home.login') }}" class="nav-item nav-link">Login</a> <!-- this should become logout-->
+            <a href="{{ url_for('users.create_account') }}" class="nav-item nav-link">Create Account</a>
+            <a href="{{ url_for('users.login') }}" class="nav-item nav-link">Login</a> <!-- this should become logout-->
         {% else%}
-            <a href="{{ url_for('home.logout') }}" class="nav-item nav-link">Logout</a> <!-- this should become logout-->
+            <a href="{{ url_for('users.logout') }}" class="nav-item nav-link">Logout</a> <!-- this should become logout-->
         {% endif %}
         <a href="{{ url_for('home.route_markets') }}" class="nav-item nav-link">Markets</a>
         <a href="{{ url_for('home.route_products') }}" class="nav-item nav-link">Products</a>
