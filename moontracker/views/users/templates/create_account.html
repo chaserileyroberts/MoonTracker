@@ -15,7 +15,7 @@
             	{% macro render_field(field) %}
                     {{ field(class="form-control", **kwargs)|safe }}
                     {% if field.errors %}
-                        <ul>
+                        <ul style="list-style: none; padding: 0;">
                         {% for error in field.errors %}
                             <li class="alert alert-danger">{{ error }}</li>
                         {% endfor %}
@@ -49,7 +49,7 @@
             </div>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                    <ul class=flashes>
+                    <ul class=flashes style="list-style: none; padding: 0;">
                     {% for message in messages %}
                         <li class="alert alert-info">{{ message }}</li>
                     {% endfor %}

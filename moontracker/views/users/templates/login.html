@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<title>Log In | Moon Tracker</title>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	</head>
+    </head>
 	<body>
 		<div class="container">
             {{ navbar() }}
@@ -14,7 +14,7 @@
             	{% macro render_field(field) %}
                     {{ field(class="form-control", **kwargs)|safe }}
                     {% if field.errors %}
-                        <ul>
+                        <ul style="list-style: none; padding: 0;">
                         {% for error in field.errors %}
                             <li class="alert alert-danger">{{ error }}</li>
                         {% endfor %}
@@ -42,7 +42,7 @@
             </div>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                    <ul class=flashes>
+                    <ul class="flashes" style="list-style: none; padding: 0;">
                     {% for message in messages %}
                         <li class="alert alert-info">{{ message }}</li>
                     {% endfor %}
