@@ -33,7 +33,7 @@ def main():
     args = parse()
 
     config = ProdConfig if args.prod else DevConfig
-
+    config.set_recaptcha_keys()
     app = create_app(config)
     db.create_all()
     app.run(host='0.0.0.0', port=args.port, use_reloader=False)
