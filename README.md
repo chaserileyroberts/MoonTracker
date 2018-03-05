@@ -59,5 +59,5 @@ Next, add api_keys.py to the root directory of the project.
 Run using the following command.
 
 ```bash
-python app.py
+python start.py
 ```
