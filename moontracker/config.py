@@ -20,14 +20,17 @@ class Config(object):
 
     DEBUG = False
     TESTING = False
+
     def set_recaptcha_keys():
-        Config.RECAPTCHA_PUBLIC_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
-        Config.RECAPTCHA_PRIVATE_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
+        """Set the default recaptcha keys."""
+        Config.RECAPTCHA_PUBLIC_KEY = (
+            '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')
+        Config.RECAPTCHA_PRIVATE_KEY = (
+            '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe')
 
 
 class DevConfig(Config):
     """Development configuration."""
-
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///moontracker_database.db'
 
@@ -37,11 +40,10 @@ class DevConfig(Config):
 class ProdConfig(Config):
     """Production configuration."""
 
-    RECAPTCHA_PUBLIC_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
-    RECAPTCHA_PRIVATE_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
-
     SQLALCHEMY_DATABASE_URI = 'sqlite:///moontracker_database.db'
+
     def set_recaptcha_keys():
+        """Import and sets the production recaptcha keys."""
         from moontracker.api_keys import recaptcha_public, recaptcha_private
         ProdConfig.RECAPTCHA_PUBLIC_KEY = recaptcha_public
         ProdConfig.RECAPTCHA_PRIVATE_KEY = recaptcha_private
@@ -50,6 +52,7 @@ class ProdConfig(Config):
 class TestConfig(Config):
     """Development configuration."""
 
+    # Test API_keys.
     RECAPTCHA_PUBLIC_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
     RECAPTCHA_PRIVATE_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
 
