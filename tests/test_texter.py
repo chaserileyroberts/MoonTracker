@@ -1,18 +1,10 @@
-from texter import Texter
-from app import Alert, db
+from moontracker.texter import Texter
+from moontracker.models import Alert
+from moontracker.extensions import db
 from unittest.mock import MagicMock as Mock
 import twilio
-from price_tracker import PriceTracker
-from tests.fake_clients import twilio_fake, price_tracker_fake
-
-
-def setup():
-    db.drop_all()
-    db.create_all()
-
-
-def teardown():
-    db.drop_all()
+from moontracker.price_tracker import PriceTracker
+from tests.utils import twilio_fake, price_tracker_fake
 
 
 def test_less_than_text():
@@ -83,7 +75,7 @@ def test_empty_text_loop():
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
 
-    texter.check_alerts(db)
+    texter.check_alerts()
     assert len(twilio.messages) == 0
     assert len(twilio.to) == 0
 
@@ -99,7 +91,7 @@ def test_single_text_loop():
     db.session.add(alert)
     db.session.commit()
 
-    texter.check_alerts(db)
+    texter.check_alerts()
     assert len(twilio.messages) == 1
     assert len(twilio.to) == 1
     assert 'above' in twilio.messages[0]
@@ -118,7 +110,7 @@ def test_single_text_loop_below():
     db.session.add(alert)
     db.session.commit()
 
-    texter.check_alerts(db)
+    texter.check_alerts()
     assert len(twilio.messages) == 1
     assert len(twilio.to) == 1
     assert 'below' in twilio.messages[0]
@@ -136,7 +128,7 @@ def test_single_entry_no_text():
     db.session.add(alert)
     db.session.commit()
 
-    texter.check_alerts(db)
+    texter.check_alerts()
     assert len(twilio.messages) == 0
     assert len(twilio.to) == 0
 
@@ -152,7 +144,7 @@ def test_invalid_number(capsys):
                   phone_number='5555')
     db.session.add(alert)
     db.session.commit()
-    texter.check_alerts(db)
+    texter.check_alerts()
     out, err = capsys.readouterr()
     assert "Invalid number" in out
 
@@ -168,7 +160,7 @@ def test_invalid_number_below(capsys):
                   phone_number='5555')
     db.session.add(alert)
     db.session.commit()
-    texter.check_alerts(db)
+    texter.check_alerts()
     out, err = capsys.readouterr()
     assert "Invalid number" in out
 
@@ -183,4 +175,4 @@ def test_price_tracker_integration():
     db.session.add(alert)
     db.session.commit()
 
-    texter.check_alerts(db)
+    texter.check_alerts()

@@ -1,4 +1,4 @@
-from price_tracker import PriceTracker
+from moontracker.price_tracker import PriceTracker
 
 
 def test_btc():

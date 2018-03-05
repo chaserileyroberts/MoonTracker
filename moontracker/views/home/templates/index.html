@@ -1,4 +1,5 @@
-<!doctype html>
+{% from "_navbar.html" import navbar with context %}
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -9,9 +10,7 @@
 
     <body>
         <div class="container">
-            <div class="page-header">
-                <h1>MoonTracker</h1>
-            </div>
+            {{ navbar() }}
             <div class="form-group">
                 {% macro render_field(field) %}
                     {{ field(class="form-control", **kwargs)|safe }}
@@ -57,7 +56,6 @@
                         <li style="color:red;">{{error}}</li>
                         {% endfor %}
                     </ul>
-
                     <input type=submit class="btn btn-primary" value=Submit>
                 </form>
             </div>

@@ -3,21 +3,11 @@ Integration Test.
 Make sure posts from the website causes texts to be sent.
 """
 
-import app
-from app import db
-from texter import Texter
-import os
+from flask import current_app
+from moontracker.texter import Texter
 from tests import test_texter
 
-test_client = app.app.test_client()
-
-
-def setup():
-    db.create_all()
-
-
-def teardown():
-    os.remove('moontracker_database.db')
+test_client = current_app.test_client()
 
 
 def test_integration_sanity():
@@ -37,7 +27,7 @@ def test_integration_sanity():
     twilio = test_texter.twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
-    texter.check_alerts(app.db)
+    texter.check_alerts()
     assert len(twilio.messages) == 1
     assert len(twilio.to) == 1
     assert 'above' in twilio.messages[0]
@@ -62,7 +52,7 @@ def test_integration_below():
     twilio = test_texter.twilio_fake()
     texter = Texter()
     texter.set_clients(cb, twilio.send_message)
-    texter.check_alerts(app.db)
+    texter.check_alerts()
     assert len(twilio.messages) == 1
     assert len(twilio.to) == 1
     assert 'below' in twilio.messages[0]
