@@ -1,4 +1,29 @@
-"""Fake clients to use for testing."""
+"""Utility functions and classes for test modules."""
+from flask import current_app
+
+test_client = current_app.test_client()
+
+
+def register(username, password, phone_number):
+    """Register user with specified username, password, and phone number."""
+    return test_client.post('/create', data=dict(
+        username=username,
+        password=password,
+        phone_number=phone_number
+    ), follow_redirects=True)
+
+
+def login(username, password):
+    """Login user with specified username and password."""
+    return test_client.post('/login', data=dict(
+        username=username,
+        password=password,
+    ), follow_redirects=True)
+
+
+def logout():
+    """Logout."""
+    return test_client.get('/logout', follow_redirects=True)
 
 
 class twilio_fake():

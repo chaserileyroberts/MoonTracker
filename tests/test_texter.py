@@ -4,7 +4,7 @@ from moontracker.extensions import db
 from unittest.mock import MagicMock as Mock
 import twilio
 from moontracker.price_tracker import PriceTracker
-from tests.fake_clients import twilio_fake, price_tracker_fake
+from tests.utils import twilio_fake, price_tracker_fake
 
 
 def test_less_than_text():
