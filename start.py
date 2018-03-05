@@ -1,6 +1,6 @@
 """Main entry point into the MoonTracker application.
 
-usage: manage.py [-h] [-p PORT] [--prod]
+usage: start.py [-h] [-p PORT] [--prod]
 
 optional arguments:
     -h, --help      show this help message and exit
@@ -13,6 +13,7 @@ import argparse
 
 from moontracker.app import create_app
 from moontracker.config import DevConfig, ProdConfig
+from moontracker.extensions import db
 
 
 def parse():
@@ -27,10 +28,16 @@ def parse():
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+def main():
+    """Run the application with command line arguments."""
     args = parse()
 
     config = ProdConfig if args.prod else DevConfig
 
     app = create_app(config)
+    db.create_all()
     app.run(host='0.0.0.0', port=args.port, use_reloader=False)
+
+
+if __name__ == '__main__':
+    main()
