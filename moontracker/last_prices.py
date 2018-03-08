@@ -21,6 +21,7 @@ def last_prices(broadcast=False):
     socketio.emit('json', json.dumps(last_prices_obj),
                   namespace='/lastpriceslive', broadcast=broadcast)
 
+
 def broadcast_last_prices():
     """Send the last price to all the clients."""
     last_prices(broadcast=True)
