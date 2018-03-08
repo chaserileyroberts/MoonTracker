@@ -1,3 +1,4 @@
+"""Last Price getter."""
 import json
 import time
 
@@ -6,6 +7,7 @@ from moontracker.models import LastPrice
 
 
 def broadcast_last_prices():
+    """Send the last price to the clients."""
     last_prices = LastPrice.query.all()
     last_prices_obj = [
         {

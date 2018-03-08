@@ -59,6 +59,8 @@ class User(db.Model):
 
 
 class LastPrice(db.Model):
+    """Object for the last price."""
+
     symbol = db.Column(db.String(80), primary_key=True, nullable=False)
     price = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime)
