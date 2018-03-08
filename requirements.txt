@@ -13,6 +13,7 @@ Flask-APScheduler==1.7.1
 Flask-Bcrypt==0.7.1
 Flask-Login==0.4.1
 Flask-SQLAlchemy==2.3.2
+Flask-SocketIO==2.9.4
 Flask-WTF==0.14.2
 idna==2.6
 itsdangerous==0.24

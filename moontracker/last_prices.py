@@ -17,4 +17,3 @@ def broadcast_last_prices():
     ]
     socketio.emit('json', json.dumps(last_prices_obj),
                   namespace='/lastpriceslive', broadcast=True)
-

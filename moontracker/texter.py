@@ -5,7 +5,9 @@ import twilio
 from moontracker.price_tracker import PriceTracker
 from moontracker.assets import assets
 from moontracker.extensions import db
-from moontracker.models import Alert
+from moontracker.models import Alert, LastPrice
+
+from datetime import datetime
 
 
 class Texter(object):
@@ -48,6 +50,9 @@ class Texter(object):
                 TODO(Chase): Change name.
         """
         currency_code = 'USD'  # can also use EUR, CAD, etc.
+
+        timestamp = datetime.utcnow()
+
         # Make the request
         # price = coinbase_client.get_spot_price(currency=currency_code)
         price = self.price_tracker.get_spot_price(
@@ -65,6 +70,9 @@ class Texter(object):
                                              Alert.above == 0)
         self.text_less_than(less_than_query.all(), price)
         less_than_query.delete(False)
+
+        last_price = LastPrice(symbol=coin, price=price, timestamp=timestamp)
+        db.session.merge(last_price)
 
         # TODO(Chase): This will cause race condition.
         db.session.commit()
