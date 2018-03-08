@@ -11,7 +11,6 @@ from moontracker.texter import Texter
 from moontracker.views.home.views import home_blueprint
 from moontracker.views.users.views import users_blueprint
 
-import threading
 
 texter = Texter()
 
