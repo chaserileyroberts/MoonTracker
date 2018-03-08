@@ -1,0 +1,11 @@
+{% macro messages() %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes" style="list-style: none; padding: 0;">
+        {% for message in messages %}
+            <li class="alert alert-info">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+{% endmacro %}

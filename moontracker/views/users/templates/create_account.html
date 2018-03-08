@@ -1,5 +1,6 @@
 {% from "_navbar.html" import navbar with context %}
 {% from "_render_field.html" import render_field with context %}
+{% from "_messages.html" import messages with context %}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -38,15 +39,7 @@
                 	 <input type=submit class="btn btn-primary" value="Create Account">
             	</form>
             </div>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <ul class=flashes style="list-style: none; padding: 0;">
-                    {% for message in messages %}
-                        <li class="alert alert-info">{{ message }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
+            {{ messages() }}
 		</div>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

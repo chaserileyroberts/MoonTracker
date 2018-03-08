@@ -4,11 +4,14 @@ from tests.utils import register, login, logout
 def test_login_logout():
     response = register('test_user', '12345678', '1111111111')
     assert response.status_code == 200
+    assert 'Successfully created new account for test_user' in str(response.data)
     response = login('test_user', '12345678')
     assert response.status_code == 200
     assert 'Logged in successfully' in str(response.data)
+    assert 'test_user' in str(response.data)
     response = logout()
     assert response.status_code == 200
+    assert 'test_user' not in str(response.data)
 
 
 def test_empty_username():
