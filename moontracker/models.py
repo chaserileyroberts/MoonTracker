@@ -56,3 +56,11 @@ class User(db.Model):
     def get_id(self):
         """Get user Id."""
         return str(self.id)
+
+
+class LastPrice(db.Model):
+    """Object for the last price."""
+
+    symbol = db.Column(db.String(80), primary_key=True, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    timestamp = db.Column(db.DateTime)

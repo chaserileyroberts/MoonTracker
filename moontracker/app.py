@@ -5,9 +5,12 @@ More information provided in the create_app() docstring.
 from flask import Flask
 
 from moontracker.extensions import scheduler, bcrypt, login_manager, db
+from moontracker.extensions import socketio
+from moontracker.last_prices import broadcast_last_prices
 from moontracker.texter import Texter
 from moontracker.views.home.views import home_blueprint
 from moontracker.views.users.views import users_blueprint
+
 
 texter = Texter()
 
@@ -33,6 +36,12 @@ def register_extensions(app):
     login_manager.init_app(app)
     db.init_app(app)
     db.app = app
+    socketio.init_app(app)
+
+    def datetimefmt(dt):
+        return dt.strftime('%c')
+
+    app.jinja_env.filters['datetimefmt'] = datetimefmt
 
 
 def register_blueprints(app):
@@ -45,3 +54,4 @@ def check_alerts():
     """Check for alerts on the database."""
     with db.app.app_context():
         texter.check_alerts()
+        broadcast_last_prices()
