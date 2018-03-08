@@ -15,9 +15,9 @@
             <a href="{{ url_for('users.create_account') }}" class="nav-item nav-link">Create Account</a>
             <a href="{{ url_for('users.login') }}" class="nav-item nav-link">Login</a> <!-- this should become logout-->
         {% else%}
-            <a href="{{ url_for('users.logout') }}" class="nav-item nav-link">Logout</a>
             <!-- the username link could possibly bring user to account settings -->
             <a href="#" class="nav-item nav-link">{{ current_user.username }}</a>
+            <a href="{{ url_for('users.logout') }}" class="nav-item nav-link">Logout</a>
         {% endif %}
     </div>
 </div>
