@@ -14,6 +14,8 @@ class Alert(db.Model):
     price = db.Column(db.Float, nullable=False)
     above = db.Column(db.Integer, nullable=False)
     phone_number = db.Column(db.String(80), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    market = db.Column(db.String)
 
 
 class User(db.Model):
@@ -21,12 +23,12 @@ class User(db.Model):
 
     __table_args__ = {'extend_existing': True}
     __tablename__ = 'users'
-    id = db.Column('user_id', db.Integer, primary_key=True)
-    username = db.Column('username', db.String(80), unique=True, index=True,
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, index=True,
                          nullable=False)
-    pw_hash = db.Column('pw_hash', db.String(80), nullable=False)
-    phone_number = db.Column('phone_number', db.String(80), nullable=False)
-    registered_on = db.Column('registered_on', db.DateTime, nullable=False)
+    pw_hash = db.Column(db.String(80), nullable=False)
+    phone_number = db.Column(db.String(80), nullable=False)
+    registered_on = db.Column(db.DateTime, nullable=False)
 
     def __init__(self, username, pw_hash, phone_number):
         """Initialize User object.
