@@ -68,6 +68,7 @@ def create_account():
 @users_blueprint.route('/manage', methods=['GET', 'POST'])
 @login_required
 def manage_alerts():
+    """Manage alerts page."""
     num_forms = range(3)  # will be number of users alerts
     forms = []
     coins = ['BTC', 'ETH', 'LTC']
