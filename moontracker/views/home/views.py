@@ -1,6 +1,7 @@
 """Home related views."""
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
+from flask_login import current_user
 from wtforms import Form, StringField, IntegerField, SelectField, validators
 import json
 
@@ -24,6 +25,9 @@ def index():
 
         alert = Alert(symbol=asset, price=target_price,
                       above=less_more, phone_number=phone_number)
+        if current_user.is_authenticated:
+            alert.user_id = current_user.id
+
         db.session.add(alert)
         db.session.commit()
 
