@@ -5,7 +5,7 @@ from wtforms import Form, StringField, IntegerField, SelectField, validators
 from sqlalchemy import exists
 
 from moontracker.extensions import bcrypt, db, login_manager
-from moontracker.models import User
+from moontracker.models import User, Alert
 from moontracker.assets import assets
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
@@ -68,6 +68,7 @@ def create_account():
 @users_blueprint.route('/manage', methods=['GET', 'POST'])
 @login_required
 def manage_alerts():
+    # user_alerts_query = 
     num_forms = range(3)  # will be number of users alerts
     forms = []
     coins = ['BTC', 'ETH', 'LTC']
