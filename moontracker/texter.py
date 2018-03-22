@@ -49,12 +49,10 @@ class Texter(object):
             coin: The asset to check against.
                 TODO(Chase): Change name.
         """
-        currency_code = 'USD'  # can also use EUR, CAD, etc.
 
         timestamp = datetime.utcnow()
 
         # Make the request
-        # price = coinbase_client.get_spot_price(currency=currency_code)
         price = self.price_tracker.get_spot_price(
             asset=coin)
 

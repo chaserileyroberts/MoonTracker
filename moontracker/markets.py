@@ -33,7 +33,7 @@ class BitfinexMarket(Market):
                     'GET https://api.bitfinex.com/v1/pubticker/btcusd {}'
                     .format(response.status_code))
             response = response.json()
-            return response['last_price']
+            return float(response['last_price'])
 
 
 class CoinbaseMarket(Market):
@@ -59,7 +59,7 @@ class CoinbaseMarket(Market):
             if response.status_code != 200:
                 raise RuntimeError('GET url {}'.format(response.status_code))
             response = response.json()
-            return response['data']['amount']
+            return float(response['data']['amount'])
 
 
 class GdaxMarket(Market):
@@ -82,7 +82,7 @@ class GdaxMarket(Market):
                     'GET https://api.coinbase.com/v2/prices/BTC-USD/spot {}'
                     .format(response.status_code))
             response = response.json()
-            return response['price']
+            return float(response['price'])
 
 
 class GeminiMarket(Market):
@@ -105,4 +105,14 @@ class GeminiMarket(Market):
                     'GET https://api.coinbase.com/v2/prices/BTC-USD/spot {}'
                     .format(response.status_code))
             response = response.json()
-            return response['last']
+            return float(response['last'])
+
+
+def lookupMarket(market):
+    markets = {
+        "bitfinex": BitfinexMarket,
+        "coinbase": CoinbaseMarket,
+        "gdax": GdaxMarket,
+        "gemini": GeminiMarket
+    }
+    return markets[market]
