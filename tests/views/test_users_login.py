@@ -4,7 +4,8 @@ from tests.utils import register, login, logout
 def test_login_logout():
     response = register('test_user', '12345678', '1111111111')
     assert response.status_code == 200
-    assert 'Successfully created new account for test_user' in str(response.data)
+    assert ('Successfully created new account for test_user'
+            in str(response.data))
     assert 'Logout' in str(response.data)
     response = login('test_user', '12345678')
     assert response.status_code == 200
