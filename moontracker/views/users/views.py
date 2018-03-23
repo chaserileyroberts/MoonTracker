@@ -1,12 +1,13 @@
 """User related views."""
 from flask import request, render_template, flash, redirect, url_for, Blueprint
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from wtforms import Form, StringField, IntegerField, SelectField, validators
 from sqlalchemy import exists
 
 from moontracker.extensions import bcrypt, db, login_manager
 from moontracker.models import User, Alert
 from moontracker.assets import assets
+from moontracker.views.home.views import AlertForm
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
@@ -68,21 +69,14 @@ def create_account():
 @users_blueprint.route('/manage', methods=['GET', 'POST'])
 @login_required
 def manage_alerts():
-    # user_alerts_query = 
-    num_forms = range(3)  # will be number of users alerts
-    forms = []
-    coins = ['BTC', 'ETH', 'LTC']
-    for i in num_forms:
-        forms.append(ManageAlertForm(
-            request.form, asset=coins[i % 3], less_more=i % 2, target_price=i))
-    # I need to not let this update every alert on page
-    for form in forms:
-        if request.method == 'POST' and form.validate():
-            asset = form.asset.data
-            target_price = form.target_price.data
-            less_more = form.less_more.data
+    user_alerts_query = Alert.query.filter(Alert.user_id == current_user.id)
+    alerts = []
+    for alert in user_alerts_query.all():
+        alerts.append(AlertDisplay(alert))
 
-    return render_template('manage.html', forms=forms)
+    form = AlertForm(request.form)
+
+    return render_template('manage.html', alerts=alerts, form=form)
 
 
 @login_manager.user_loader
@@ -117,13 +111,12 @@ class NewAccountForm(Form):
                 '^[0-9]+$', message="Input characters must be numeric")])
 
 
-# this can probably be replaced by previously written alert form
-# for logged in user
-class ManageAlertForm(Form):
-    """Manage Alert Form object."""
-
-    asset = SelectField(
-        'Coin', choices=assets)
-    target_price = IntegerField('Target Price', [validators.optional()])
-    less_more = SelectField(
-        '', choices=[(1, 'above'), (0, 'below')], coerce=int)
+class AlertDisplay():
+    def __init__(self, alert):
+        self.phone_number = alert.phone_number
+        self.asset = alert.symbol
+        if alert.above == 1:
+            self.above = 'above'
+        else:
+            self.above = 'below'
+        self.target_price = alert.price
