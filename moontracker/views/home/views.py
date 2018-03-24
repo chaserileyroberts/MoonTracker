@@ -17,7 +17,7 @@ def index():
     """Code for the homepage."""
     form = AlertForm(request.form)
     if request.method == 'POST' and form.validate():
-        flash("Success!")
+        flash("Alert is set!")
         asset = form.asset.data
         target_price = form.target_price.data
         less_more = form.less_more.data
@@ -68,19 +68,15 @@ def route_products():
         market = form.market.data
         target_price = form.target_price.data
         less_more = form.less_more.data
-
-        if product:
-            market_choices = []
-            for market in markets:
-                if product in market['products']:
-                    market_choices.append(market)
-
-            form.market.choices = [('', '')] + market_choices
-
         if form.validate():
-            # TODO: add to database
-            pass
-
+            flash("Alert is set!")
+            alert = Alert(symbol=product, price=target_price,
+                          above=less_more, phone_number=phone_number,
+                          market=market)
+            if current_user.is_authenticated:
+                alert.user_id = current_user.id
+            db.session.add(alert)
+            db.session.commit()
     return render_template('products.html', form=form,
                            markets_json=json.dumps(markets),
                            products_json=json.dumps(products),
@@ -105,6 +101,7 @@ class AlertForm(Form):
             Recaptcha("Please do the recaptcha.")])
 
 
+# TODO(Chase): Clean up the repeated code here.
 markets = {
     'coinbase': {
         'name': 'Coinbase',
@@ -117,20 +114,20 @@ markets = {
 }
 
 products = {
-    'btc-usd': {
-        'name': 'Bitcoin/USD'
+    'BTC': {
+        'name': 'Bitcoin'
     },
-    'eth-usd': {
-        'name': 'Ethereum/USD'
+    'ETH': {
+        'name': 'Ethereum'
     },
-    'ltc-usd': {
-        'name': 'Litecoin/USD'
+    'LTC': {
+        'name': 'Litecoin'
     }
 }
 
 app_markets = ['coinbase']
 
-app_products = ['btc-usd', 'eth-usd', 'ltc-usd']
+app_products = ['BTC', 'ETH', 'LTC']
 
 
 class MarketsForm(Form):
@@ -182,7 +179,7 @@ class ProductsForm(Form):
                           validators=product_validators)
 
     market_validators = [validators.InputRequired()]
-    market = SelectField('Market', choices=[('', '')],
+    market = SelectField('Market', choices=[('coinbase', 'Coinbase')],
                          default='', validators=market_validators)
 
     target_price_validators = [validators.InputRequired()]
