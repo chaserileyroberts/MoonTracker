@@ -59,7 +59,7 @@ class Texter(object):
             Alert.symbol == coin,
             Alert.price < price,
             Alert.above == 1,
-            ((Alert.market == market) | (Alert.market == None)))  # noqa
+            ((Alert.market == market) | (Alert.market.is_(None))))
         self.text_greater_than(greater_than_query.all(), price)
         greater_than_query.delete(False)
 
@@ -67,7 +67,7 @@ class Texter(object):
             Alert.symbol == coin,
             Alert.price > price,
             Alert.above == 0,
-            ((Alert.market == market) | (Alert.market == None)))  # noqa
+            ((Alert.market == market) | (Alert.market.is_(None))))
         self.text_less_than(less_than_query.all(), price)
         less_than_query.delete(False)
 
