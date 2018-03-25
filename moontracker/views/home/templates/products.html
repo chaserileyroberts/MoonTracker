@@ -76,12 +76,11 @@
                     marketElem.prop('disabled', false);
                     marketElem.empty();
                     marketElem.append($("<option />").val('').text(''));
-                    $.each(app_markets, function (index, market) {
-                        if (markets[market].products.indexOf(product) >= 0) {
-                            marketElem.append($("<option />").val(market).text(markets[market].name));
-                        }
+                    $.each(app_markets[product].markets, function (index, market) {
+                        marketElem.append($("<option />").val(market).text(market));
                     });
-                } else {
+                } else {                    
+                    marketElem.empty();
                     marketElem.prop('disabled', true);
                 }
             });

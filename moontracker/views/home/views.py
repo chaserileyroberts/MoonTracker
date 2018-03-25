@@ -5,7 +5,7 @@ from flask_login import current_user
 from wtforms import Form, StringField, IntegerField, SelectField, validators
 import json
 
-from moontracker.assets import assets
+from moontracker.assets import supported_assets, assets, market_apis
 from moontracker.extensions import db
 from moontracker.models import Alert
 
@@ -80,7 +80,7 @@ def route_products():
     return render_template('products.html', form=form,
                            markets_json=json.dumps(markets),
                            products_json=json.dumps(products),
-                           app_markets_json=json.dumps(app_markets))
+                           app_markets_json=json.dumps(supported_assets))
 
 
 class AlertForm(Form):
@@ -170,8 +170,8 @@ class ProductsForm(Form):
     phone_number = StringField('Phone Number',
                                validators=phone_number_validators)
 
-    product_choices = [(product, products[product]['name'])
-                       for product in app_products]
+    product_choices = [(product, supported_assets[product]['name'])
+                       for product in supported_assets]
     product_validators = [validators.InputRequired()]
     product = SelectField('Product',
                           choices=[('', '')] + product_choices,
@@ -179,7 +179,8 @@ class ProductsForm(Form):
                           validators=product_validators)
 
     market_validators = [validators.InputRequired()]
-    market = SelectField('Market', choices=[('coinbase', 'Coinbase')],
+    market = SelectField('Market',
+                         choices=[('', '')] + [(m, m) for m in market_apis],
                          default='', validators=market_validators)
 
     target_price_validators = [validators.InputRequired()]

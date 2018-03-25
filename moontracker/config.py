@@ -11,7 +11,7 @@ class Config(object):
             'id': 'job1',
             'func': 'moontracker.app:check_alerts',
             'trigger': 'interval',
-            'seconds': 2
+            'seconds': 10
         }
     ]
 
@@ -57,7 +57,7 @@ class TestConfig(Config):
     RECAPTCHA_PRIVATE_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///test_database.db'
-
+    JOBS = []
     DEBUG = True
     TESTING = True
 
