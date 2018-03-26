@@ -223,7 +223,7 @@
             $("#asset").combobox();
         </script>
         <script type="text/javascript">
-            var lplSocket = io('/lastpriceslive');
+            var lplSocket = io('/lastpriceslive', { transports: ['websocket'] });
             lplSocket.on('json', function (lastPricesStr) {
                 var lastPricesTableElem = $('#last-prices-table');
                 if (lastPricesTableElem.length == 0) {
