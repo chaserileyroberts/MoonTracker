@@ -15,6 +15,7 @@ Flask-Login==0.4.1
 Flask-SQLAlchemy==2.3.2
 Flask-SocketIO==2.9.4
 Flask-WTF==0.14.2
+eventlet==0.22.1
 idna==2.6
 itsdangerous==0.24
 Jinja2==2.10
