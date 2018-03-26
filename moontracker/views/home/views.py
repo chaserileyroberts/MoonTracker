@@ -5,7 +5,7 @@ from flask_login import current_user
 from wtforms import Form, StringField, IntegerField, SelectField, validators
 import json
 
-from moontracker.assets import assets
+from moontracker.assets import supported_assets, assets, market_apis
 from moontracker.extensions import db
 from moontracker.models import Alert
 
@@ -17,7 +17,7 @@ def index():
     """Code for the homepage."""
     form = AlertForm(request.form)
     if request.method == 'POST' and form.validate():
-        flash("Success!")
+        flash("Alert is set!")
         asset = form.asset.data
         target_price = form.target_price.data
         less_more = form.less_more.data
@@ -68,23 +68,19 @@ def route_products():
         market = form.market.data
         target_price = form.target_price.data
         less_more = form.less_more.data
-
-        if product:
-            market_choices = []
-            for market in markets:
-                if product in market['products']:
-                    market_choices.append(market)
-
-            form.market.choices = [('', '')] + market_choices
-
         if form.validate():
-            # TODO: add to database
-            pass
-
+            flash("Alert is set!")
+            alert = Alert(symbol=product, price=target_price,
+                          above=less_more, phone_number=phone_number,
+                          market=market)
+            if current_user.is_authenticated:
+                alert.user_id = current_user.id
+            db.session.add(alert)
+            db.session.commit()
     return render_template('products.html', form=form,
                            markets_json=json.dumps(markets),
                            products_json=json.dumps(products),
-                           app_markets_json=json.dumps(app_markets))
+                           app_markets_json=json.dumps(supported_assets))
 
 
 class AlertForm(Form):
@@ -105,6 +101,7 @@ class AlertForm(Form):
             Recaptcha("Please do the recaptcha.")])
 
 
+# TODO(Chase): Clean up the repeated code here.
 markets = {
     'coinbase': {
         'name': 'Coinbase',
@@ -117,20 +114,20 @@ markets = {
 }
 
 products = {
-    'btc-usd': {
-        'name': 'Bitcoin/USD'
+    'BTC': {
+        'name': 'Bitcoin'
     },
-    'eth-usd': {
-        'name': 'Ethereum/USD'
+    'ETH': {
+        'name': 'Ethereum'
     },
-    'ltc-usd': {
-        'name': 'Litecoin/USD'
+    'LTC': {
+        'name': 'Litecoin'
     }
 }
 
 app_markets = ['coinbase']
 
-app_products = ['btc-usd', 'eth-usd', 'ltc-usd']
+app_products = ['BTC', 'ETH', 'LTC']
 
 
 class MarketsForm(Form):
@@ -173,8 +170,8 @@ class ProductsForm(Form):
     phone_number = StringField('Phone Number',
                                validators=phone_number_validators)
 
-    product_choices = [(product, products[product]['name'])
-                       for product in app_products]
+    product_choices = [(product, supported_assets[product]['name'])
+                       for product in supported_assets]
     product_validators = [validators.InputRequired()]
     product = SelectField('Product',
                           choices=[('', '')] + product_choices,
@@ -182,7 +179,8 @@ class ProductsForm(Form):
                           validators=product_validators)
 
     market_validators = [validators.InputRequired()]
-    market = SelectField('Market', choices=[('', '')],
+    market = SelectField('Market',
+                         choices=[('', '')] + [(m, m) for m in market_apis],
                          default='', validators=market_validators)
 
     target_price_validators = [validators.InputRequired()]
@@ -191,3 +189,6 @@ class ProductsForm(Form):
 
     less_more_choices = [(1, 'above'), (0, 'below')]
     less_more = SelectField('', choices=less_more_choices, coerce=int)
+    recaptcha = RecaptchaField(
+        'Recaptcha', validators=[
+            Recaptcha("Please do the recaptcha.")])
