@@ -189,3 +189,6 @@ class ProductsForm(Form):
 
     less_more_choices = [(1, 'above'), (0, 'below')]
     less_more = SelectField('', choices=less_more_choices, coerce=int)
+    recaptcha = RecaptchaField(
+        'Recaptcha', validators=[
+            Recaptcha("Please do the recaptcha.")])
