@@ -53,7 +53,7 @@ class price_tracker_fake():
         """Build fake price tracker client."""
         self.amount = float(amount)
 
-    def get_spot_price(self, asset):
+    def get_spot_price(self, asset, market):
         """Get the current price of the asset.
 
         Args:
