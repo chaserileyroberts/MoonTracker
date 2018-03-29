@@ -74,7 +74,6 @@ def manage_alerts():
     alerts = Alert.query.filter(Alert.user_id == current_user.id).all()
 
     form = ManageAlertForm(request.form, alerts)
-    print(form.alert_id.validators)
 
     if request.method == 'POST':
         if request.form['submit'] == 'Delete' and form.alert_id.validate(form):
