@@ -1,0 +1,92 @@
+{% from "_navbar.html" import navbar with context %}
+{% from "_render_field.html" import render_field with context %}
+{% from "_messages.html" import messages with context %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Log In | Moon Tracker</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+
+    <body>
+        <div class="container">
+            {{ navbar() }}
+
+            {% for alert in alerts %}
+            <div class="row">
+                <div class="col-9 col-md-10">
+                    <div><b>Asset:</b> {{ supported_assets[alert.symbol]['name'] }}</div>
+
+                    <div><b>Target Price:</b> {% if alert.above == 1 %}above{% else %}below{% endif %} ${{ alert.price }}</div>
+
+                    <div><b>Phone Number(s):</b> {{ alert.phone_number }}</div>
+                </div>
+                <!-- replace with edit image -->
+                <div class="col-3 col-md-2">
+                    <form name="editButton" method="post">
+                        <input type="button" name="edit" value="Edit" class="btn btn-default" data-toggle="modal" data-target="#alert-modal" data-alert-id="{{ alert.id }}" data-alert-symbol="{{ alert.symbol }}" data-alert-above="{{ alert.above }}" data-alert-price="{{ alert.price }}" data-alert-phone-number="{{ alert.phone_number }}">
+                    </form>
+                </div>
+            </div>
+            <br>
+            <br>
+            {% endfor %}
+        </div>
+
+        <div id="alert-modal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <form method="post">
+                                <dl>
+                                    <dt>{{ form.asset.label }}</dt>
+                                    <dd>{{ render_field(form.asset) }}</dd>
+
+                                    <dt>{{ form.target_price.label }}</dt>
+                                    <dd>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-3">
+                                               {{ render_field(form.less_more) }}
+                                            </div>
+                                            <div class="col-xs-12 col-md-9">
+                                                {{ render_field(form.target_price) }}
+                                            </div>
+                                        </div>
+                                    </dd>
+
+                                    <dt>{{ form.phone_number.label }}</dt>
+                                    <dd>{{ render_field(form.phone_number) }}</dd>
+                                    <dd>{{ render_field(form.alert_id) }}</dd>
+                                </dl>
+                                <input type="submit" name="submit" value="Cancel" class="btn btn-secondary" data-dismiss="modal">
+                                <input type="submit" name="submit" value="Delete" class="btn btn-danger">
+                                <input type="submit" name="submit" value="Save Changes" class="btn btn-primary">
+                            </form>
+                        </div>
+                        {{ messages() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            $('#alert-modal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var modal = $(this);
+                modal.find('#alert_id').val(button.data('alert-id'));
+                modal.find('#asset').val(button.data('alert-symbol'));
+                modal.find('#less_more').val(button.data('alert-above'));
+                modal.find('#target_price').val(button.data('alert-price'));
+                modal.find('#phone_number').val(button.data('alert-phone-number'));
+            });
+        </script>
+    </body>
+</html>

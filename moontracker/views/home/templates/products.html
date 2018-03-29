@@ -1,6 +1,7 @@
 {% from "_navbar.html" import navbar with context %}
 {% from "_render_field.html" import render_field with context %}
-<!doctype html>
+{% from "_messages.html" import messages with context %}
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -56,15 +57,7 @@
                     <input type=submit class="btn btn-primary" value=Submit>
                 </form>
             </div>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <ul class=flashes style="list-style: none; padding: 0;">
-                    {% for message in messages %}
-                        <li class="alert alert-info">{{ message }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
+            {{ messages() }}
         </div>
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
