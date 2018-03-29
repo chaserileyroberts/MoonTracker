@@ -2,7 +2,8 @@
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
 from flask_login import current_user
-from wtforms import (Form, StringField, IntegerField, SelectField, validators, FloatField)
+from wtforms import Form, FloatField, StringField, SelectField
+from wtforms import validators
 import json
 
 from moontracker.assets import supported_assets, assets, market_apis
@@ -83,8 +84,9 @@ def route_products():
                            app_markets_json=json.dumps(supported_assets))
 
 
+class AlertForm(Form):
+    """Form object for website."""
 
-class DefaultForm(Form):
     phone_number = StringField(
         'Phone Number', [
             validators.Length(
@@ -95,9 +97,6 @@ class DefaultForm(Form):
     target_price = FloatField('Target Price', [validators.optional()])
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
-
-class AlertForm(DefaultForm):
-    """Form object for website."""
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
@@ -154,8 +153,8 @@ class MarketsForm(Form):
                           validators=product_validators)
 
     target_price_validators = [validators.InputRequired()]
-    target_price = IntegerField('Target Price',
-                                validators=target_price_validators)
+    target_price = FloatField('Target Price',
+                              validators=target_price_validators)
 
     less_more_choices = [(1, 'above'), (0, 'below')]
     less_more = SelectField('', choices=less_more_choices, coerce=int)
@@ -186,8 +185,8 @@ class ProductsForm(Form):
                          default='', validators=market_validators)
 
     target_price_validators = [validators.InputRequired()]
-    target_price = IntegerField('Target Price',
-                                validators=target_price_validators)
+    target_price = FloatField('Target Price',
+                              validators=target_price_validators)
 
     less_more_choices = [(1, 'above'), (0, 'below')]
     less_more = SelectField('', choices=less_more_choices, coerce=int)
