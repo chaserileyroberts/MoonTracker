@@ -17,11 +17,11 @@
             {% for alert in alerts %}
             	<div class="row">
 		            <div class="col-9 col-md-10">
-		                <div><b>Asset:</b> {{ alert.asset }}</div>
+		                <div><b>Asset:</b> <span class="text-muted">{{ alert.asset }}</span></div>
 
-		                <div><b>Target Price:</b> {{ alert.above }} ${{ alert.target_price }}</div>
+		                <div><b>Target Price:</b> <span class="text-muted">{{ alert.above }} ${{ alert.target_price }}</span></div>
 
-		                <div><b>Phone Number(s):</b> {{ alert.phone_number }}</div>
+		                <div><b>Phone Number(s):</b> <span class="text-muted">{{ alert.phone_number }}</span></div>
 		            </div>
 	    			<!-- replace with edit image -->
 	    			<div class="col-3 col-md-2">
@@ -32,6 +32,7 @@
 	    			</div>
 	    		</div>
     			<br/>
+    			<hr/>
     			<br/>
             {% endfor %}
 
