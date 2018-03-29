@@ -77,7 +77,6 @@ def manage_alerts():
 
     if request.method == 'POST':
         if request.form['submit'] == 'Delete' and form.alert_id.validate(form):
-            print('delete button pressed')
             current_index = None
             current_alert = None
             for index, alert in enumerate(alerts):
@@ -92,7 +91,6 @@ def manage_alerts():
                 del alerts[current_index]
 
         elif request.form['submit'] == 'Save Changes' and form.validate():
-            print('update button pressed')
             current_alert = None
             for alert in alerts:
                 if alert.id == int(form.alert_id.data):
