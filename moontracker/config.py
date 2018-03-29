@@ -2,6 +2,7 @@
 
 import os
 
+
 class Config(object):
     """Base configuration for the flask app."""
 
