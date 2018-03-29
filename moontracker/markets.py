@@ -68,7 +68,7 @@ class GdaxMarket(Market):
             'https://api.gdax.com/products/{}-usd/ticker'.format(product))
         if response.status_code != 200:
             raise RuntimeError(
-                'GET https://api.coinbase.com/v2/prices/BTC-USD/spot {}'
+                'GET https://api.gdax.com/products/ {}'
                 .format(response.status_code))
         response = response.json()
         return float(response['price'])
@@ -90,7 +90,7 @@ class GeminiMarket(Market):
             'https://api.gemini.com/v1/pubticker/{}usd'.format(product))
         if response.status_code != 200:
             raise RuntimeError(
-                'GET https://api.coinbase.com {}'
+                'GET https://api.gemini.com/v1/pubticker/{}'
                 .format(response.status_code))
         response = response.json()
         return float(response['last'])

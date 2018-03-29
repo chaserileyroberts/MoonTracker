@@ -226,7 +226,6 @@
                     var headerCElem = $('<div class="table-header table-row">');
                     headerCElem.append($('<div class="table-col last-prices-col-0-3">').text('Coin'));
                     headerCElem.append($('<div class="table-col last-prices-col-1-3">').text('Price'));
-                    headerCElem.append($('<div class="table-col last-prices-col-2-3">').text('Timestamp'));
                     tableCElem.append(headerCElem);
                     lastPricesElem.append(tableCElem);
                     lastPricesTableElem = lastPricesElem.find('#last-prices-table');
@@ -241,10 +240,6 @@
                             var rowPriceElem = $(rowElem).find('.last-prices-col-price');
                             var oldPriceText = rowPriceElem.text();
                             rowPriceElem.text(lastPrice.price);
-                            var rowTimestampElem = $(rowElem).find('.last-prices-col-timestamp');
-                            var dt = new Date();
-                            dt.setUTCSeconds(lastPrice.timestamp)
-                            rowTimestampElem.text(dt);
                             if (rowPriceElem.text() !== oldPriceText) {
                                 rowPriceElem.addClass('last-prices-flash-update', 0);
                                 rowPriceElem.removeClass('last-prices-flash-update', 800);
@@ -258,8 +253,6 @@
                         rowCElem.append($('<div class="table-col last-prices-col-0-3 last-prices-col-symbol">').text(lastPrice.symbol));
                         rowCElem.append($('<div class="table-col last-prices-col-1-3 last-prices-col-price">').text(lastPrice.price));
                         var dt = new Date();
-                        dt.setUTCSeconds(lastPrice.timestamp);
-                        rowCElem.append($('<div class="table-col last-prices-col-2-3 last-prices-col-timestamp">').text(dt));
                         lastPricesTableElem.append(rowCElem);
                     }
                 });
