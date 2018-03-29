@@ -1,6 +1,7 @@
 from moontracker.models import Alert
 from tests.utils import register, test_client
-# from flask_login import current_user
+
+from moontracker.extensions import db
 
 
 def test_correct_num_alerts():
@@ -102,3 +103,25 @@ def test_delete():
     assert '<b>Asset:</b> Litcoin' not in str(response.data)
     results = Alert.query.filter(Alert.user_id == 1).all()
     assert len(results) == 0
+    assert 'LTC' in str(response.data)
+    assert '$100.00' in str(response.data)
+    assert '1111111111' in str(response.data)
+
+    response = test_client.post(
+        '/',
+        data=dict(
+            phone_number='1111111111',
+            asset='BTC',
+            less_more='0',
+            target_price='50',
+            # user_id = '1'  # fake user id
+        ))
+    assert response.status_code == 200
+
+    results = Alert.query.filter(Alert.user_id == 1).all()
+    assert len(results) == 2
+
+    response = test_client.get('/manage', follow_redirects=True)
+    assert 'BTC' in str(response.data)
+    assert '$50.00' in str(response.data)
+    assert '1111111111' in str(response.data)
