@@ -1,5 +1,7 @@
 """Flask Config module."""
 
+import os
+
 
 class Config(object):
     """Base configuration for the flask app."""
@@ -16,7 +18,7 @@ class Config(object):
     ]
 
     SCHEDULER_API_ENABLED = True
-    SECRET_KEY = "0"  # Not a big deal for now
+    SECRET_KEY = os.urandom(256)
 
     DEBUG = False
     TESTING = False
