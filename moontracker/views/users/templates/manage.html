@@ -37,6 +37,11 @@
             </div>
             <hr>
             {% endfor %}
+            <div class="col-md-1">
+                    <form name="addButton" method="post">
+                        <input type="button" name="edit" value="Add Alert" class="btn btn-primary" data-toggle="modal" data-target="#alert-modal" data-alert-id="-1" data-alert-symbol="" data-alert-above="" data-alert-price="" data-alert-phone-number="">
+                    </form>
+                </div>
         </div>
 
         <div id="alert-modal" class="modal fade" role="dialog">
