@@ -13,7 +13,7 @@ import argparse
 
 from moontracker.app import create_app
 from moontracker.config import DevConfig, ProdConfig
-from moontracker.extensions import db
+from moontracker.extensions import db, socketio
 
 
 def parse():
@@ -36,7 +36,7 @@ def main():
     config.set_recaptcha_keys()
     app = create_app(config)
     db.create_all()
-    app.run(host='0.0.0.0', port=args.port, use_reloader=False)
+    socketio.run(app, host='0.0.0.0', port=args.port, use_reloader=False)
 
 
 if __name__ == '__main__':

@@ -48,6 +48,12 @@
                             </div>
                         </dd>
                     </dl>
+                    {{form.recaptcha}}
+                    {% for error in form.recaptcha.errors %}
+                    <ul>
+                        <li style="color:red;">{{error}}</li>
+                        {% endfor %}
+                    </ul>
                     <input type=submit class="btn btn-primary" value=Submit>
                 </form>
             </div>
@@ -61,20 +67,17 @@
             $('#product').on('change', function (event) {
                 var product = event.target.value;
                 console.log(product);
-                markets = {{ markets_json|safe }};
-                products = {{ products_json|safe }};
                 app_markets = {{ app_markets_json|safe }};
                 var marketElem = $('#market');
                 if (product !== '') {
                     marketElem.prop('disabled', false);
                     marketElem.empty();
                     marketElem.append($("<option />").val('').text(''));
-                    $.each(app_markets, function (index, market) {
-                        if (markets[market].products.indexOf(product) >= 0) {
-                            marketElem.append($("<option />").val(market).text(markets[market].name));
-                        }
+                    $.each(app_markets[product].markets, function (index, market) {
+                        marketElem.append($("<option />").val(market).text(market));
                     });
-                } else {
+                } else {                    
+                    marketElem.empty();
                     marketElem.prop('disabled', true);
                 }
             });

@@ -3,7 +3,7 @@ from twilio.rest import Client as TwilioClient
 import twilio
 
 from moontracker.price_tracker import PriceTracker
-from moontracker.assets import assets
+from moontracker.assets import supported_assets
 from moontracker.extensions import db
 from moontracker.models import Alert, LastPrice
 
@@ -17,8 +17,6 @@ class Texter(object):
         """Object initializer."""
         self.price_tracker = None
         self.send_message = None
-
-        self.coins = [i[0] for i in assets]
 
     def set_clients(self, price_tracker=None, send_message=None):
         """Set Clients. Used for unit testing.
@@ -39,35 +37,37 @@ class Texter(object):
             twilio_client = TwilioClient(twilio_sid, twilio_auth)
             self.send_message = twilio_client.api.account.messages.create
 
-        for i in range(len(self.coins)):
-            self.check_alerts_for_coin(self.coins[i])
+        for asset in supported_assets:
+            for market in supported_assets[asset]["markets"]:
+                self.check_alerts_for_coin(asset, market)
 
-    def check_alerts_for_coin(self, coin):
+    def check_alerts_for_coin(self, coin, market):
         """Check for alerts.
 
         Args:
             coin: The asset to check against.
-                TODO(Chase): Change name.
+            makert: String of which market to use
         """
-        currency_code = 'USD'  # can also use EUR, CAD, etc.
-
         timestamp = datetime.utcnow()
 
         # Make the request
-        # price = coinbase_client.get_spot_price(currency=currency_code)
         price = self.price_tracker.get_spot_price(
-            asset=coin)
+            asset=coin, market=market)
 
         # Get all of the prices that are less than the current amount
-        greater_than_query = Alert.query.filter(Alert.symbol == coin,
-                                                Alert.price < price,
-                                                Alert.above != 0)
+        greater_than_query = Alert.query.filter(
+            Alert.symbol == coin,
+            Alert.price < price,
+            Alert.above == 1,
+            ((Alert.market == market) | (Alert.market.is_(None))))
         self.text_greater_than(greater_than_query.all(), price)
         greater_than_query.delete(False)
 
-        less_than_query = Alert.query.filter(Alert.symbol == coin,
-                                             Alert.price > price,
-                                             Alert.above == 0)
+        less_than_query = Alert.query.filter(
+            Alert.symbol == coin,
+            Alert.price > price,
+            Alert.above == 0,
+            ((Alert.market == market) | (Alert.market.is_(None))))
         self.text_less_than(less_than_query.all(), price)
         less_than_query.delete(False)
 
