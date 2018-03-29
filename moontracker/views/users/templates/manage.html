@@ -26,7 +26,7 @@
 
                     <div><b>Target Price:</b> <span class="text-muted">{% if alert.above == 1 %}above{% else %}below{% endif %} ${{ '%0.2f' | format(alert.price|float) }}</span></div>
 
-                    <div><b>Phone Number(s):</b> <span class="text-muted">{{ alert.phone_number[:3] }}-{{ alert.phone_number[3:6] }}-{{ alert.phone_number[6:] }}</span></div>
+                    <div><b>Phone Number:</b> <span class="text-muted">{{ alert.phone_number[:3] }}-{{ alert.phone_number[3:6] }}-{{ alert.phone_number[6:] }}</span></div>
                 </div>
                 <!-- replace with edit image -->
                 <div class="col-3 col-md-1">
