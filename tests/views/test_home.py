@@ -80,7 +80,7 @@ def test_nonint_price():
             target_price='aaaaa'
         ))
     assert response.status_code == 200
-    assert 'Not a valid integer value' in str(response.data)
+    assert 'Not a valid float value' in str(response.data)
 
     results = Alert.query.filter().all()
     assert len(results) == 0

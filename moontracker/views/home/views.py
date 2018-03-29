@@ -2,7 +2,7 @@
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
 from flask_login import current_user
-from wtforms import Form, StringField, IntegerField, SelectField, validators
+from wtforms import (Form, StringField, IntegerField, SelectField, validators, FloatField)
 import json
 
 from moontracker.assets import supported_assets, assets, market_apis
@@ -83,9 +83,8 @@ def route_products():
                            app_markets_json=json.dumps(supported_assets))
 
 
-class AlertForm(Form):
-    """Form object for website."""
 
+class DefaultForm(Form):
     phone_number = StringField(
         'Phone Number', [
             validators.Length(
@@ -93,9 +92,12 @@ class AlertForm(Form):
                 '^[0-9]+$', message="Input characters must be numeric")])
     asset = SelectField(
         'Coin', choices=assets)
-    target_price = IntegerField('Target Price', [validators.optional()])
+    target_price = FloatField('Target Price', [validators.optional()])
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
+
+class AlertForm(DefaultForm):
+    """Form object for website."""
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])

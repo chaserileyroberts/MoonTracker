@@ -7,7 +7,7 @@ from sqlalchemy import exists
 from moontracker.extensions import bcrypt, db, login_manager
 from moontracker.models import User, Alert
 from moontracker.assets import assets
-from moontracker.views.home.views import AlertForm
+from moontracker.views.home.views import DefaultForm
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
@@ -70,17 +70,13 @@ def create_account():
 @login_required
 def manage_alerts():
     """Manage alerts page."""
+ 
+    form = DefaultForm(request.form)
     user_alerts_query = Alert.query.filter(Alert.user_id == current_user.id)
-    alerts = []
-    for alert in user_alerts_query.all():
-        alerts.append(AlertDisplay(alert))
-
-    form = AlertForm(request.form)
-
     # this should change depending on which edit button is clicked
     if (user_alerts_query.count() > 0):
         current_alert = user_alerts_query[0]
-        form = AlertForm(request.form, phone_number=current_alert.phone_number,
+        form = DefaultForm(request.form, phone_number=current_alert.phone_number,
             asset=current_alert.symbol, target_price=current_alert.price, less_more=current_alert.above)
 
     if request.method == 'POST':
@@ -89,15 +85,23 @@ def manage_alerts():
             db.session.delete(current_alert)
             db.session.commit()
             # figure out proper way to refresh
-        elif request.form['submit'] == 'Save Changes':
+        elif request.form['submit'] == 'Save Changes' and form.validate():
             current_alert.phone_number = form.phone_number.data
             current_alert.symbol = form.asset.data
-            # current_alert.price = form.target_price.data
+            current_alert.price = form.target_price.data
+            print(form.target_price.object_data)
             current_alert.above = form.less_more.data
             db.session.commit()
             print('update button pressed')
             # figure out proper way to refresh
+    
+    # Get alerts after updates are set.
+    user_alerts_query = Alert.query.filter(Alert.user_id == current_user.id)
+    alerts = []
+    for alert in user_alerts_query.all():
+        alerts.append(AlertDisplay(alert))
 
+  
     return render_template('manage.html', alerts=alerts, form=form)
 
 
