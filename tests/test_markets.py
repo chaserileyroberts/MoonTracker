@@ -11,7 +11,7 @@ def test_all_markets_sanity():
 
 
 def test_lookupMarket():
-    markets = ['bitfinex', 'coinbase', 'gdax', 'gemini']
+    markets = ['bitfinex', 'coinbase', 'gdax', 'gemini', 'nasdaq']
     for m in markets:
         mrkt = lookupMarket(m)
         assert issubclass(mrkt, Market)

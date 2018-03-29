@@ -96,7 +96,7 @@ class GeminiMarket(Market):
         return float(response['last'])
 
 
-class NasdeqMarket(Market):
+class NasdaqMarket(Market):
     """Nasdeq Stock Market."""
 
     def get_spot_price(self, product):
@@ -120,6 +120,6 @@ def lookupMarket(market):
         "coinbase": CoinbaseMarket,
         "gdax": GdaxMarket,
         "gemini": GeminiMarket,
-        "nasdeq": NasdeqMarket
+        "nasdaq": NasdaqMarket
     }
     return markets[market]

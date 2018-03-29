@@ -14,15 +14,15 @@ supported_assets = {
     },
     "GOOGL": {
         "name": "Google",
-        "markets": ["nasdeq"]
+        "markets": ["nasdaq"]
     },
     "AAPL": {
         "name": "Apple",
-        "markets": ["nasdeq"]
+        "markets": ["nasdaq"]
     },
     "FB": {
         "name": "Facebook",
-        "markets": ["nasdeq"]
+        "markets": ["nasdaq"]
     },
 }
 
