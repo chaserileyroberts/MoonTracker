@@ -67,8 +67,6 @@
             $('#product').on('change', function (event) {
                 var product = event.target.value;
                 console.log(product);
-                markets = {{ markets_json|safe }};
-                products = {{ products_json|safe }};
                 app_markets = {{ app_markets_json|safe }};
                 var marketElem = $('#market');
                 if (product !== '') {

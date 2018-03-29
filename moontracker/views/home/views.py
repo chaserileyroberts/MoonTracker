@@ -35,30 +35,6 @@ def index():
     return render_template('index.html', form=form)
 
 
-@home_blueprint.route('/markets', methods=['GET', 'POST'])
-def route_markets():
-    """Webpage for the route markets."""
-    form = MarketsForm(request.form)
-    if request.method == 'POST':
-        phone_number = form.phone_number.data
-        market = form.market.data
-        product = form.product.data
-        target_price = form.target_price.data
-        less_more = form.less_more.data
-
-        if market:
-            product_choices = app_markets[market]['products']
-            form.product.choices = [('', '')] + product_choices
-
-        if form.validate():
-            # TODO: add to database
-            pass
-
-    return render_template('markets.html', form=form,
-                           markets_json=json.dumps(markets),
-                           products_json=json.dumps(products))
-
-
 @home_blueprint.route('/products', methods=['GET', 'POST'])
 def route_products():
     """Webpage for the products page."""
@@ -79,8 +55,6 @@ def route_products():
             db.session.add(alert)
             db.session.commit()
     return render_template('products.html', form=form,
-                           markets_json=json.dumps(markets),
-                           products_json=json.dumps(products),
                            app_markets_json=json.dumps(supported_assets))
 
 
@@ -100,64 +74,6 @@ class AlertForm(Form):
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
-
-
-# TODO(Chase): Clean up the repeated code here.
-markets = {
-    'coinbase': {
-        'name': 'Coinbase',
-        'products': [
-            'btc-usd',
-            'eth-usd',
-            'ltc-usd'
-        ]
-    }
-}
-
-products = {
-    'BTC': {
-        'name': 'Bitcoin'
-    },
-    'ETH': {
-        'name': 'Ethereum'
-    },
-    'LTC': {
-        'name': 'Litecoin'
-    }
-}
-
-app_markets = ['coinbase']
-
-app_products = ['BTC', 'ETH', 'LTC']
-
-
-class MarketsForm(Form):
-    """Website forms that includes market with asset."""
-
-    phone_number_validators = [
-        validators.Length(min=10),
-        validators.Regexp('^[0-9]+$',
-                          message="Input characters must be numeric")
-    ]
-    phone_number = StringField('Phone Number',
-                               validators=phone_number_validators)
-
-    market_choices = [(market, markets[market]['name'])
-                      for market in app_markets]
-    market_validators = [validators.InputRequired()]
-    market = SelectField('Market', choices=[('', '')] + market_choices,
-                         default='', validators=market_validators)
-
-    product_validators = [validators.InputRequired()]
-    product = SelectField('Product', choices=[('', '')], default='',
-                          validators=product_validators)
-
-    target_price_validators = [validators.InputRequired()]
-    target_price = FloatField('Target Price',
-                              validators=target_price_validators)
-
-    less_more_choices = [(1, 'above'), (0, 'below')]
-    less_more = SelectField('', choices=less_more_choices, coerce=int)
 
 
 class ProductsForm(Form):
