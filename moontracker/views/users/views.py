@@ -78,8 +78,6 @@ def manage_alerts():
     print(form.alert_id.validators)
 
     if request.method == 'POST':
-        print(request.form['submit'], request.form['submit'] == 'Delete', form.alert_id.data, [
-              alert.id for alert in alerts], form.alert_id.validate(form))
         if request.form['submit'] == 'Delete' and form.alert_id.validate(form):
             print('delete button pressed')
             current_index = None
@@ -158,7 +156,9 @@ class ManageAlertForm(Form):
     phone_number = StringField(
         'Phone Number', [
             validators.Length(min=10),
-            validators.Regexp('^[0-9]+$', message="Input characters must be numeric")])
+            validators.Regexp(
+                '^[0-9]+$',
+                message="Input characters must be numeric")])
     asset = SelectField(
         'Coin', choices=assets)
     target_price = FloatField('Target Price', [validators.optional()])

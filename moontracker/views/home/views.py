@@ -154,7 +154,7 @@ class MarketsForm(Form):
 
     target_price_validators = [validators.InputRequired()]
     target_price = FloatField('Target Price',
-                                validators=target_price_validators)
+                              validators=target_price_validators)
 
     less_more_choices = [(1, 'above'), (0, 'below')]
     less_more = SelectField('', choices=less_more_choices, coerce=int)
@@ -186,7 +186,7 @@ class ProductsForm(Form):
 
     target_price_validators = [validators.InputRequired()]
     target_price = FloatField('Target Price',
-                                validators=target_price_validators)
+                              validators=target_price_validators)
 
     less_more_choices = [(1, 'above'), (0, 'below')]
     less_more = SelectField('', choices=less_more_choices, coerce=int)
