@@ -2,7 +2,7 @@
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
 from flask_login import current_user
-from wtforms import Form, FloatField, StringField, IntegerField, SelectField
+from wtforms import Form, FloatField, StringField, SelectField
 from wtforms import validators
 import json
 

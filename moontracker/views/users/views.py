@@ -2,7 +2,7 @@
 from flask import request, render_template, flash, redirect, url_for, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
 import wtforms
-from wtforms import Form, FloatField, StringField, IntegerField, SelectField, HiddenField
+from wtforms import Form, FloatField, StringField, IntegerField, SelectField
 from wtforms import validators
 from sqlalchemy import exists
 
@@ -78,7 +78,8 @@ def manage_alerts():
     print(form.alert_id.validators)
 
     if request.method == 'POST':
-        print(request.form['submit'], request.form['submit'] == 'Delete', form.alert_id.data, [alert.id for alert in alerts], form.alert_id.validate(form))
+        print(request.form['submit'], request.form['submit'] == 'Delete', form.alert_id.data, [
+              alert.id for alert in alerts], form.alert_id.validate(form))
         if request.form['submit'] == 'Delete' and form.alert_id.validate(form):
             print('delete button pressed')
             current_index = None
@@ -152,13 +153,12 @@ class NewAccountForm(Form):
 class ManageAlertForm(Form):
     """Form to manage an alert"""
 
-    alert_id = IntegerField([validators.Required()],
+    alert_id = IntegerField(validators=[validators.Required()],
                             widget=wtforms.widgets.HiddenInput())
     phone_number = StringField(
         'Phone Number', [
-            validators.Length(
-                min=10), validators.Regexp(
-                '^[0-9]+$', message="Input characters must be numeric")])
+            validators.Length(min=10),
+            validators.Regexp('^[0-9]+$', message="Input characters must be numeric")])
     asset = SelectField(
         'Coin', choices=assets)
     target_price = FloatField('Target Price', [validators.optional()])
@@ -167,6 +167,5 @@ class ManageAlertForm(Form):
 
     def __init__(self, form, alerts):
         super().__init__(form)
-        self.alert_id.validators = [validators.AnyOf([alert.id for alert in alerts])]
-
-
+        self.alert_id.validators = [
+            validators.AnyOf([alert.id for alert in alerts])]
