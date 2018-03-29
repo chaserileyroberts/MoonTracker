@@ -26,8 +26,8 @@ supported_assets = {
     },
 }
 
-assets = [(asset, supported_assets[asset]["name"])
-          for asset in supported_assets]
+assets = sorted([(asset, supported_assets[asset]["name"])
+                 for asset in supported_assets])
 
 market_apis = set()
 for m in supported_assets:
