@@ -1,12 +1,14 @@
 """User related views."""
 from flask import request, render_template, flash, redirect, url_for, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
-from wtforms import Form, StringField, IntegerField, SelectField, validators
+import wtforms
+from wtforms import Form, FloatField, StringField, IntegerField, SelectField, HiddenField
+from wtforms import validators
 from sqlalchemy import exists
 
 from moontracker.extensions import bcrypt, db, login_manager
 from moontracker.models import User, Alert
-from moontracker.assets import assets
+from moontracker.assets import assets, supported_assets
 from moontracker.views.home.views import AlertForm
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
@@ -70,35 +72,49 @@ def create_account():
 @login_required
 def manage_alerts():
     """Manage alerts page."""
-    user_alerts_query = Alert.query.filter(Alert.user_id == current_user.id)
-    alerts = []
-    for alert in user_alerts_query.all():
-        alerts.append(AlertDisplay(alert))
+    alerts = Alert.query.filter(Alert.user_id == current_user.id).all()
 
-    form = AlertForm(request.form)
-
-    # this should change depending on which edit button is clicked
-    if (user_alerts_query.count() > 0):
-        current_alert = user_alerts_query[0]
-        form = AlertForm(request.form, phone_number=current_alert.phone_number,
-            asset=current_alert.symbol, target_price=current_alert.price, less_more=current_alert.above)
+    form = ManageAlertForm(request.form, alerts)
+    print(form.alert_id.validators)
 
     if request.method == 'POST':
-        if request.form['submit'] == 'Delete':
+        print(request.form['submit'], request.form['submit'] == 'Delete', form.alert_id.data, [alert.id for alert in alerts], form.alert_id.validate(form))
+        if request.form['submit'] == 'Delete' and form.alert_id.validate(form):
             print('delete button pressed')
-            db.session.delete(current_alert)
-            db.session.commit()
-            # figure out proper way to refresh
-        elif request.form['submit'] == 'Save Changes':
-            current_alert.phone_number = form.phone_number.data
-            current_alert.symbol = form.asset.data
-            # current_alert.price = form.target_price.data
-            current_alert.above = form.less_more.data
-            db.session.commit()
-            print('update button pressed')
-            # figure out proper way to refresh
+            current_index = None
+            current_alert = None
+            for index, alert in enumerate(alerts):
+                if alert.id == int(form.alert_id.data):
+                    current_index = index
+                    current_alert = alert
+                    break
 
-    return render_template('manage.html', alerts=alerts, form=form)
+            if current_alert is not None:
+                db.session.delete(current_alert)
+                db.session.commit()
+                del alerts[current_index]
+
+        elif request.form['submit'] == 'Save Changes' and form.validate():
+            print('update button pressed')
+            current_alert = None
+            for alert in alerts:
+                if alert.id == int(form.alert_id.data):
+                    current_alert = alert
+                    break
+
+            if current_alert is not None:
+                current_alert.phone_number = form.phone_number.data
+                current_alert.symbol = form.asset.data
+                current_alert.price = form.target_price.data
+                current_alert.above = form.less_more.data
+                db.session.merge(current_alert)
+                db.session.commit()
+                # figure out proper way to refresh
+        else:
+            print(form.alert_id.errors)
+
+    return render_template('manage.html', alerts=alerts,
+                           supported_assets=supported_assets, form=form)
 
 
 @login_manager.user_loader
@@ -133,13 +149,24 @@ class NewAccountForm(Form):
                 '^[0-9]+$', message="Input characters must be numeric")])
 
 
-class AlertDisplay():
-    """Alert information object."""
-    def __init__(self, alert):
-        self.phone_number = alert.phone_number
-        self.asset = alert.symbol
-        if alert.above == 1:
-            self.above = 'above'
-        else:
-            self.above = 'below'
-        self.target_price = alert.price
+class ManageAlertForm(Form):
+    """Form to manage an alert"""
+
+    alert_id = IntegerField([validators.Required()],
+                            widget=wtforms.widgets.HiddenInput())
+    phone_number = StringField(
+        'Phone Number', [
+            validators.Length(
+                min=10), validators.Regexp(
+                '^[0-9]+$', message="Input characters must be numeric")])
+    asset = SelectField(
+        'Coin', choices=assets)
+    target_price = FloatField('Target Price', [validators.optional()])
+    less_more = SelectField(
+        '', choices=[(1, 'above'), (0, 'below')], coerce=int)
+
+    def __init__(self, form, alerts):
+        super().__init__(form)
+        self.alert_id.validators = [validators.AnyOf([alert.id for alert in alerts])]
+
+
