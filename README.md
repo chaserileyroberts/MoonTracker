@@ -52,7 +52,14 @@ pip install -r requirements.txt
 
 ### Adding api_keys.py to the Project
 
-Next, add api_keys.py to the root directory of the project.
+The application requires API keys for Twilio and Recaptcha. Create an api_keys.py file under the moontracker folder, and add the API keys formatted as follows.
+
+```text
+twilio_sid = <twilio_sid>
+twilio_auth = <twilio_auth>
+recaptcha_public = <recaptcha_public>
+recaptcha_private = <recaptcha_private>
+```
 
 ### Running
 
