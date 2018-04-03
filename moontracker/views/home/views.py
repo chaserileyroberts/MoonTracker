@@ -32,7 +32,8 @@ def index():
         db.session.add(alert)
         db.session.commit()
 
-    return render_template('index.html', form=form)
+    return render_template('index.html', form=form,
+                           app_markets_json=json.dumps(supported_assets))
 
 
 @home_blueprint.route('/products', methods=['GET', 'POST'])

@@ -32,6 +32,12 @@
             .last-prices-col-2-3 {
                 width: 50%;
             }
+            .last-prices-col-0-2 {
+                width: 60%;
+            }
+            .last-prices-col-1-2 {
+                width: 40%;
+            }
             .last-prices-flash-update {
                 background-color: #FFFFE0;
             }
@@ -221,6 +227,7 @@
             $("#asset").combobox();
         </script>
         <script type="text/javascript">
+            appMarkets = {{ app_markets_json|safe }};
             var lplSocket = io('/lastpriceslive', { transports: ['websocket'] });
             lplSocket.on('json', function (lastPricesStr) {
                 var lastPricesTableElem = $('#last-prices-table');
@@ -229,8 +236,8 @@
                     lastPricesElem.append($('<h4>').text('Last Prices'));
                     var tableCElem = $('<div id="last-prices-table" class="table">');
                     var headerCElem = $('<div class="table-header table-row">');
-                    headerCElem.append($('<div class="table-col last-prices-col-0-3">').text('Coin'));
-                    headerCElem.append($('<div class="table-col last-prices-col-1-3">').text('Price'));
+                    headerCElem.append($('<div class="table-col last-prices-col-0-2">').text('Coin'));
+                    headerCElem.append($('<div class="table-col last-prices-col-1-2">').text('Price'));
                     tableCElem.append(headerCElem);
                     lastPricesElem.append(tableCElem);
                     lastPricesTableElem = lastPricesElem.find('#last-prices-table');
@@ -239,25 +246,26 @@
                 var lastPrices = JSON.parse(lastPricesStr);
                 $.each(lastPrices, function (index, lastPrice) {
                     var rowFound = false;
-                    lastPricesTableElem.find('.table-row').each(function (index, rowElem) {
-                        var rowSymbol = $(rowElem).find('.last-prices-col-symbol').text();
-                        if (lastPrice.symbol == rowSymbol) {
-                            var rowPriceElem = $(rowElem).find('.last-prices-col-price');
-                            var oldPriceText = rowPriceElem.text();
-                            rowPriceElem.text(lastPrice.price);
-                            if (rowPriceElem.text() !== oldPriceText) {
-                                rowPriceElem.addClass('last-prices-flash-update', 0);
-                                rowPriceElem.removeClass('last-prices-flash-update', 800);
-                            }
-                            rowFound = true;
-                            return false;
+                    var rowElem = lastPricesTableElem.find('#last-prices-' + lastPrices.symbol);
+                    if (rowElem.length > 0) {
+                        // var rowSymbol = $(rowElem).find('.last-prices-col-symbol').text();
+                        var rowPriceElem = $(rowElem).find('.last-prices-col-price');
+                        var oldPriceText = rowPriceElem.text();
+                        var priceText = '$' + lastPrice.price;
+                        rowPriceElem.text(priceText);
+                        if (rowPriceElem.text() !== oldPriceText) {
+                            rowPriceElem.addClass('last-prices-flash-update', 0);
+                            rowPriceElem.removeClass('last-prices-flash-update', 800);
                         }
-                    });
+                        rowFound = true;
+                        return false;
+                    }
                     if (!rowFound) {
-                        var rowCElem = $('<div class="table-row">');
-                        rowCElem.append($('<div class="table-col last-prices-col-0-3 last-prices-col-symbol">').text(lastPrice.symbol));
-                        rowCElem.append($('<div class="table-col last-prices-col-1-3 last-prices-col-price">').text(lastPrice.price));
-                        var dt = new Date();
+                        var rowCElem = $('<div id="last-prices-' + lastPrice.symbol + '" class="table-row">');
+                        var symbolText = appMarkets[lastPrice.symbol]['name'];
+                        rowCElem.append($('<div class="table-col last-prices-col-0-2 last-prices-col-symbol">').text(symbolText));
+                        var priceText = '$' + lastPrice.price;
+                        rowCElem.append($('<div class="table-col last-prices-col-1-2 last-prices-col-price">').text(priceText));
                         lastPricesTableElem.append(rowCElem);
                     }
                 });
