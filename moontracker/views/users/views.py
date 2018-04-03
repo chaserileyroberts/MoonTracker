@@ -67,6 +67,25 @@ def create_account():
     return render_template('create_account.html', form=form)
 
 
+@users_blueprint.route('/settings', methods=['GET', 'POST'])
+# @login_required
+def account_settings():
+    """Account settings page."""
+    form = ChangePasswordForm(request.form)
+    if request.method == 'POST' and request.form['submit'] == 'Save Changes' and form.validate():
+        current_password = form.current_password.data
+        new_password = form.new_password.data
+        new_password_check = form.new_password_check.data
+        # check that current_password = current_user.password
+        # check that new_password = new_password_check
+        pw_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        # query for user and set password
+        log_out(user, True)
+        flash('Successfully changed passsword for ' + username)
+        return redirect(request.args.get('next') or url_for('home.index'))
+    return render_template('settings.html', form=form)
+
+
 @users_blueprint.route('/manage', methods=['GET', 'POST'])
 @login_required
 def manage_alerts():
@@ -155,6 +174,15 @@ class NewAccountForm(Form):
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
+
+
+class ChangePasswordForm(Form):
+    current_password = StringField('Password', [
+        validators.Length(min=8, message="Please enter password")])
+    new_password = StringField('Password', [
+        validators.Length(min=8, message="Please enter password")])
+    new_password_check = StringField('Password', [
+        validators.Length(min=8, message="Please enter password")])
 
 
 class ManageAlertForm(Form):

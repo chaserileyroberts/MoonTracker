@@ -13,27 +13,31 @@
 	<body>
 		<div class="container">
             {{ navbar() }}
-            <div class="form-group">
-                <form method=post>
-                	<dl>
-                		<dt>
-                			{{ form.username.label }}
-                		</dt>
-                		<dd>
-                			{{ render_field(form.username) }}
-                		</dd>
-                		<dt>
-                			{{ form.password.label }}
-                		</dt>
-                		<dd>
-                			{{ render_field(form.password, type="password") }}
-                		</dd>
-                	</dl>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <form method=post>
+                        	<dl>
+                        		<dt>
+                        			{{ form.username.label }}
+                        		</dt>
+                        		<dd>
+                        			{{ render_field(form.username) }}
+                        		</dd>
+                        		<dt>
+                        			{{ form.password.label }}
+                        		</dt>
+                        		<dd>
+                        			{{ render_field(form.password, type="password") }}
+                        		</dd>
+                        	</dl>
 
-                	 <input type=submit class="btn btn-primary" value=Login>
-            	</form>
+                        	 <input type=submit class="btn btn-primary" value=Login>
+                    	</form>
+                    </div>
+                    {{ messages() }}
+                </div>
             </div>
-            {{ messages() }}
 		</div>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

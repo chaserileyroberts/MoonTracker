@@ -1,0 +1,67 @@
+{% from "_navbar.html" import navbar with context %}
+{% from "_render_field.html" import render_field with context %}
+{% from "_messages.html" import messages with context %}
+<!DOCTYPE>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Account Settings | Moon Tracker</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	</head>
+	<body>
+		<div class="container">
+			{{ navbar() }}
+
+			<div class="row justify-content-center">
+				<div class="col-12 col-md-6">
+					<div><b>Username:</b> {{ current_user.username }}</div>
+					<br>
+					<div class="row">
+						<div class="col-8 col-md-11">
+							<div><b>Change your password</b></div>
+						</div>
+						<div class="col-4 col-md-1">
+							<button type="button" class="btn btn-default" data-toggle="modal" data-target="#password-modal">Change</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div id="password-modal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+            	<div class="modal-content">
+            		<div class="modal-header">
+                    	<button type="button" class="close" data-dismiss="modal">&times;</button>
+               		</div>
+               		<div class="modal-body">
+
+                        <div class="form-group">
+                            <form method="post">
+                            	<dl>
+                            		<dt>Current password</dt>
+                            		<dd>{{ render_field(form.current_password, type="password") }}</dd>
+                            		<dt>New password</dt>
+                            		<dd>{{ render_field(form.new_password, type="password") }}</dd>
+                            		<dt>Retype new password</dt>
+                            		<dd>{{ render_field(form.new_password_check, type="password") }}</dd>
+                            	</dl>
+                            	<input type="submit" name="submit" value="Cancel" class="btn btn-secondary" data-dismiss="modal">
+                				<input type="submit" name="submit" value="Save Changes" class="btn btn-primary">
+                            </form>
+                        </div>
+
+                        {{ messages() }}
+                	</div>
+            	</div>
+        	</div>
+		</div>
+
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+	</body>
+</html>

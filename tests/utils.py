@@ -1,7 +1,9 @@
 """Utility functions and classes for test modules."""
 from flask import current_app
+from selenium import webdriver
 
 test_client = current_app.test_client()
+browser = webdriver.ChromeOptions()
 
 
 def register(username, password, phone_number):
