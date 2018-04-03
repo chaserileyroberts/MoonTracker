@@ -6,10 +6,8 @@ from moontracker.extensions import socketio
 from moontracker.models import LastPrice
 
 
-@socketio.on('connect', namespace='/lastpriceslive')
-def last_prices(broadcast=False):
-    """Send the last price to the client."""
-    last_prices = LastPrice.query.all()
+def get_last_prices_json(last_prices):
+    """Create json for last prices."""
     last_prices_obj = [
         {
             'symbol': last_price.symbol,
@@ -18,8 +16,21 @@ def last_prices(broadcast=False):
         }
         for last_price in last_prices
     ]
-    socketio.emit('json', json.dumps(last_prices_obj),
+    return json.dumps(last_prices_obj)
+
+
+def emit_last_prices(last_prices, broadcast=False):
+    """Emit last prices to socketio."""
+    last_prices_json = get_last_prices_json(last_prices)
+    socketio.emit('json', last_prices_json,
                   namespace='/lastpriceslive', broadcast=broadcast)
+
+
+@socketio.on('connect', namespace='/lastpriceslive')
+def last_prices(broadcast=False):
+    """Send the last price to the client."""
+    last_prices = LastPrice.query.all()
+    emit_last_prices(last_prices, broadcast=broadcast)
 
 
 def broadcast_last_prices():
