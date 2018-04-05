@@ -58,6 +58,9 @@ class User(db.Model):
     def get_id(self):
         """Get user Id."""
         return str(self.id)
+    def set_password(self,pw_hash):
+        self.pw_hash = pw_hash
+
 
 
 class LastPrice(db.Model):

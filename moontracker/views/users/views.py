@@ -77,11 +77,26 @@ def account_settings():
         new_password = form.new_password.data
         new_password_check = form.new_password_check.data
         # check that current_password = current_user.password
+        
+        if (not bcrypt.check_password_hash(current_user.pw_hash,current_password)):
+            flash('Current password is invalid', 'error')
+            return redirect(url_for('.account_settings'))
+
+
         # check that new_password = new_password_check
-        pw_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        if(new_password!=new_password_check):
+            flash('New passwords do not match', 'error')
+            return redirect(url_for('.account_settings'))
+
+        
         # query for user and set password
-        log_out(user, True)
-        flash('Successfully changed passsword for ' + username)
+        pw_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        current_user.set_password(pw_hash)
+        db.session.commit()
+        
+
+        # why logout logout()
+        flash('Successfully changed passsword for ' + current_user.username)
         return redirect(request.args.get('next') or url_for('home.index'))
     return render_template('settings.html', form=form)
 
