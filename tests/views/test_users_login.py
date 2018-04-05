@@ -16,6 +16,10 @@ def test_login_logout():
     assert 'test_user' not in str(response.data)
     assert 'Logout' not in str(response.data)
 
+def test_bad_logout():
+    response = logout()
+    assert response.status_code == 401
+
 
 def test_empty_username():
     response = login('', '12345678')
