@@ -70,8 +70,8 @@ class AlertForm(Form):
     asset = SelectField(
         'Coin', choices=assets)
     target_price = FloatField('Target Price', [validators.optional()])
-    less_more = SelectField(
-        '', choices=[(1, 'above'), (0, 'below'), (2, '+ %'), (3, '- %')], coerce=int)
+    less_more = SelectField('', choices=[(1, 'above'), (0, 'below'),
+                                         (2, '+ %'), (3, '- %')], coerce=int)
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])

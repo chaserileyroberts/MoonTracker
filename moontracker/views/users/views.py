@@ -68,20 +68,31 @@ def create_account():
 
 
 @users_blueprint.route('/settings', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def account_settings():
     """Account settings page."""
     form = ChangePasswordForm(request.form)
-    if request.method == 'POST' and request.form['submit'] == 'Save Changes' and form.validate():
+    if (request.method == 'POST' and form.validate()):
         current_password = form.current_password.data
         new_password = form.new_password.data
         new_password_check = form.new_password_check.data
         # check that current_password = current_user.password
+        if (not bcrypt.check_password_hash(current_user.pw_hash,
+                                           current_password)):
+            flash('Current password is invalid', 'error')
+            return redirect(url_for('.account_settings'))
+
         # check that new_password = new_password_check
-        pw_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        if(new_password != new_password_check):
+            flash('New passwords do not match', 'error')
+            return redirect(url_for('.account_settings'))
+
         # query for user and set password
-        log_out(user, True)
-        flash('Successfully changed passsword for ' + username)
+        pw_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        current_user.set_password(pw_hash)
+        db.session.commit()
+        # why logout logout()
+        flash('Successfully changed password for ' + current_user.username)
         return redirect(request.args.get('next') or url_for('home.index'))
     return render_template('settings.html', form=form)
 
@@ -177,6 +188,8 @@ class NewAccountForm(Form):
 
 
 class ChangePasswordForm(Form):
+    """Form to change a users password."""
+
     current_password = StringField('Password', [
         validators.Length(min=8, message="Please enter password")])
     new_password = StringField('Password', [

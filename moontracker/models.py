@@ -59,6 +59,10 @@ class User(db.Model):
         """Get user Id."""
         return str(self.id)
 
+    def set_password(self, pw_hash):
+        """Set password to a specified hash."""
+        self.pw_hash = pw_hash
+
 
 class LastPrice(db.Model):
     """Object for the last price."""
