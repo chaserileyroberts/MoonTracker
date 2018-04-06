@@ -23,9 +23,10 @@ def index():
         target_price = form.target_price.data
         less_more = form.less_more.data
         phone_number = form.phone_number.data
-
+        market = form.market.data
         alert = Alert(symbol=asset, price=target_price,
-                      above=less_more, phone_number=phone_number)
+                      above=less_more, phone_number=phone_number,
+                      market=market)
         if current_user.is_authenticated:
             alert.user_id = current_user.id
 
@@ -75,6 +76,10 @@ class AlertForm(Form):
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
+    market_validators = [validators.InputRequired()]
+    market = SelectField('Market',
+                         choices=[('', '')] + [(m, m) for m in market_apis],
+                         default='', validators=market_validators)
 
 
 class ProductsForm(Form):
