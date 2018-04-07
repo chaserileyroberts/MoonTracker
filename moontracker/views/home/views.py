@@ -23,9 +23,10 @@ def index():
         target_price = form.target_price.data
         less_more = form.less_more.data
         phone_number = form.phone_number.data
-
+        market = form.market.data
         alert = Alert(symbol=asset, price=target_price,
-                      above=less_more, phone_number=phone_number)
+                      above=less_more, phone_number=phone_number,
+                      market=market)
         if current_user.is_authenticated:
             alert.user_id = current_user.id
 
@@ -33,29 +34,6 @@ def index():
         db.session.commit()
 
     return render_template('index.html', form=form,
-                           app_markets_json=json.dumps(supported_assets))
-
-
-@home_blueprint.route('/products', methods=['GET', 'POST'])
-def route_products():
-    """Webpage for the products page."""
-    form = ProductsForm(request.form)
-    if request.method == 'POST':
-        phone_number = form.phone_number.data
-        product = form.product.data
-        market = form.market.data
-        target_price = form.target_price.data
-        less_more = form.less_more.data
-        if form.validate():
-            flash("Alert is set!")
-            alert = Alert(symbol=product, price=target_price,
-                          above=less_more, phone_number=phone_number,
-                          market=market)
-            if current_user.is_authenticated:
-                alert.user_id = current_user.id
-            db.session.add(alert)
-            db.session.commit()
-    return render_template('products.html', form=form,
                            app_markets_json=json.dumps(supported_assets))
 
 
@@ -75,38 +53,7 @@ class AlertForm(Form):
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
-
-
-class ProductsForm(Form):
-    """Website form for the products page."""
-
-    phone_number_validators = [
-        validators.Length(min=10),
-        validators.Regexp('^[0-9]+$',
-                          message="Input characters must be numeric")
-    ]
-    phone_number = StringField('Phone Number',
-                               validators=phone_number_validators)
-
-    product_choices = [(product, supported_assets[product]['name'])
-                       for product in supported_assets]
-    product_validators = [validators.InputRequired()]
-    product = SelectField('Product',
-                          choices=[('', '')] + product_choices,
-                          default='',
-                          validators=product_validators)
-
     market_validators = [validators.InputRequired()]
     market = SelectField('Market',
                          choices=[('', '')] + [(m, m) for m in market_apis],
                          default='', validators=market_validators)
-
-    target_price_validators = [validators.InputRequired()]
-    target_price = FloatField('Target Price',
-                              validators=target_price_validators)
-
-    less_more_choices = [(1, 'above'), (0, 'below')]
-    less_more = SelectField('', choices=less_more_choices, coerce=int)
-    recaptcha = RecaptchaField(
-        'Recaptcha', validators=[
-            Recaptcha("Please do the recaptcha.")])

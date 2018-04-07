@@ -59,7 +59,7 @@
                                     {{ form.phone_number.label }}
                                 </dt>
                                 <dd>
-                                    {{ render_field(form.phone_number) }}
+                                    {{ render_field(form.phone_number, placeholder="Phone Number") }}
                                 </dd>
                                 <dt>
                                     {{ form.asset.label }}
@@ -68,6 +68,12 @@
                                     {{ render_field(form.asset) }}
                                 </dd>
                                 <dt>
+                                    {{ form.market.label }}
+                                </dt>
+                                <dd>
+                                    {{ render_field(form.market, disabled=(form.asset.data == '')) }}
+                                </dd>
+                                        <dt>
                                     {{ form.target_price.label }}
                                 </dt>
                                 <dd>
@@ -106,10 +112,11 @@
                     this.wrapper = $("<span>")
                         .addClass("custom-combobox")
                         .insertAfter(this.element);
-     
+                    this.element.val("");
+                    var marketElem = $('#market');
+                    marketElem.val('');
                     this.element.hide();
                     this._createAutocomplete();
-                    this._createShowAllButton();
                 },
      
                 _createAutocomplete: function() {
@@ -130,6 +137,8 @@
      
                     this._on(this.input, {
                         autocompleteselect: function(event, ui) {
+                            var marketElem = $('#market');
+                            marketElem.val('')
                             ui.item.option.selected = true;
                             this._trigger("select", event, {
                                 item: ui.item.option
@@ -138,38 +147,6 @@
      
                         autocompletechange: "_removeIfInvalid"
                     });
-                },
-     
-                _createShowAllButton: function() {
-                    var input = this.input,
-                        wasOpen = false;
-     
-                    $("<a>")
-                        .attr("tabIndex", -1)
-                        .attr("title", "Show All Items")
-                        .tooltip()
-                        .appendTo(this.wrapper)
-                        .button({
-                            icons: {
-                                primary: "ui-icon-triangle-1-s"
-                            },
-                            text: false
-                        })
-                        .addClass("custom-combobox-toggle")
-                        .on("mousedown", function() {
-                            wasOpen = input.autocomplete("widget").is(":visible");
-                        })
-                        .on("click", function() {
-                            input.trigger("focus");
-     
-                            // Close if already visible
-                            if (wasOpen) {
-                                return;
-                            }
-     
-                            // Pass empty string as value to search for, displaying all results
-                            input.autocomplete("search", "");
-                        });
                 },
      
                 _source: function(request, response) {
@@ -186,27 +163,35 @@
                 },
      
                 _removeIfInvalid: function(event, ui) {
-                    // Selected an item, nothing to do
-                    if (ui.item) {
-                        return;
-                    }
-     
                     // Search for a match (case-insensitive)
+
+                    var product = "";
                     var value = this.input.val(),
                         valueLowerCase = value.toLowerCase(),
                         valid = false;
+                    appMarkets = {{ app_markets_json|safe }};
+                    var marketElem = $('#market');
+                    marketElem.val('')
                     this.element.children("option").each(function() {
                         if ($(this).text().toLowerCase() === valueLowerCase) {
+                            product = $(this).val();
                             this.selected = valid = true;
                             return false;
                         }
                     });
-     
                     // Found a match, nothing to do
                     if (valid) {
+                        marketElem.prop('disabled', false);
+                        marketElem.empty();
+                        marketElem.append($("<option />").val('').text(''));
+                        $.each(appMarkets[product].markets, function (index, market) {
+                            marketElem.append($("<option />").val(market).text(market));
+                        });
                         return;
                     }
-     
+                    // Disable if not valid
+                    marketElem.empty();
+                    marketElem.prop('disabled', true);
                     // Remove invalid value
                     this.input
                         .val("")
