@@ -12,7 +12,7 @@
             <a href="{{ url_for('users.login') }}" class="nav-item nav-link">Login</a> <!-- this should become logout-->
         {% else%}
             <!-- the username link could possibly bring user to account settings -->
-            <a href="{{ url_for('users.manage_alerts') }}" class="nav-item nav-link">Manage</a>
+            <a href="{{ url_for('users.manage_alerts') }}" class="nav-item nav-link">Mange Alerts</a>
              <a href="{{ url_for('users.account_settings') }}" class="nav-item nav-link">{{ current_user.username }}</a>
             <a href="{{ url_for('users.logout') }}" class="nav-item nav-link">Logout</a>
         {% endif %}

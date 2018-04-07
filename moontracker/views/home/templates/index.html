@@ -113,6 +113,8 @@
                         .addClass("custom-combobox")
                         .insertAfter(this.element);
                     this.element.val("");
+                    var marketElem = $('#market');
+                    marketElem.val('');
                     this.element.hide();
                     this._createAutocomplete();
                 },
