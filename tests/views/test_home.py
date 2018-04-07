@@ -8,6 +8,7 @@ def test_valid_post():
         data=dict(
             phone_number='5558675309',
             asset='BTC',
+            market='gemini',
             less_more='1',
             target_price='100',
         ))
@@ -26,6 +27,7 @@ def test_valid_post_below():
         data=dict(
             phone_number='5558675309',
             asset='BTC',
+            market='bitfinex',
             less_more='0',
             target_price='100',
         ))
@@ -44,6 +46,7 @@ def test_short_phonenumber():
         data=dict(
             phone_number='3',
             asset='BTC',
+            market='gemini',
             less_more='1',
             target_price='100'
         ))
@@ -60,6 +63,7 @@ def test_nonint_phonenumber():
         data=dict(
             phone_number='aaaaa',
             asset='BTC',
+            market='gemini',
             less_more='1',
             target_price='100'
         ))
@@ -76,6 +80,7 @@ def test_nonint_price():
         data=dict(
             phone_number='5558675309',
             asset='BTC',
+            market='gdax',
             less_more='1',
             target_price='aaaaa'
         ))
@@ -88,10 +93,10 @@ def test_nonint_price():
 
 def test_product_page():
     response = test_client.post(
-        '/products',
+        '/',
         data=dict(
             phone_number='5558675309',
-            product='BTC',
+            asset='BTC',
             less_more='1',
             target_price='100',
             market='coinbase'

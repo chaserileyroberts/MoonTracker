@@ -106,14 +106,13 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js" type="text/javascript"></script>
-        <!--
         <script type="text/javascript">
             $.widget("custom.combobox", {
                 _create: function() {
                     this.wrapper = $("<span>")
                         .addClass("custom-combobox")
                         .insertAfter(this.element);
-     
+                    this.element.val("");
                     this.element.hide();
                     this._createAutocomplete();
                 },
@@ -136,6 +135,8 @@
      
                     this._on(this.input, {
                         autocompleteselect: function(event, ui) {
+                            var marketElem = $('#market');
+                            marketElem.val('')
                             ui.item.option.selected = true;
                             this._trigger("select", event, {
                                 item: ui.item.option
@@ -160,27 +161,35 @@
                 },
      
                 _removeIfInvalid: function(event, ui) {
-                    // Selected an item, nothing to do
-                    if (ui.item) {
-                        return;
-                    }
-     
                     // Search for a match (case-insensitive)
+
+                    var product = "";
                     var value = this.input.val(),
                         valueLowerCase = value.toLowerCase(),
                         valid = false;
+                    appMarkets = {{ app_markets_json|safe }};
+                    var marketElem = $('#market');
+                    marketElem.val('')
                     this.element.children("option").each(function() {
                         if ($(this).text().toLowerCase() === valueLowerCase) {
+                            product = $(this).val();
                             this.selected = valid = true;
                             return false;
                         }
                     });
-     
                     // Found a match, nothing to do
                     if (valid) {
+                        marketElem.prop('disabled', false);
+                        marketElem.empty();
+                        marketElem.append($("<option />").val('').text(''));
+                        $.each(appMarkets[product].markets, function (index, market) {
+                            marketElem.append($("<option />").val(market).text(market));
+                        });
                         return;
                     }
-     
+                    // Disable if not valid
+                    marketElem.empty();
+                    marketElem.prop('disabled', true);
                     // Remove invalid value
                     this.input
                         .val("")
@@ -200,7 +209,6 @@
             });
             $("#asset").combobox();
         </script>
-        -->
         <script type="text/javascript">
             appMarkets = {{ app_markets_json|safe }};
             var lplSocket = io('/lastpriceslive', { transports: ['websocket'] });
@@ -245,24 +253,6 @@
                         lastPricesTableElem.append(rowCElem);
                     }
                 });
-            });
-        </script>
-        <script type="text/javascript">
-            $('#asset').on('change', function (event) {
-                var product = event.target.value;
-                appMarkets = {{ app_markets_json|safe }};
-                var marketElem = $('#market');
-                if (product !== '') {
-                    marketElem.prop('disabled', false);
-                    marketElem.empty();
-                    marketElem.append($("<option />").val('').text(''));
-                    $.each(appMarkets[product].markets, function (index, market) {
-                        marketElem.append($("<option />").val(market).text(market));
-                    });
-                } else {                    
-                    marketElem.empty();
-                    marketElem.prop('disabled', true);
-                }
             });
         </script>
     </body>

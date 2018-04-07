@@ -19,6 +19,7 @@ def test_integration_sanity():
         data=dict(
             phone_number='5558675309',
             asset='BTC',
+            market='coinbase',
             less_more='1',
             target_price='1'
         ))
@@ -44,6 +45,7 @@ def test_integration_below():
         data=dict(
             phone_number='5558675309',
             asset='BTC',
+            market='coinbase',
             less_more='0',
             target_price='100'
         ))
@@ -65,10 +67,10 @@ def test_integration_include_market():
     Make post request to the website, make sure texter sends the message.
     """
     response = test_client.post(
-        '/products',
+        '/',
         data=dict(
             phone_number='5558675309',
-            product='BTC',
+            asset='BTC',
             less_more='1',
             target_price='10',
             market='coinbase'
