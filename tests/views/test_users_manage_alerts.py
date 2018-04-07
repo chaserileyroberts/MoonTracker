@@ -11,12 +11,11 @@ def test_correct_num_alerts():
         data=dict(
             phone_number='1111111111',
             asset='LTC',
+            market='coinbase',
             less_more='1',
             target_price='100',
-            # user_id = '1'  # fake user id
         ))
     assert response.status_code == 200
-
     results = Alert.query.filter(Alert.user_id == 1).all()
     assert len(results) == 1
 
@@ -35,9 +34,9 @@ def test_edit():
         data=dict(
             phone_number='1111111111',
             asset='LTC',
+            market='gdax',
             less_more='1',
             target_price='100',
-            # user_id = '1'  # fake user id
         ))
     assert response.status_code == 200
 
@@ -65,16 +64,16 @@ def test_edit():
 
 def test_delete():
     response = register('test_user', '12345678', '1111111111')
+    assert 'test_user' in str(response.data)
     assert response.status_code == 200
-
     response = test_client.post(
         '/',
         data=dict(
             phone_number='1111111111',
             asset='LTC',
+            market='gemini',
             less_more='1',
             target_price='100',
-            # user_id = '1'  # fake user id
         ))
     assert response.status_code == 200
 
@@ -106,11 +105,11 @@ def test_delete():
             phone_number='1111111111',
             asset='BTC',
             less_more='0',
+            market='gemini',
             target_price='50',
-            # user_id = '1'  # fake user id
         ))
+    assert "test_user" in str(response.data)
     assert response.status_code == 200
-
     results = Alert.query.filter(Alert.user_id == 1).all()
     assert len(results) == 1
 
