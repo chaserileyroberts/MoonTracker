@@ -237,7 +237,7 @@
                         if (rowSymbol == symbolText) {
                             var rowPriceElem = $(rowElem).find('.last-prices-col-price');
                             var oldPriceText = rowPriceElem.text();
-                            rowPriceElem.text(lastPrice.price);
+                            rowPriceElem.text('$' + lastPrice.price);
                             if (rowPriceElem.text() !== oldPriceText) {
                                 rowPriceElem.addClass('last-prices-flash-update', 0);
                                 rowPriceElem.removeClass('last-prices-flash-update', 800);
