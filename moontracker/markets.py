@@ -18,7 +18,6 @@ class Market:
         """
         raise NotImplementedError
 
-
     def get_percent_change(self, product, time):
         """Get the percent change of the asset over the specified time period.
 
@@ -29,8 +28,9 @@ class Market:
             change: The percent change as a float.
 
         """
-        current_price = get_spot_price(self, product)
-        prev_price = get_spot_price(self, product, time - timedelta(seconds=time))
+        current_price = self.get_spot_price(product)
+        prev_price = self.get_spot_price(
+            product, time - timedelta(seconds=time))
         return (current_price - prev_price) / prev_price
 
 
@@ -48,7 +48,10 @@ class BitfinexMarket(Market):
         """
         product = product.upper()
         utc_time = int((time - datetime(1970, 1, 1)).total_seconds() * 1000)
-        response = requests.get('https://api.bitfinex.com/v2/candles/trade:1m:t{}USD/hist?limit=10&sort=1&start={}&end={}'.format(product, utc_time - 100000, utc_time))
+        response = requests.get(
+            'https://api.bitfinex.com/v2/candles/trade:1m:t{}USD/hist?limit=10\
+            &sort=1&start={}&end={}'.format(product, utc_time - 240000,
+                                            utc_time))
         if response.status_code != 200:
             raise RuntimeError(
                 'GET https://api.bitfinex.com/v2/candles/ {}'
@@ -65,20 +68,22 @@ class GdaxMarket(Market):
 
         Args:
             product: The coin you want the value of.
-            time: Time to get the price of the coin at, defaults to the current time.
+            time: Time to get the price of the coin at,
+                  defaults to the current time.
         Returns:
             price: The price.
 
         """
         response = requests.get(
             'https://api.gdax.com/products/{}-usd/candles?start={}&end={}\
-            &granularity=60'.format(product, time - timedelta(minutes=10), time))
+            &granularity=60'.format(product, time - timedelta(minutes=10),
+                                    time))
         if response.status_code != 200:
             raise RuntimeError(
                 'GET https://api.gdax.com/products/ {}'
                 .format(response.status_code))
         response = response.json()
-        return float(response[len(response)-1][4])
+        return float(response[len(response) - 1][4])
 
 
 class GeminiMarket(Market):
@@ -95,7 +100,8 @@ class GeminiMarket(Market):
         """
         utc_time = int((time - datetime(1970, 1, 1)).total_seconds()) - 120
         response = requests.get(
-            'https://api.gemini.com/v1/trades/{}usd?since={}&limit_trades=1'.format(product, utc_time))
+            'https://api.gemini.com/v1/trades/{}usd?since={}&limit_trades=1'
+            .format(product, utc_time))
         if response.status_code != 200:
             raise RuntimeError(
                 'GET https://api.gemini.com/v1/trades/{}'
@@ -111,7 +117,8 @@ class NasdaqMarket(Market):
         """Get stock price value from extrading."""
         date = time.date().strftime("%Y%m%d")
         response = requests.get(
-            "https://api.iextrading.com/1.0/stock/{}/chart/date/{}".format(product, date))
+            "https://api.iextrading.com/1.0/stock/{}/chart/date/{}"
+            .format(product, date))
         if response.status_code != 200:
             raise RuntimeError(
                 'GET https://api.iextrading.com {}'
