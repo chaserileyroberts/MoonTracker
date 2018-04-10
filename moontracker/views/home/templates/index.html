@@ -53,13 +53,13 @@
                                         </div>
                                     </div>
                                 </dd>
+                            </dl>
                             {{ form.recaptcha }}
                             <ul>
                             {% for error in form.recaptcha.errors %}
-                                <li style="color:red;">{{error}}</li>
+                                <li class=".recaptcha-error">{{ error }}</li>
                             {% endfor %}
                             </ul>
-                            </dl>
                             <input type=submit class="btn btn-primary" value=Submit>
                         </form>
                     </div>
@@ -72,8 +72,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js" type="text/javascript"></script>
-        <script type="text/javascript" src="/appMarkets.js"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
+        <script src="/appMarkets.js"></script>
+        <script src="{{ url_for('static', filename='index.js') }}"></script>
     </body>
 </html>

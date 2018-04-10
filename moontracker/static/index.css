@@ -29,3 +29,6 @@
 .last-prices-flash-update {
     background-color: #FFFFE0;
 }
+.recaptcha-error {
+    color: red;
+}
