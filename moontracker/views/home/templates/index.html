@@ -57,7 +57,7 @@
                             {{ form.recaptcha }}
                             <ul>
                             {% for error in form.recaptcha.errors %}
-                                <li style="color:red;">{{error}}</li>
+                                <li class=".recaptcha-error">{{ error }}</li>
                             {% endfor %}
                             </ul>
                             <input type=submit class="btn btn-primary" value=Submit>
