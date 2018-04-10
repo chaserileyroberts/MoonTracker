@@ -59,7 +59,7 @@ class AlertForm(Form):
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
-    market_validators = [validators.InputRequired()]
+    market_validators = [validators.AnyOf((m for m in market_apis))]
     market = SelectField('Market',
                          choices=[('', '')] + [(m, m) for m in market_apis],
-                         default='', validators=market_validators)
+                         default=' ', validators=market_validators)
