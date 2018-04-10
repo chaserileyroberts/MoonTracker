@@ -37,6 +37,12 @@ def index():
                            app_markets_json=json.dumps(supported_assets))
 
 
+@home_blueprint.route('/appMarkets.js', methods=['GET'])
+def app_markets():
+    """Generates JavaScript for appMarkets."""
+    return 'appMarkets = ' + json.dumps(supported_assets)
+
+
 class AlertForm(Form):
     """Form object for website."""
 
