@@ -22,7 +22,7 @@ class Market:
             raise RuntimeError('GET {} {}'.format(request, response.status_code))
         return response.json()
 
-    def get_spot_price(self, product, time=datetime.utcnow()):
+    def get_spot_price(self, product, time=None):
         """Get the asset price at the specified time.
 
         Args:
@@ -42,14 +42,14 @@ class Market:
 
         Args:
             product: The asset to get the percent change of.
-            seconds: The time in seconds to get the change over.
+            time: The time in seconds to get the change over.
         Returns:
             change: The percent change as a float.
 
         """
         current_price = self.get_spot_price(product)
         prev_price = self.get_spot_price(
-            product, time - timedelta(seconds=time))
+            product, datetime.utcnow() - timedelta(seconds=time))
         return (current_price - prev_price) / prev_price
 
 
@@ -241,8 +241,8 @@ class NasdaqMarket(Market):
 
             # Return the latest trade price.
             # len(response)-1 returns the latest timeframe.
-            # 'close' returns the closing price of the timeframe.
-            return float(response[len(response) - 1]['close'])
+            # 'average' returns the average price of the timeframe.
+            return float(response[len(response) - 1]['average'])
 
 
 def lookupMarket(market):
