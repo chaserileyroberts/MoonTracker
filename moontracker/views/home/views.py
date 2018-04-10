@@ -8,7 +8,7 @@ import json
 
 from moontracker.assets import supported_assets, assets, market_apis
 from moontracker.extensions import db
-from moontracker.models import Alert
+from moontracker.models import Alert, LastPrice
 
 home_blueprint = Blueprint('home', __name__, template_folder='templates')
 
@@ -18,20 +18,40 @@ def index():
     """Code for the homepage."""
     form = AlertForm(request.form)
     if request.method == 'POST' and form.validate():
-        flash("Alert is set!")
         asset = form.asset.data
         target_price = form.target_price.data
         less_more = form.less_more.data
         phone_number = form.phone_number.data
         market = form.market.data
-        alert = Alert(symbol=asset, price=target_price,
-                      above=less_more, phone_number=phone_number,
-                      market=market)
-        if current_user.is_authenticated:
-            alert.user_id = current_user.id
+        had_last_price_error = False
+        if less_more == 2 or less_more == 3:
+            last_price_query = LastPrice.query.filter(
+                    LastPrice.symbol == asset)
+            lp_result = last_price_query.one_or_none()
+            if lp_result is None:
+                had_last_price_error = True
+            else:
+                if less_more == 2:  # + %
+                    less_more = 1  # above
+                    target_price = lp_result.price * (
+                            target_price / 100.0 + 1.0)
+                elif less_more == 3:  # - %
+                    less_more = 0  # below
+                    target_price = lp_result.price * (
+                            1.0 - target_price / 100.0)
 
-        db.session.add(alert)
-        db.session.commit()
+        if had_last_price_error:
+            flash("Internal error setting percent change!", 'error')
+        else:
+            alert = Alert(symbol=asset, price=target_price,
+                          above=less_more, phone_number=phone_number,
+                          market=market)
+            if current_user.is_authenticated:
+                alert.user_id = current_user.id
+
+            db.session.add(alert)
+            db.session.commit()
+            flash("Alert is set!")
 
     return render_template('index.html', form=form,
                            app_markets_json=json.dumps(supported_assets))
@@ -51,14 +71,23 @@ class AlertForm(Form):
             validators.Length(
                 min=10), validators.Regexp(
                 '^[0-9]+$', message="Input characters must be numeric")])
+
     asset = SelectField(
         'Coin', choices=assets)
+
     target_price = FloatField('Target Price', [validators.optional()])
-    less_more = SelectField('', choices=[(1, 'above'), (0, 'below'),
-                                         (2, '+ %'), (3, '- %')], coerce=int)
+
+    less_more_validators = [validators.AnyOf([1, 0, 2, 3])]
+    less_more = SelectField(
+        '',
+        choices=[(1, 'above'), (0, 'below'), (2, '+ %'), (3, '- %')],
+        validators=less_more_validators,
+        coerce=int)
+
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
+
     market_validators = [validators.AnyOf([m for m in market_apis])]
     market = SelectField('Market',
                          choices=[('', '')] + [(m, m) for m in market_apis],
