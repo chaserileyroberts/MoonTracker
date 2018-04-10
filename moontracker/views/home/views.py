@@ -37,6 +37,12 @@ def index():
                            app_markets_json=json.dumps(supported_assets))
 
 
+@home_blueprint.route('/appMarkets.js', methods=['GET'])
+def app_markets():
+    """Generates JavaScript for appMarkets."""
+    return 'appMarkets = ' + json.dumps(supported_assets)
+
+
 class AlertForm(Form):
     """Form object for website."""
 
@@ -53,7 +59,7 @@ class AlertForm(Form):
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
-    market_validators = [validators.InputRequired()]
+    market_validators = [validators.AnyOf((m for m in market_apis))]
     market = SelectField('Market',
                          choices=[('', '')] + [(m, m) for m in market_apis],
-                         default='', validators=market_validators)
+                         default=' ', validators=market_validators)
