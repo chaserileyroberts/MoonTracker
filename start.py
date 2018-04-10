@@ -40,15 +40,15 @@ def main():
     keyfile = "/etc/letsencrypt/archive/moontracker.xyz/privkey1.pem"
     if not args.prod:
         socketio.run(
-            app, 
-            host='0.0.0.0', 
-            port=args.port, 
+            app,
+            host='0.0.0.0',
+            port=args.port,
             use_reloader=False)
     else:
         socketio.run(
-            app, 
-            host='0.0.0.0', 
-            port=args.port, 
+            app,
+            host='0.0.0.0',
+            port=args.port,
             use_reloader=False,
             certfile=certfile,
             keyfile=keyfile)

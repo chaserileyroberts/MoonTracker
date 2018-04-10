@@ -107,11 +107,9 @@ def manage_alerts():
 
     if request.method == 'POST':
         if request.form['submit'] == 'Delete' and form.alert_id.validate(form):
-            current_index = None
             current_alert = None
             for index, alert in enumerate(alerts):
                 if alert.id == int(form.alert_id.data):
-                    current_index = index
                     current_alert = alert
                     break
 

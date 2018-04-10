@@ -39,7 +39,7 @@ def index():
 
 @home_blueprint.route('/appMarkets.js', methods=['GET'])
 def app_markets():
-    """Generates JavaScript for appMarkets."""
+    """Generate JavaScript for appMarkets."""
     return 'appMarkets = ' + json.dumps(supported_assets)
 
 
@@ -62,4 +62,4 @@ class AlertForm(Form):
     market_validators = [validators.AnyOf([m for m in market_apis])]
     market = SelectField('Market',
                          choices=[('', '')] + [(m, m) for m in market_apis],
-                         default=' ', validators=market_validators)
+                         default='', validators=market_validators)
