@@ -26,7 +26,7 @@ def index():
         had_last_price_error = False
         if less_more == 2 or less_more == 3:
             last_price_query = LastPrice.query.filter(
-                    LastPrice.symbol == asset)
+                LastPrice.symbol == asset)
             lp_result = last_price_query.one_or_none()
             if lp_result is None:
                 had_last_price_error = True
@@ -34,11 +34,11 @@ def index():
                 if less_more == 2:  # + %
                     less_more = 1  # above
                     target_price = lp_result.price * (
-                            target_price / 100.0 + 1.0)
+                        target_price / 100.0 + 1.0)
                 elif less_more == 3:  # - %
                     less_more = 0  # below
                     target_price = lp_result.price * (
-                            1.0 - target_price / 100.0)
+                        1.0 - target_price / 100.0)
 
         if had_last_price_error:
             flash("Internal error setting percent change!", 'error')
