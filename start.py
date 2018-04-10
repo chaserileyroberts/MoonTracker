@@ -36,7 +36,22 @@ def main():
     config.set_recaptcha_keys()
     app = create_app(config)
     db.create_all()
-    socketio.run(app, host='0.0.0.0', port=args.port, use_reloader=False)
+    certfile = "/etc/letsencrypt/live/moontracker.xyz/fullchain.pem"
+    keyfile = "/etc/letsencrypt/live/moontracker.xyz/privkey.pem"
+    if not args.prod:
+        socketio.run(
+            app, 
+            host='0.0.0.0', 
+            port=args.port, 
+            use_reloader=False)
+    else:
+        socketio.run(
+            app, 
+            host='0.0.0.0', 
+            port=args.port, 
+            use_reloader=False,
+            certfile=certfile,
+            keyfile=keyfile)
 
 
 if __name__ == '__main__':
