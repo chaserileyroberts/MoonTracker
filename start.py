@@ -36,8 +36,8 @@ def main():
     config.set_recaptcha_keys()
     app = create_app(config)
     db.create_all()
-    certfile = "/etc/letsencrypt/live/moontracker.xyz/fullchain.pem"
-    keyfile = "/etc/letsencrypt/live/moontracker.xyz/privkey.pem"
+    certfile = "/etc/letsencrypt/archive/moontracker.xyz/fullchain1.pem"
+    keyfile = "/etc/letsencrypt/archive/moontracker.xyz/privkey1.pem"
     if not args.prod:
         socketio.run(
             app, 
