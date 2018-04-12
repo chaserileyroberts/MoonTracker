@@ -54,13 +54,15 @@
                                         </div>
                                     </div>
                                 </dd>
+                                {#
                                 <dt>
                                     {{ form.alert_cond.label }}
                                 </dt>
                                 <dd>
                                     {{ form.alert_cond(subfield_kwargs={ 'class': 'form-control' })|safe }}
-                                    {{ render_field_errors(form.alert_cond) }}
+                                    {{ render_field_errors(form.alert) }}
                                 </dd>
+                                #}
                             </dl>
                             {{ form.recaptcha }}
                             <ul>

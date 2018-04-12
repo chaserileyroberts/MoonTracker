@@ -20,8 +20,6 @@ home_blueprint = Blueprint('home', __name__, template_folder='templates')
 def index():
     """Code for the homepage."""
     form = AlertForm(request.form)
-    print('alert_cond.data', form.alert_cond.data)
-    print('alert_cond.form.meta', form.alert_cond.form.meta)
     if request.method == 'POST' and form.validate():
         asset = form.asset.data
         target_price = form.target_price.data
@@ -71,16 +69,15 @@ def app_markets():
 class AlertConditionForm(Form):
     """Form for AlertConditionField."""
 
-    cond_option_validators = [validators.AnyOf([1, 0, 2, 3])]
+    # cond_option_validators = [validators.AnyOf([1, 0, 2, 3])]
+    cond_option_validators = [validators.optional()]
     cond_option = SelectField(
         'Condition Option',
         choices=[(1, 'above'), (0, 'below'), (2, '+ %'), (3, '- %')],
         validators=cond_option_validators,
         coerce=int)
-    price = FloatField(
-        'Target Price', [validators.optional()])
-    percent = FloatField(
-        'Target Percent Change', [validators.optional()])
+    price = FloatField('Target Price')
+    percent = FloatField('Target Percent Change')
     percent_duration = SelectField(
         'Target Change Duration',
         choices=[
@@ -154,7 +151,7 @@ class AlertForm(Form):
         validators=less_more_validators,
         coerce=int)
 
-    alert_cond = AlertConditionField('Alert Condition')
+    # alert_cond = AlertConditionField('Alert Condition')
 
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
