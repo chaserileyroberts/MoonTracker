@@ -102,6 +102,43 @@ $.widget("custom.combobox", {
 });
 $("#asset").combobox();
 
+function onAlertCondChange(cond_option) {
+    console.log(cond_option);
+    var priceElem = $('#alert_cond-price');
+    var priceLabel = $('label[for="alert_cond-price"]');
+    var percentElem = $('#alert_cond-percent');
+    var percentLabel = $('label[for="alert_cond-percent"]');
+    var percentDurationElem = $('#alert_cond-percent_duration');
+    var percentDurationLabel = $('label[for="alert_cond-percent_duration"]');
+    if (cond_option == '1' || cond_option == '0') {
+        priceElem.show();
+        priceLabel.show();
+        percentElem.hide();
+        percentLabel.hide();
+        percentDurationElem.hide();
+        percentDurationLabel.hide();
+    } else if (cond_option == '2' || cond_option == '3') {
+        priceElem.hide();
+        priceLabel.hide();
+        percentElem.show();
+        percentLabel.show();
+        percentDurationElem.show();
+        percentDurationLabel.show();
+    } else {
+        priceElem.hide();
+        priceLabel.hide();
+        percentElem.hide();
+        percentLabel.hide();
+        percentDurationElem.hide();
+        percentDurationLabel.hide();
+    }
+}
+
+$('#alert_cond-cond_option').on('change', function (event) {
+    var cond_option = event.target.value;
+    onAlertCondChange(cond_option);
+});
+onAlertCondChange($('#alert_cond-cond_option').val());
 
 var lplSocket = io('/lastpriceslive', { transports: ['websocket'] });
 lplSocket.on('json', function (lastPricesStr) {
