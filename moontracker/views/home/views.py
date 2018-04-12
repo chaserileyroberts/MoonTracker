@@ -2,8 +2,13 @@
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
 from flask_login import current_user
-from wtforms import Form, FloatField, StringField, SelectField
+import wtforms
+from wtforms import Form
+from wtforms import Field, FloatField, StringField, SelectField
 from wtforms import validators
+from wtforms import widgets
+from wtforms.fields import FormField
+from wtforms.utils import unset_value
 import json
 
 from moontracker.assets import supported_assets, assets, market_apis
@@ -17,6 +22,8 @@ home_blueprint = Blueprint('home', __name__, template_folder='templates')
 def index():
     """Code for the homepage."""
     form = AlertForm(request.form)
+    print('alert_cond.data', form.alert_cond.data)
+    print('alert_cond.form.meta', form.alert_cond.form.meta)
     if request.method == 'POST' and form.validate():
         asset = form.asset.data
         target_price = form.target_price.data
@@ -63,6 +70,61 @@ def app_markets():
     return 'appMarkets = ' + json.dumps(supported_assets)
 
 
+class AlertConditionForm(Form):
+    """Form for AlertConditionField."""
+    cond_option_validators = [validators.AnyOf([1, 0, 2, 3])]
+    cond_option = SelectField(
+        'Condition Option',
+        choices=[(1, 'above'), (0, 'below'), (2, '+ %'), (3, '- %')],
+        validators=cond_option_validators,
+        coerce=int)
+    price = FloatField(
+        'Target Price', [validators.optional()])
+    percent = FloatField(
+        'Target Percent Change', [validators.optional()])
+    percent_duration = SelectField(
+        'Target Change Duration',
+        choices=[(0, '1 hour'), (1, '24 hours'), (2, '1 week'), (2, '1 month')],
+        coerce=int)
+
+
+class AlertConditionWidget(widgets.TableWidget):
+    """Table widget that can pass subfield kwargs."""
+    def __call__(self, field, subfield_kwargs=None, **kwargs):
+        html = []
+        if self.with_table_tag:
+            kwargs.setdefault('id', field.id)
+            html.append('<dl ' + widgets.html_params(**kwargs) + '>')
+        hidden = ''
+        if subfield_kwargs is None:
+            subfield_kwargs = {}
+        for subfield in field:
+            if subfield.type in ('HiddenField', 'CSRFTokenField'):
+                hidden += subfield(**subfield_kwargs)
+            else:
+                html.append(
+                    '<dt>' +
+                    subfield.label() +
+                    '</dt><dd>' +
+                    hidden +
+                    subfield(**subfield_kwargs) +
+                    '</dd>')
+                hidden = ''
+        if self.with_table_tag:
+            html.append('</dl>')
+        if hidden:
+            html.append(hidden)
+        return widgets.HTMLString(''.join(html))
+
+
+class AlertConditionField(FormField):
+    """Field for alert condition."""
+    widget = AlertConditionWidget()
+
+    def __init__(self, label='Alert Condition', validators=None, separator='-', **kwargs):
+        super().__init__(AlertConditionForm, label, validators, **kwargs)
+
+
 class AlertForm(Form):
     """Form object for website."""
 
@@ -83,6 +145,8 @@ class AlertForm(Form):
         choices=[(1, 'above'), (0, 'below'), (2, '+ %'), (3, '- %')],
         validators=less_more_validators,
         coerce=int)
+
+    alert_cond = AlertConditionField('Alert Condition')
 
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[

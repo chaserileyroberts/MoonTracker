@@ -1,5 +1,6 @@
 {% from "_navbar.html" import navbar with context %}
 {% from "_render_field.html" import render_field with context %}
+{% from "_render_field.html" import render_field_errors with context %}
 {% from "_messages.html" import messages with context %}
 <!DOCTYPE html>
 <html lang="en">
@@ -52,6 +53,13 @@
                                             {{ render_field(form.target_price) }}
                                         </div>
                                     </div>
+                                </dd>
+                                <dt>
+                                    {{ form.alert_cond.label }}
+                                </dt>
+                                <dd>
+                                    {{ form.alert_cond(subfield_kwargs={ 'class': 'form-control' })|safe }}
+                                    {{ render_field_errors(form.alert_cond) }}
                                 </dd>
                             </dl>
                             {{ form.recaptcha }}
