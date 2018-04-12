@@ -2,7 +2,7 @@
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
 from flask_login import current_user
-from wtforms import Form, FloatField, StringField, SelectField
+from wtforms import Form, FloatField, StringField, SelectField,DateField
 from wtforms import validators
 import json
 
@@ -23,6 +23,7 @@ def index():
         less_more = form.less_more.data
         phone_number = form.phone_number.data
         market = form.market.data
+        end_date = form.end_date
         had_last_price_error = False
         if less_more == 2 or less_more == 3:
             last_price_query = LastPrice.query.filter(
@@ -83,6 +84,9 @@ class AlertForm(Form):
         choices=[(1, 'above'), (0, 'below'), (2, '+ %'), (3, '- %')],
         validators=less_more_validators,
         coerce=int)
+    end_date = DateField("Enter end date only for percent change (M/D/Y)", format='%m/%d/%y')
+
+
 
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[

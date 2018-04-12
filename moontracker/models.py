@@ -16,6 +16,7 @@ class Alert(db.Model):
     phone_number = db.Column(db.String(80), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     market = db.Column(db.String)
+    end_date = db.Column(db.DateTime)
 
 
 class User(db.Model):
