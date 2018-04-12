@@ -2,13 +2,11 @@
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
 from flask_login import current_user
-import wtforms
 from wtforms import Form
-from wtforms import Field, FloatField, StringField, SelectField
+from wtforms import FloatField, StringField, SelectField
 from wtforms import validators
 from wtforms import widgets
 from wtforms.fields import FormField
-from wtforms.utils import unset_value
 import json
 
 from moontracker.assets import supported_assets, assets, market_apis
@@ -72,6 +70,7 @@ def app_markets():
 
 class AlertConditionForm(Form):
     """Form for AlertConditionField."""
+
     cond_option_validators = [validators.AnyOf([1, 0, 2, 3])]
     cond_option = SelectField(
         'Condition Option',
@@ -84,13 +83,19 @@ class AlertConditionForm(Form):
         'Target Percent Change', [validators.optional()])
     percent_duration = SelectField(
         'Target Change Duration',
-        choices=[(0, '1 hour'), (1, '24 hours'), (2, '1 week'), (2, '1 month')],
+        choices=[
+            (0, '1 hour'),
+            (1, '24 hours'),
+            (2, '1 week'),
+            (3, '1 month')],
         coerce=int)
 
 
 class AlertConditionWidget(widgets.TableWidget):
     """Table widget that can pass subfield kwargs."""
+
     def __call__(self, field, subfield_kwargs=None, **kwargs):
+        """Generate HTML for the widget."""
         html = []
         if self.with_table_tag:
             kwargs.setdefault('id', field.id)
@@ -119,9 +124,12 @@ class AlertConditionWidget(widgets.TableWidget):
 
 class AlertConditionField(FormField):
     """Field for alert condition."""
+
     widget = AlertConditionWidget()
 
-    def __init__(self, label='Alert Condition', validators=None, separator='-', **kwargs):
+    def __init__(self, label='Alert Condition', validators=None, separator='-',
+                 **kwargs):
+        """Init."""
         super().__init__(AlertConditionForm, label, validators, **kwargs)
 
 
