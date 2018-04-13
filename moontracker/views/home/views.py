@@ -85,7 +85,7 @@ class AlertConditionForm(Form):
         coerce=int)
 
     def validate(self, extra_validators=None):
-        """Validates the AlertForm."""
+        """Validate the AlertForm."""
         self._errors = None
         success = True
         if self.cond_option.data == 1 or self.cond_option.data == 0:
