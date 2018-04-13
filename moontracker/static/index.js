@@ -104,12 +104,12 @@ $("#asset").combobox();
 
 function onAlertCondChange(cond_option) {
     console.log(cond_option);
-    var priceElem = $('#alert_cond-price');
-    var priceLabel = $('label[for="alert_cond-price"]');
-    var percentElem = $('#alert_cond-percent');
-    var percentLabel = $('label[for="alert_cond-percent"]');
-    var percentDurationElem = $('#alert_cond-percent_duration');
-    var percentDurationLabel = $('label[for="alert_cond-percent_duration"]');
+    var priceElem = $('#price');
+    var priceLabel = $('label[for="price"]');
+    var percentElem = $('#percent');
+    var percentLabel = $('label[for="percent"]');
+    var percentDurationElem = $('#percent_duration');
+    var percentDurationLabel = $('label[for="percent_duration"]');
     if (cond_option == '1' || cond_option == '0') {
         priceElem.show();
         priceLabel.show();
@@ -134,11 +134,11 @@ function onAlertCondChange(cond_option) {
     }
 }
 
-$('#alert_cond-cond_option').on('change', function (event) {
+$('#cond_option').on('change', function (event) {
     var cond_option = event.target.value;
     onAlertCondChange(cond_option);
 });
-onAlertCondChange($('#alert_cond-cond_option').val());
+onAlertCondChange($('#cond_option').val());
 
 var lplSocket = io('/lastpriceslive', { transports: ['websocket'] });
 lplSocket.on('json', function (lastPricesStr) {

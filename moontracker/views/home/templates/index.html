@@ -42,11 +42,28 @@
                                     {{ render_field(form.market, disabled=(form.asset.data == '')) }}
                                 </dd>
                                 <dt>
-                                    {{ form.alert_cond.label }}
+                                    {{ form.cond_option.label }}
                                 </dt>
                                 <dd>
-                                    {{ form.alert_cond(subfield_kwargs={ 'class': 'form-control' })|safe }}
-                                    {{ render_field_errors(form.alert_cond) }}
+                                    {{ render_field(form.cond_option) }}
+                                </dd>
+                                <dt>
+                                    {{ form.price.label }}
+                                </dt>
+                                <dd>
+                                    {{ render_field(form.price) }}
+                                </dd>
+                                <dt>
+                                    {{ form.percent.label }}
+                                </dt>
+                                <dd>
+                                    {{ render_field(form.percent) }}
+                                </dd>
+                                <dt>
+                                    {{ form.percent_duration.label }}
+                                </dt>
+                                <dd>
+                                    {{ render_field(form.percent_duration) }}
                                 </dd>
                             </dl>
                             {{ form.recaptcha }}
