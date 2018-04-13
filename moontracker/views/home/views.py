@@ -11,7 +11,7 @@ import json
 
 from moontracker.assets import supported_assets, assets, market_apis
 from moontracker.extensions import db
-from moontracker.models import Alert, LastPrice
+from moontracker.models import Alert
 
 home_blueprint = Blueprint('home', __name__, template_folder='templates')
 
@@ -95,7 +95,8 @@ class AlertConditionForm(Form):
         elif self.cond_option.data == 2 or self.cond_option.data == 3:
             self.price.validators = [validators.optional()]
             self.percent.validators = AlertConditionForm.percent_validators
-            self.percent_duration.validators = AlertConditionForm.percent_duration_validators
+            pdv = AlertConditionForm.percent_duration_validators
+            self.percent_duration.validators = pdv
 
         for name, field in self._fields.items():
             if extra_validators is not None and name in extra_validators:
