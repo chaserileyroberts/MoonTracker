@@ -42,27 +42,12 @@
                                     {{ render_field(form.market, disabled=(form.asset.data == '')) }}
                                 </dd>
                                 <dt>
-                                    {{ form.target_price.label }}
-                                </dt>
-                                <dd>
-                                    <div class="row">
-                                        <div class="col-12 col-md-3">
-                                            {{ render_field(form.less_more) }} 
-                                        </div>
-                                        <div class="col-12 col-md-9">
-                                            {{ render_field(form.target_price) }}
-                                        </div>
-                                    </div>
-                                </dd>
-                                {#
-                                <dt>
                                     {{ form.alert_cond.label }}
                                 </dt>
                                 <dd>
                                     {{ form.alert_cond(subfield_kwargs={ 'class': 'form-control' })|safe }}
                                     {{ render_field_errors(form.alert_cond) }}
                                 </dd>
-                                #}
                             </dl>
                             {{ form.recaptcha }}
                             <ul>
