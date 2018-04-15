@@ -32,7 +32,8 @@ class Market:
         Returns:
             price: The current price of the asset as a float.
         Raises:
-            RuntimeErrror: If the request doesn't return a 200 status code.
+            RuntimeError: If the request doesn't return a 200 status code.
+            ValueError: If the time is not supported by the API.
 
         """
         raise NotImplementedError
@@ -66,7 +67,8 @@ class BitfinexMarket(Market):
         Returns:
             price: The current price of the asset as a float.
         Raises:
-            RuntimeErrror: If the request doesn't return a 200 status code.
+            RuntimeError: If the request doesn't return a 200 status code.
+            ValueError: If the time is not supported by the API.
 
         """
 
@@ -112,7 +114,8 @@ class CoinbaseMarket(Market):
         Returns:
             price: The current price of the asset as a float.
         Raises:
-            RuntimeErrror: If the request doesn't return a 200 status code.
+            RuntimeError: If the request doesn't return a 200 status code.
+            ValueError: If the time is not supported by the API.
 
         """
 
@@ -140,7 +143,8 @@ class GdaxMarket(Market):
         Returns:
             price: The current price of the asset as a float.
         Raises:
-            RuntimeErrror: If the request doesn't return a 200 status code.
+            RuntimeError: If the request doesn't return a 200 status code.
+            ValueError: If the time is not supported by the API.
 
         """
             
@@ -180,7 +184,8 @@ class GeminiMarket(Market):
         Returns:
             price: The current price of the asset as a float.
         Raises:
-            RuntimeErrror: If the request doesn't return a 200 status code.
+            RuntimeError: If the request doesn't return a 200 status code.
+            ValueError: If the time is not supported by the API.
 
         """
 
@@ -220,7 +225,8 @@ class NasdaqMarket(Market):
         Returns:
             price: The current price of the asset as a float.
         Raises:
-            RuntimeErrror: If the request doesn't return a 200 status code.
+            RuntimeError: If the request doesn't return a 200 status code.
+            ValueError: If the time is not supported by the API.
 
         """
 
@@ -228,6 +234,8 @@ class NasdaqMarket(Market):
             request = "https://api.iextrading.com/1.0/stock/{}/quote".format(product)
             response = self._handle_request(request)
             return float(response['latestPrice'])
+        elif (datetime.utcnow() - time).total_seconds() > (7 * 24 * 60 * 60):
+            raise ValueError("Tiem must be within 7 days of the current time.")
         else:
             date = time.date().strftime("%Y%m%d")
 
