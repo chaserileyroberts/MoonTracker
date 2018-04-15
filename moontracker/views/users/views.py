@@ -107,11 +107,9 @@ def manage_alerts():
 
     if request.method == 'POST':
         if request.form['submit'] == 'Delete' and form.alert_id.validate(form):
-            current_index = None
             current_alert = None
             for index, alert in enumerate(alerts):
                 if alert.id == int(form.alert_id.data):
-                    current_index = index
                     current_alert = alert
                     break
 
@@ -124,7 +122,7 @@ def manage_alerts():
                 print("New Alert")
                 alert = Alert(symbol=form.asset.data,
                               price=form.target_price.data,
-                              above=form.less_more.data,
+                              condition=form.less_more.data,
                               phone_number=form.phone_number.data)
                 alert.user_id = current_user.id
                 db.session.merge(alert)
@@ -140,7 +138,7 @@ def manage_alerts():
                     current_alert.phone_number = form.phone_number.data
                     current_alert.symbol = form.asset.data
                     current_alert.price = form.target_price.data
-                    current_alert.above = form.less_more.data
+                    current_alert.condition = form.less_more.data
                     db.session.merge(current_alert)
                     db.session.commit()
                     # figure out proper way to refresh

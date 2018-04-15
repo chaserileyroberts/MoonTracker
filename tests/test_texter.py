@@ -13,7 +13,7 @@ def test_less_than_text():
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
 
-    alerts = [Alert(symbol='BTC', price=50.0, above=0,
+    alerts = [Alert(symbol='BTC', price=50.0, condition=0,
                     phone_number='555-555-5555')]
 
     texter.text_less_than(alerts, 3.0)
@@ -30,7 +30,7 @@ def test_greater_than_text():
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
 
-    alerts = [Alert(symbol='BTC', price=1.0, above=1,
+    alerts = [Alert(symbol='BTC', price=1.0, condition=1,
                     phone_number='555-555-5555')]
 
     texter.text_greater_than(alerts, 3.0)
@@ -47,7 +47,7 @@ def test_LTC():
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
 
-    alerts = [Alert(symbol='LTC', price=1.0, above=1,
+    alerts = [Alert(symbol='LTC', price=1.0, condition=1,
                     phone_number='555-555-5555')]
 
     texter.text_greater_than(alerts, 3.0)
@@ -61,7 +61,7 @@ def test_ETH():
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
 
-    alerts = [Alert(symbol='ETH', price=1.0, above=1,
+    alerts = [Alert(symbol='ETH', price=1.0, condition=1,
                     phone_number='555-555-5555')]
 
     texter.text_greater_than(alerts, 3.0)
@@ -86,7 +86,7 @@ def test_single_text_loop():
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
 
-    alert = Alert(symbol='BTC', price=10.0, above=1,
+    alert = Alert(symbol='BTC', price=10.0, condition=1,
                   phone_number='555-555-5555')
     db.session.add(alert)
     db.session.commit()
@@ -105,7 +105,7 @@ def test_single_text_loop_below():
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
 
-    alert = Alert(symbol='BTC', price=10.0, above=0,
+    alert = Alert(symbol='BTC', price=10.0, condition=0,
                   phone_number='555-555-5555')
     db.session.add(alert)
     db.session.commit()
@@ -124,7 +124,7 @@ def test_single_text_loop_include_market():
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
 
-    alert = Alert(symbol='ETH', price=2483.0, above=0,
+    alert = Alert(symbol='ETH', price=2483.0, condition=0,
                   phone_number='1234567890', market='coinbase')
     db.session.add(alert)
     db.session.commit()
@@ -143,7 +143,7 @@ def test_include_market_above():
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
 
-    alert = Alert(symbol='ETH', price=2, above=1,
+    alert = Alert(symbol='ETH', price=2, condition=1,
                   phone_number='1234567890', market='coinbase')
     db.session.add(alert)
     db.session.commit()
@@ -161,7 +161,7 @@ def test_single_entry_no_text():
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
-    alert = Alert(symbol='BTC', price=100.0, above=1,
+    alert = Alert(symbol='BTC', price=100.0, condition=1,
                   phone_number='555-555-5555')
     db.session.add(alert)
     db.session.commit()
@@ -178,7 +178,7 @@ def test_invalid_number(capsys):
                                 .TwilioRestException(Mock(), Mock()))
     texter = Texter()
     texter.set_clients(price_tracker, send_message)
-    alert = Alert(symbol='BTC', price=10.0, above=1,
+    alert = Alert(symbol='BTC', price=10.0, condition=1,
                   phone_number='5555')
     db.session.add(alert)
     db.session.commit()
@@ -194,7 +194,7 @@ def test_invalid_number_below(capsys):
                                 .TwilioRestException(Mock(), Mock()))
     texter = Texter()
     texter.set_clients(price_tracker, send_message)
-    alert = Alert(symbol='BTC', price=100.0, above=0,
+    alert = Alert(symbol='BTC', price=100.0, condition=0,
                   phone_number='5555')
     db.session.add(alert)
     db.session.commit()
@@ -208,7 +208,7 @@ def test_price_tracker_integration():
     twilio = twilio_fake()
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
-    alert = Alert(symbol='BTC', price=100.0, above=1,
+    alert = Alert(symbol='BTC', price=100.0, condition=1,
                   phone_number='555-555-5555')
     db.session.add(alert)
     db.session.commit()
