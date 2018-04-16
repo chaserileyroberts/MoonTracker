@@ -90,10 +90,8 @@ class AlertForm(Form):
     percent_duration = SelectField(
         'Target Change Duration',
         choices=[
-            (0, '1 hour'),
             (1, '24 hours'),
-            (2, '1 week'),
-            (3, '1 month')],
+            (2, '1 week')],
         coerce=int)
 
     recaptcha = RecaptchaField(
