@@ -58,7 +58,7 @@ class Texter(object):
         greater_than_query = Alert.query.filter(
             Alert.symbol == coin,
             Alert.price < price,
-            Alert.above == 1,
+            Alert.condition == 1,
             ((Alert.market == market) | (Alert.market.is_(None))))
         self.text_greater_than(greater_than_query.all(), price)
         greater_than_query.delete(False)
@@ -66,7 +66,7 @@ class Texter(object):
         less_than_query = Alert.query.filter(
             Alert.symbol == coin,
             Alert.price > price,
-            Alert.above == 0,
+            Alert.condition == 0,
             ((Alert.market == market) | (Alert.market.is_(None))))
         self.text_less_than(less_than_query.all(), price)
         less_than_query.delete(False)

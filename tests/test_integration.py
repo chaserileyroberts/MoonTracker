@@ -16,13 +16,13 @@ def test_integration_sanity():
     """
     response = test_client.post(
         '/',
-        data=dict(
-            phone_number='5558675309',
-            asset='BTC',
-            market='coinbase',
-            less_more='1',
-            target_price='1'
-        ))
+        data={
+            'phone_number': '5558675309',
+            'asset': 'BTC',
+            'market': 'coinbase',
+            'cond_option': '1',
+            'price': '1'
+        })
     assert response.status_code == 200
     cb = price_tracker_fake("45")
     twilio = twilio_fake()
@@ -42,13 +42,13 @@ def test_integration_below():
     """
     response = test_client.post(
         '/',
-        data=dict(
-            phone_number='5558675309',
-            asset='BTC',
-            market='coinbase',
-            less_more='0',
-            target_price='100'
-        ))
+        data={
+            'phone_number': '5558675309',
+            'asset': 'BTC',
+            'market': 'coinbase',
+            'cond_option': '0',
+            'price': '100'
+        })
     assert response.status_code == 200
     cb = price_tracker_fake("45")
     twilio = twilio_fake()
@@ -68,13 +68,13 @@ def test_integration_include_market():
     """
     response = test_client.post(
         '/',
-        data=dict(
-            phone_number='5558675309',
-            asset='BTC',
-            less_more='1',
-            target_price='10',
-            market='coinbase'
-        ))
+        data={
+            'phone_number': '5558675309',
+            'asset': 'BTC',
+            'market': 'coinbase',
+            'cond_option': '1',
+            'price': '10'
+        })
     assert response.status_code == 200
     assert "Alert is set!" in str(response.data)
     cb = price_tracker_fake("45")
