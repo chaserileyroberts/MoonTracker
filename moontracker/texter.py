@@ -42,14 +42,15 @@ class Texter(object):
         for asset in supported_assets:
             for market in supported_assets[asset]["markets"]:
                 self.check_alerts_for_coin(asset, market)
-                
+
     '''remove alert from database if at or past end date'''
+
     def check_date(self):
 
         timestamp = datetime.now().date()
-        dateQuery = Alert.query.filter( 
-            Alert.end_date<=timestamp)
-        
+        dateQuery = Alert.query.filter(
+            Alert.end_date <= timestamp)
+
         dateQuery.delete(False)
         db.session.commit()
 
@@ -85,8 +86,6 @@ class Texter(object):
 
         last_price = LastPrice(symbol=coin, price=price, timestamp=timestamp)
         db.session.merge(last_price)
-
-
 
         # TODO(Chase): This will cause race condition.
         db.session.commit()

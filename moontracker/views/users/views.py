@@ -4,7 +4,7 @@ from flask import request, render_template, flash, redirect, url_for, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
 import wtforms
 from flask_wtf import RecaptchaField, Recaptcha
-from wtforms import Form, FloatField, StringField, IntegerField, SelectField,DateField
+from wtforms import Form, FloatField, StringField, IntegerField, SelectField, DateField
 from wtforms import validators
 from sqlalchemy import exists
 from moontracker.extensions import bcrypt, db, login_manager
@@ -215,7 +215,8 @@ class ManageAlertForm(Form):
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
 
-    end_date = DateField("Enter end date for alert (YYYY/MM/DD)", format='%Y-%m-%d',default=datetime.now().date())
+    end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
+                         format='%Y-%m-%d', default=datetime.now().date())
 
     def __init__(self, form, alerts):
         """Initialize the form."""

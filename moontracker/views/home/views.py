@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
 from flask_login import current_user
-from wtforms import Form, FloatField, StringField, SelectField,DateField
+from wtforms import Form, FloatField, StringField, SelectField, DateField
 from wtforms import validators
 import json
 
@@ -47,7 +47,7 @@ def index():
         else:
             alert = Alert(symbol=asset, price=target_price,
                           above=less_more, phone_number=phone_number,
-                          market=market,end_date = end_date.data)
+                          market=market, end_date=end_date.data)
             if current_user.is_authenticated:
                 alert.user_id = current_user.id
 
@@ -85,8 +85,9 @@ class AlertForm(Form):
         choices=[(1, 'above'), (0, 'below'), (2, '+ %'), (3, '- %')],
         validators=less_more_validators,
         coerce=int)
-    end_date = DateField("Enter end date for alert (YYYY/MM/DD)", format='%Y-%m-%d',default=datetime.now().date())
-  
+    end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
+                         format='%Y-%m-%d', default=datetime.now().date())
+
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
