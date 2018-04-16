@@ -46,8 +46,7 @@ class Texter(object):
    
 
     def check_date(self):
-        '''remove alert from database if at or past end date'''
-
+        """remove alert from database if at or past end date"""
         timestamp = datetime.now().date()
         dateQuery = Alert.query.filter(
             Alert.end_date <= timestamp)
