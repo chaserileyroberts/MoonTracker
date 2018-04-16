@@ -3,12 +3,13 @@ from flask import request, render_template, flash, redirect, url_for, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
 import wtforms
 from flask_wtf import RecaptchaField, Recaptcha
-from wtforms import Form, FloatField, StringField, IntegerField, SelectField
+from wtforms import Form, StringField, IntegerField
 from wtforms import validators
 from sqlalchemy import exists
 from moontracker.extensions import bcrypt, db, login_manager
 from moontracker.models import User, Alert
-from moontracker.assets import assets, supported_assets
+from moontracker.assets import supported_assets
+from moontracker.views.home.views import AlertForm
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
@@ -196,22 +197,12 @@ class ChangePasswordForm(Form):
         validators.Length(min=8, message="Please enter password")])
 
 
-class ManageAlertForm(Form):
+class ManageAlertForm(AlertForm):
     """Form to manage an alert."""
 
     alert_id = IntegerField(validators=[validators.Required()],
                             widget=wtforms.widgets.HiddenInput())
-    phone_number = StringField(
-        'Phone Number', [
-            validators.Length(min=10),
-            validators.Regexp(
-                '^[0-9]+$',
-                message="Input characters must be numeric")])
-    asset = SelectField(
-        'Coin', choices=assets)
-    target_price = FloatField('Target Price', [validators.optional()])
-    less_more = SelectField(
-        '', choices=[(1, 'above'), (0, 'below')], coerce=int)
+    recaptcha = None
 
     def __init__(self, form, alerts):
         """Initialize the form."""
