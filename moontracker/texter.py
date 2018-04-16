@@ -93,9 +93,9 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "%s price is above your trigger of %s. "
-                        "Current price is %s"
-                        % (alert.symbol, alert.price, price)))
+                        "{} price is below your trigger of {:.2f}. "
+                        "Current price is {:.2f}"
+                        .format(alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.
                 print("Invalid number:", alert.phone_number)
@@ -116,8 +116,8 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "%s price is below your trigger of %s. "
-                        "Current price is %s"
-                        % (alert.symbol, alert.price, price)))
+                        "{} price is below your trigger of {:.2f}. "
+                        "Current price is {:.2f}"
+                        .format(alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 print("Invalid number:", alert.phone_number)
