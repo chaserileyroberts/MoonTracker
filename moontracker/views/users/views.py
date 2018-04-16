@@ -1,5 +1,4 @@
 """User related views."""
-from datetime import datetime
 from flask import request, render_template, flash, redirect, url_for, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
 import wtforms
@@ -11,6 +10,7 @@ from sqlalchemy import exists
 from moontracker.extensions import bcrypt, db, login_manager
 from moontracker.models import User, Alert
 from moontracker.assets import assets, supported_assets
+from datetime import datetime
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
