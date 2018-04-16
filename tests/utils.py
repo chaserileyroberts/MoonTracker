@@ -51,9 +51,10 @@ class twilio_fake():
 class price_tracker_fake():
     """Fake Price Tracker client."""
 
-    def __init__(self, amount):
+    def __init__(self, amount, percent=None):
         """Build fake price tracker client."""
         self.amount = float(amount)
+        self.percent = float(percent)
 
     def get_spot_price(self, asset, market):
         """Get the current price of the asset.
@@ -62,3 +63,6 @@ class price_tracker_fake():
             asset: The asset in question.
         """
         return self.amount
+
+    def get_percent_change(self, asset, market, hour):
+        return self.percent

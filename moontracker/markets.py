@@ -102,7 +102,7 @@ class BitfinexMarket(Market):
 
 
 class CoinbaseMarket(Market):
-    """Markert Client for Coinbase."""
+    """Market Client for Coinbase."""
 
     def get_spot_price(self, product, time=None):
         """Get the asset price at the specified time.
