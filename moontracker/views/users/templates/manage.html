@@ -33,7 +33,7 @@
 		                <!-- replace with edit image -->
 		                <div class="col-3 col-md-1">
 		                    <form name="editButton" method="post">
-		                        <input type="button" name="edit" value="Edit" class="btn btn-default" data-toggle="modal" data-target="#alert-modal" data-alert-id="{{ alert.id }}" data-alert-symbol="{{ alert.symbol }}" data-alert-above="{{ alert.above }}" data-alert-price="{{ alert.price }}" data-alert-phone-number="{{ alert.phone_number }}">
+		                        <input type="button" name="edit" value="Edit" class="btn btn-default" data-toggle="modal" data-target="#alert-modal" data-alert-id="{{ alert.id }}" data-alert-symbol="{{ alert.symbol }}" data-alert-above="{{ alert.above }}" data-alert-price="{{ alert.price }}" data-alert-phone-number="{{ alert.phone_number }}" data-alert-end-date="{{ alert.phone_number }}>">
 		                    </form>
 		                </div>
 		            </div>
@@ -76,6 +76,12 @@
                                     <dt>{{ form.phone_number.label }}</dt>
                                     <dd>{{ render_field(form.phone_number) }}</dd>
                                     <dd>{{ render_field(form.alert_id) }}</dd>
+                                    <dt>
+                                    {{ form.end_date.label }}
+                                </dt>
+                                <dd>
+                                    {{ render_field(form.end_date) }}
+                                </dd>
                                 </dl>
                                 <input type="submit" name="submit" value="Cancel" class="btn btn-secondary" data-dismiss="modal">
                                 <input type="submit" name="submit" value="Delete" class="btn btn-danger">

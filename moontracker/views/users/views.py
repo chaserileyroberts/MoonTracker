@@ -1,9 +1,10 @@
 """User related views."""
+from datetime import datetime
 from flask import request, render_template, flash, redirect, url_for, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
 import wtforms
 from flask_wtf import RecaptchaField, Recaptcha
-from wtforms import Form, FloatField, StringField, IntegerField, SelectField
+from wtforms import Form, FloatField, StringField, IntegerField, SelectField,DateField
 from wtforms import validators
 from sqlalchemy import exists
 from moontracker.extensions import bcrypt, db, login_manager
@@ -123,7 +124,8 @@ def manage_alerts():
                 alert = Alert(symbol=form.asset.data,
                               price=form.target_price.data,
                               above=form.less_more.data,
-                              phone_number=form.phone_number.data)
+                              phone_number=form.phone_number.data,
+                              end_date=form.end_date.data)
                 alert.user_id = current_user.id
                 db.session.merge(alert)
                 db.session.commit()
@@ -212,6 +214,8 @@ class ManageAlertForm(Form):
     target_price = FloatField('Target Price', [validators.optional()])
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
+
+    end_date = DateField("Enter end date for alert (YYYY/MM/DD)", format='%Y-%m-%d',default=datetime.now().date())
 
     def __init__(self, form, alerts):
         """Initialize the form."""
