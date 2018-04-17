@@ -27,7 +27,7 @@ class PriceTracker():
         value = mrkt.get_spot_price(asset)
         return value
 
-    def get_percent_change(self, asset, market=None, time=3600):
+    def get_percent_change(self, asset, market=None, duration=3600):
         """Get the percent change for the asset.
 
         Args:
@@ -46,5 +46,5 @@ class PriceTracker():
         else:
             MarketClass = lookupMarket(market)
         mrkt = MarketClass()
-        change = mrkt.get_percent_change(asset, time)
+        change = mrkt.get_percent_change(asset, duration)
         return change

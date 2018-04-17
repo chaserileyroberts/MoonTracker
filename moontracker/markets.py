@@ -82,6 +82,8 @@ class BitfinexMarket(Market):
 
             # Returns the latest trade price.
             return float(response[6])
+        elif (datetime.utcnow() - time).total_seconds() > (31 * 24 * 60 * 60):
+            raise ValueError("Time must be within 31 days of the current time.")
         else:
             # Bitfinex requires the time to be in milliseconds since epoch.
             start_time = int((time - datetime(1970, 1, 1)).total_seconds() * 1000)
@@ -121,6 +123,8 @@ class CoinbaseMarket(Market):
 
         if time is None:
             request = 'https://api.coinbase.com/v2/prices/{}-usd/spot'.format(product)
+        elif (datetime.utcnow() - time).total_seconds() > (31 * 24 * 60 * 60):
+            raise ValueError("Time must be within 31 days of the current time.")
         else:
             # Coinbase only allows historical prices by date.
             date = time.date().isoformat()
@@ -152,6 +156,8 @@ class GdaxMarket(Market):
             request = 'https://api.gdax.com/products/{}-usd/ticker'.format(product)
             response = self._handle_request(request)
             return float(response['price'])
+        elif (datetime.utcnow() - time).total_seconds() > (31 * 24 * 60 * 60):
+            raise ValueError("Time must be within 31 days of the current time.")
         else:
             # The start time is arbitrarily 10 minutes behind the end time.
             start_time = time - timedelta(minutes=10)
@@ -193,6 +199,8 @@ class GeminiMarket(Market):
             request = 'https://api.gemini.com/v1/pubticker/{}usd'.format(product)
             response = self._handle_request(request)
             return float(response['last'])
+        elif (datetime.utcnow() - time).total_seconds() > (7 * 24 * 60 * 60):
+            raise ValueError("Time must be within 7 days of the current time.")
         else:
             # Gemini requires the time to be in seconds since epoch.
             # Arbitrarily 10 minutes behind the target time.
@@ -235,7 +243,7 @@ class NasdaqMarket(Market):
             response = self._handle_request(request)
             return float(response['latestPrice'])
         elif (datetime.utcnow() - time).total_seconds() > (7 * 24 * 60 * 60):
-            raise ValueError("Tiem must be within 7 days of the current time.")
+            raise ValueError("Time must be within 7 days of the current time.")
         else:
             date = time.date().strftime("%Y%m%d")
 

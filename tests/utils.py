@@ -55,7 +55,7 @@ class price_tracker_fake():
         """Build fake price tracker client."""
         self.amount = float(amount)
         if percent is None:
-            self.percent = None
+            self.percent = 0
         else:
             self.percent = float(percent)
 
@@ -67,5 +67,5 @@ class price_tracker_fake():
         """
         return self.amount
 
-    def get_percent_change(self, asset, market, hour):
+    def get_percent_change(self, asset, market, duration):
         return self.percent

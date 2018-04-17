@@ -4,6 +4,7 @@ import twilio
 
 from moontracker.price_tracker import PriceTracker
 from moontracker.assets import supported_assets
+from moontracker.times import supported_times
 from moontracker.extensions import db
 from moontracker.models import Alert, LastPrice
 
@@ -41,19 +42,11 @@ class Texter(object):
             for market in supported_assets[asset]["markets"]:
                 self.check_alerts_for_coin(asset, market)
 
-    def check_alerts_percent_change(self):
-        if self.price_tracker is None:
-            self.price_tracker = PriceTracker()
-        if self.send_message is None:
-            from moontracker.api_keys import twilio_sid, twilio_auth
-            twilio_client = TwilioClient(twilio_sid, twilio_auth)
-            self.send_message = twilio_client.api.account.messages.create
-
+        # too many requests per second, keep getting 429 code
         for asset in supported_assets:
             for market in supported_assets[asset]["markets"]: # This might change for percent change
-                # for time in supported_times
-                # self.check_alerts_for_coin_percent(asset, market)
-                pass
+                for time in supported_times:
+                    self.check_alerts_for_coin_percent(asset, market, time[1])
 
     def check_alerts_for_coin(self, coin, market):
         """Check for alerts.
@@ -91,7 +84,7 @@ class Texter(object):
         # TODO(Chase): This will cause race condition.
         db.session.commit()
 
-    def check_alerts_for_coin_percent(self, coin, market, time):
+    def check_alerts_for_coin_percent(self, coin, market, duration):
         """Check for alerts.
 
         Args:
@@ -101,8 +94,37 @@ class Texter(object):
         timestamp = datetime.utcnow()
 
         # I need to check each supported time
-        # percent = self.price_tracker.get_percent_change(
-           # asset=coin, market=market, time=)
+        percent = self.price_tracker.get_percent_change(
+           asset=coin, market=market, duration=duration)
+
+        price = self.price_tracker.get_spot_price(
+            asset=coin, market=market)
+
+        if (percent > 0): # what if 0? did we already check for that?
+            # Get all of the alerts with a percent increase less than the current percent increase
+            percent_increase_query = Alert.query.filter(
+                Alert.symbol == coin,
+                Alert.percent_duration == duration,
+                Alert.percent < percent,
+                Alert.condition == 2,
+                ((Alert.market == market) | (Alert.market.is_(None))))
+            self.text_percent_increase(percent_increase_query.all(), price, percent, duration)
+            percent_increase_query.delete(False)
+        else:
+            # Get all of the alerts with a percent decrease smaller in magnitude than the current percent decrease
+            percent_decrease_query = Alert.query.filter(
+                Alert.symbol == coin,
+                Alert.percent_duration == duration,
+                - Alert.percent > percent,
+                Alert.condition == 3,
+                ((Alert.market == market) | (Alert.market.is_(None))))
+            self.text_percent_decrease(percent_decrease_query.all(), price, percent, duration)
+            percent_decrease_query.delete(False)
+
+        # What is last price doing and do I need it?
+
+        # TODO(Chase): This will cause race condition.
+        db.session.commit()
 
     def text_greater_than(self, alerts, price):
         """Send text message for above triggers.
@@ -180,7 +202,6 @@ class Texter(object):
             percent:
             percent_duration:
         """
-        print("Sending text to %s" % alert.phone_number)
         for alert in alerts:
             print("Sending text to %s" % alert.phone_number)
             try:
