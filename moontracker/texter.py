@@ -45,7 +45,7 @@ class Texter(object):
         """Remove alert from database if at or past end date."""
         timestamp = datetime.now().date()
         dateQuery = Alert.query.filter(
-            Alert.end_date <= timestamp)
+            Alert.end_date < timestamp)
 
         dateQuery.delete(False)
         db.session.commit()
