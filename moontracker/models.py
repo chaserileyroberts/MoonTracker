@@ -11,8 +11,10 @@ class Alert(db.Model):
     __tablename__ = 'alerts'
     id = db.Column(db.Integer, primary_key=True)
     symbol = db.Column(db.String(80), nullable=False)
-    price = db.Column(db.Float, nullable=False)
-    above = db.Column(db.Integer, nullable=False)
+    condition = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=True)
+    percent = db.Column(db.Float, nullable=True)
+    percent_duration = db.Column(db.Integer, nullable=True)
     phone_number = db.Column(db.String(80), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     market = db.Column(db.String)

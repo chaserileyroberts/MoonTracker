@@ -127,6 +127,8 @@ def manage_alerts():
                               above=form.less_more.data,
                               phone_number=form.phone_number.data,
                               end_date=form.end_date.data)
+                              condition=form.less_more.data,
+                              phone_number=form.phone_number.data)
                 alert.user_id = current_user.id
                 db.session.merge(alert)
                 db.session.commit()
@@ -141,7 +143,7 @@ def manage_alerts():
                     current_alert.phone_number = form.phone_number.data
                     current_alert.symbol = form.asset.data
                     current_alert.price = form.target_price.data
-                    current_alert.above = form.less_more.data
+                    current_alert.condition = form.less_more.data
                     db.session.merge(current_alert)
                     db.session.commit()
                     # figure out proper way to refresh

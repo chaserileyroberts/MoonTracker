@@ -67,7 +67,7 @@ class Texter(object):
         greater_than_query = Alert.query.filter(
             Alert.symbol == coin,
             Alert.price < price,
-            Alert.above == 1,
+            Alert.condition == 1,
             ((Alert.market == market) | (Alert.market.is_(None))))
         self.text_greater_than(greater_than_query.all(), price)
         greater_than_query.delete(False)
@@ -75,7 +75,7 @@ class Texter(object):
         less_than_query = Alert.query.filter(
             Alert.symbol == coin,
             Alert.price > price,
-            Alert.above == 0,
+            Alert.condition == 0,
             ((Alert.market == market) | (Alert.market.is_(None))))
         self.text_less_than(less_than_query.all(), price)
         less_than_query.delete(False)
@@ -102,9 +102,9 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "%s price is above your trigger of %s. "
-                        "Current price is %s"
-                        % (alert.symbol, alert.price, price)))
+                        "{} price is above your trigger of ${:.2f}. "
+                        "Current price is ${:.2f}"
+                        .format(alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 # Catch errors.
                 print("Invalid number:", alert.phone_number)
@@ -125,8 +125,8 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "%s price is below your trigger of %s. "
-                        "Current price is %s"
-                        % (alert.symbol, alert.price, price)))
+                        "{} price is below your trigger of ${:.2f}. "
+                        "Current price is ${:.2f}"
+                        .format(alert.symbol, alert.price, price)))
             except twilio.base.exceptions.TwilioRestException:
                 print("Invalid number:", alert.phone_number)

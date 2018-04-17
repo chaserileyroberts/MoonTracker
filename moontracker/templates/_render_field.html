@@ -1,5 +1,4 @@
-{% macro render_field(field) %}
-    {{ field(class="form-control", **kwargs)|safe }}
+{% macro render_field_errors(field) %}
     {% if field.errors %}
         <ul style="list-style: none; padding: 0;">
         {% for error in field.errors %}
@@ -7,4 +6,8 @@
         {% endfor %}
         </ul>
     {% endif %}
+{% endmacro %}
+{% macro render_field(field) %}
+    {{ field(class="form-control", **kwargs)|safe }}
+    {{ render_field_errors(field) }}
 {% endmacro %}

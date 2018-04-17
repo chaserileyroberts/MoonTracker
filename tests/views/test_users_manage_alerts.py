@@ -8,13 +8,13 @@ def test_correct_num_alerts():
 
     response = test_client.post(
         '/',
-        data=dict(
-            phone_number='1111111111',
-            asset='LTC',
-            market='coinbase',
-            less_more='1',
-            target_price='100',
-        ))
+        data={
+            'phone_number': '1111111111',
+            'asset': 'LTC',
+            'market': 'coinbase',
+            'cond_option': '1',
+            'price': '100'
+        })
     assert response.status_code == 200
     results = Alert.query.filter(Alert.user_id == 1).all()
     assert len(results) == 1
@@ -31,13 +31,13 @@ def test_edit():
 
     response = test_client.post(
         '/',
-        data=dict(
-            phone_number='1111111111',
-            asset='LTC',
-            market='gdax',
-            less_more='1',
-            target_price='100',
-        ))
+        data={
+            'phone_number': '1111111111',
+            'asset': 'LTC',
+            'market': 'gdax',
+            'cond_option': '1',
+            'price': '100'
+        })
     assert response.status_code == 200
 
     results = Alert.query.filter(Alert.user_id == 1).all()
@@ -46,16 +46,17 @@ def test_edit():
     response = test_client.get('/manage', follow_redirects=True)
     assert '$100' in str(response.data)
     assert '1111111111' in str(response.data)
-    response = test_client.post('/manage',
-                                data=dict(
-                                    phone_number="1111111111",
-                                    asset="BTC",
-                                    less_more="1",
-                                    target_price="20",
-                                    alert_id='1',
-                                    submit="Save Changes"
-                                ),
-                                follow_redirects=True)
+    response = test_client.post(
+        '/manage',
+        data=dict(
+            phone_number="1111111111",
+            asset="BTC",
+            less_more="1",
+            target_price="20",
+            alert_id='1',
+            submit="Save Changes"
+        ),
+        follow_redirects=True)
     assert response.status_code == 200
     response = test_client.get('/manage', follow_redirects=True)
     assert '$20' in str(response.data)
@@ -68,13 +69,13 @@ def test_delete():
     assert response.status_code == 200
     response = test_client.post(
         '/',
-        data=dict(
-            phone_number='1111111111',
-            asset='LTC',
-            market='gemini',
-            less_more='1',
-            target_price='100',
-        ))
+        data={
+            'phone_number': '1111111111',
+            'asset': 'LTC',
+            'market': 'gemini',
+            'cond_option': '1',
+            'price': '100'
+        })
     assert response.status_code == 200
 
     results = Alert.query.filter(Alert.user_id == 1).all()
@@ -83,16 +84,17 @@ def test_delete():
     response = test_client.get('/manage', follow_redirects=True)
     assert '$100' in str(response.data)
     assert '1111111111' in str(response.data)
-    response = test_client.post('/manage',
-                                data=dict(
-                                    phone_number="1111111111",
-                                    asset="LTC",
-                                    less_more="1",
-                                    target_price="100",
-                                    alert_id='1',
-                                    submit="Delete"
-                                ),
-                                follow_redirects=True)
+    response = test_client.post(
+        '/manage',
+        data=dict(
+            phone_number="1111111111",
+            asset="LTC",
+            less_more="1",
+            target_price="100",
+            alert_id='1',
+            submit="Delete"
+        ),
+        follow_redirects=True)
     assert response.status_code == 200
     response = test_client.get('/manage', follow_redirects=True)
     results = Alert.query.filter(Alert.user_id == 1).all()
@@ -101,13 +103,13 @@ def test_delete():
 
     response = test_client.post(
         '/',
-        data=dict(
-            phone_number='1111111111',
-            asset='BTC',
-            less_more='0',
-            market='gemini',
-            target_price='50',
-        ))
+        data={
+            'phone_number': '1111111111',
+            'asset': 'BTC',
+            'market': 'gemini',
+            'cond_option': '0',
+            'price': '50'
+        })
     assert "test_user" in str(response.data)
     assert response.status_code == 200
     results = Alert.query.filter(Alert.user_id == 1).all()

@@ -3,13 +3,14 @@ from datetime import datetime
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
 from flask_login import current_user
-from wtforms import Form, FloatField, StringField, SelectField, DateField
+from wtforms import Form
+from wtforms import FloatField, StringField, SelectField, DateField
 from wtforms import validators
 import json
 
 from moontracker.assets import supported_assets, assets, market_apis
 from moontracker.extensions import db
-from moontracker.models import Alert, LastPrice
+from moontracker.models import Alert
 
 home_blueprint = Blueprint('home', __name__, template_folder='templates')
 
@@ -20,10 +21,9 @@ def index():
     form = AlertForm(request.form)
     if request.method == 'POST' and form.validate():
         asset = form.asset.data
-        target_price = form.target_price.data
-        less_more = form.less_more.data
+        cond_option = form.cond_option.data
         phone_number = form.phone_number.data
-        market = form.market.data
+        market = form.market.date
         end_date = form.end_date
         had_last_price_error = False
         if less_more == 2 or less_more == 3:
@@ -55,6 +55,25 @@ def index():
             db.session.commit()
             flash("Alert is set!")
 
+        alert = Alert(
+            symbol=asset,
+            condition=cond_option,
+            phone_number=phone_number,
+            market=market)
+        if cond_option == 1 or cond_option == 0:
+            alert.price = form.price.data
+        elif cond_option == 2 or cond_option == 3:
+            alert.percent = form.percent.data
+            alert.percent_duration = form.percent_duration.data
+
+        if current_user.is_authenticated:
+            alert.user_id = current_user.id
+
+        db.session.add(alert)
+        db.session.commit()
+        flash("Alert is set!")
+
+
     return render_template('index.html', form=form,
                            app_markets_json=json.dumps(supported_assets))
 
@@ -77,13 +96,37 @@ class AlertForm(Form):
     asset = SelectField(
         'Coin', choices=assets)
 
-    target_price = FloatField('Target Price', [validators.optional()])
+    market_validators = [validators.AnyOf([m for m in market_apis])]
+    market = SelectField('Market',
+                         choices=[('', '')] + [(m, m) for m in market_apis],
+                         default='', validators=market_validators)
 
-    less_more_validators = [validators.AnyOf([1, 0, 2, 3])]
-    less_more = SelectField(
-        '',
-        choices=[(1, 'above'), (0, 'below'), (2, '+ %'), (3, '- %')],
-        validators=less_more_validators,
+    cond_option_validators = [validators.AnyOf([1, 0, 2, 3])]
+    cond_option = SelectField(
+        'Condition Option',
+        choices=[
+            (-1, ''),
+            (1, 'Above a price'),
+            (0, 'Below a price'),
+            (2, 'Percent increase'),
+            (3, 'Percent decrease')],
+        validators=cond_option_validators,
+        coerce=int)
+
+    price_validators = [validators.InputRequired()]
+    price = FloatField('Target Price')
+
+    percent_validators = [validators.InputRequired()]
+    percent = FloatField('Target Percent Change')
+
+    percent_duration_validators = [validators.AnyOf([0, 1, 2, 3])]
+    percent_duration = SelectField(
+        'Target Change Duration',
+        choices=[
+            (0, '1 hour'),
+            (1, '24 hours'),
+            (2, '1 week'),
+            (3, '1 month')],
         coerce=int)
     end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
                          format='%Y-%m-%d', default=datetime.now().date())
@@ -92,7 +135,16 @@ class AlertForm(Form):
         'Recaptcha', validators=[
             Recaptcha("Please do the recaptcha.")])
 
-    market_validators = [validators.AnyOf([m for m in market_apis])]
-    market = SelectField('Market',
-                         choices=[('', '')] + [(m, m) for m in market_apis],
-                         default='', validators=market_validators)
+    def validate(self, **kwargs):
+        """Validate the AlertForm."""
+        if self.cond_option.data == 1 or self.cond_option.data == 0:
+            self.price.validators = AlertForm.price_validators
+            self.percent.validators = [validators.optional()]
+            self.percent_duration.validators = [validators.optional()]
+        elif self.cond_option.data == 2 or self.cond_option.data == 3:
+            self.price.validators = [validators.optional()]
+            self.percent.validators = AlertForm.percent_validators
+            pdv = AlertForm.percent_duration_validators
+            self.percent_duration.validators = pdv
+
+        return super().validate(**kwargs)
