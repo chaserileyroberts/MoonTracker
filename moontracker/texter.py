@@ -41,12 +41,26 @@ class Texter(object):
             for market in supported_assets[asset]["markets"]:
                 self.check_alerts_for_coin(asset, market)
 
+    def check_alerts_percent_change(self):
+        if self.price_tracker is None:
+            self.price_tracker = PriceTracker()
+        if self.send_message is None:
+            from moontracker.api_keys import twilio_sid, twilio_auth
+            twilio_client = TwilioClient(twilio_sid, twilio_auth)
+            self.send_message = twilio_client.api.account.messages.create
+
+        for asset in supported_assets:
+            for market in supported_assets[asset]["markets"]: # This might change for percent change
+                # for time in supported_times
+                # self.check_alerts_for_coin_percent(asset, market)
+                pass
+
     def check_alerts_for_coin(self, coin, market):
         """Check for alerts.
 
         Args:
             coin: The asset to check against.
-            makert: String of which market to use
+            market: String of which market to use
         """
         timestamp = datetime.utcnow()
 
@@ -76,6 +90,19 @@ class Texter(object):
 
         # TODO(Chase): This will cause race condition.
         db.session.commit()
+
+    def check_alerts_for_coin_percent(self, coin, market, time):
+        """Check for alerts.
+
+        Args:
+            coin: The asset to check against.
+            market: String of which market to use
+        """
+        timestamp = datetime.utcnow()
+
+        # I need to check each supported time
+        # percent = self.price_tracker.get_percent_change(
+           # asset=coin, market=market, time=)
 
     def text_greater_than(self, alerts, price):
         """Send text message for above triggers.
@@ -119,5 +146,50 @@ class Texter(object):
                         "%s price is below your trigger of %s. "
                         "Current price is %s"
                         % (alert.symbol, alert.price, price)))
+            except twilio.base.exceptions.TwilioRestException:
+                print("Invalid number:", alert.phone_number)
+
+    def text_percent_increase(self, alerts, price, percent, percent_duration):
+        """Send text message for percent increase triggers.
+
+        Args:
+            alerts: The alerts to send. Should be type Alert.
+            price: The current asset price.
+            percent:
+            percent_duration:
+        """
+        for alert in alerts:
+            print("Sending text to %s" % alert.phone_number)
+            try:
+                self.send_message(
+                    to=alert.phone_number,
+                    from_="+15072003597",
+                    body=(
+                        "%s price has increased by at least %s%% over %d hours. "
+                        "Current price is %s"
+                        % (alert.symbol, alert.price, percent, percent_duration, price)))
+            except twilio.base.exceptions.TwilioRestException:
+                print("Invalid number:", alert.phone_number)
+
+    def text_percent_decrease(self, alerts, price, percent, percent_duration):
+        """Send text message for percent decrease triggers.
+
+        Args:
+            alerts: The alerts to send. Should be type Alert.
+            price: The current asset price.
+            percent:
+            percent_duration:
+        """
+        print("Sending text to %s" % alert.phone_number)
+        for alert in alerts:
+            print("Sending text to %s" % alert.phone_number)
+            try:
+                self.send_message(
+                    to=alert.phone_number,
+                    from_="+15072003597",
+                    body=(
+                        "%s price has decreased by at least %s%% over %d hours. "
+                        "Current price is %s"
+                        % (alert.symbol, alert.price, percent, percent_duration, price)))
             except twilio.base.exceptions.TwilioRestException:
                 print("Invalid number:", alert.phone_number)

@@ -8,6 +8,7 @@ from wtforms import validators
 import json
 
 from moontracker.assets import supported_assets, assets, market_apis
+from moontracker.times import times
 from moontracker.extensions import db
 from moontracker.models import Alert
 
@@ -89,11 +90,7 @@ class AlertForm(Form):
     percent_duration_validators = [validators.AnyOf([0, 1, 2, 3])]
     percent_duration = SelectField(
         'Target Change Duration',
-        choices=[
-            (0, '1 hour'),
-            (1, '24 hours'),
-            (2, '1 week'),
-            (3, '1 month')],
+        choices=times,
         coerce=int)
 
     recaptcha = RecaptchaField(
