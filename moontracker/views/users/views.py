@@ -219,6 +219,10 @@ class ManageAlertForm(Form):
     end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
                          format='%Y-%m-%d', default=datetime.now().date())
 
+    recaptcha = RecaptchaField(
+        'Recaptcha', validators=[
+            Recaptcha("Please do the recaptcha.")])
+
     def __init__(self, form, alerts):
         """Initialize the form."""
         super().__init__(form)

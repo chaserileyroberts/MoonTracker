@@ -1,49 +1,49 @@
-{% from "_navbar.html" import navbar with context % }
-{% from "_render_field.html" import render_field with context % }
-{% from "_messages.html" import messages with context % }
-<!DOCTYPE html >
-<html lang = "en" >
-    <head >
-        <meta charset = "utf-8" >
-        <meta name = "viewport" content = "width=device-width, initial-scale=1, shrink-to-fit=no" >
-        <title > Log In | Moon Tracker < /title >
-        <link rel = "stylesheet" href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity = "sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin = "anonymous" >
-    </head >
+{% from "_navbar.html" import navbar with context %}
+{% from "_render_field.html" import render_field with context %}
+{% from "_messages.html" import messages with context %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Log In | Moon Tracker</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
 
-    <body >
-        <div class = "container" >
-            {{navbar()}}
+    <body>
+        <div class="container">
+            {{ navbar() }}
 
-            <div class = "row justify-content-center" >
-            	<div class = "col-12 col-md-6" >
-		            {% if alerts|length == 0 % }
-		            <p class = "text-muted" > No alerts set < /p >
-		            {% else % }
-		            <hr >
-		            {% endif % }
-		            {% for alert in alerts % }
-		            <div class = "row" >
-		                <div class = "col-9 col-md-11" >
-		                    <div > <b > Asset: < /b > <span class = "text-muted" > {{supported_assets[alert.symbol]['name']}} < /span > </div >
+            <div class="row justify-content-center">
+            	<div class="col-12 col-md-6">
+		            {% if alerts|length == 0 %}
+		            <p class="text-muted">No alerts set</p>
+		            {% else %}
+		            <hr>
+		            {% endif %}
+		            {% for alert in alerts %}
+		            <div class="row">
+		                <div class="col-9 col-md-11">
+		                    <div><b>Asset:</b> <span class="text-muted">{{ supported_assets[alert.symbol]['name'] }}</span></div>
 
-		                    <div > <b > Target Price: < /b > <span class = "text-muted" > {% if alert.above == 1 % }above{ % else % }below{ % endif % } ${{ '%0.2f' | format(alert.price|float) }} < /span > </div >
+		                    <div><b>Target Price:</b> <span class="text-muted">{% if alert.above == 1 %}above{% else %}below{% endif %} ${{ '%0.2f' | format(alert.price|float) }}</span></div>
 
-		                    <div > <b > Phone Number: < /b > <span class = "text-muted" > {{alert.phone_number[:3]}}-{{alert.phone_number[3:6]}}-{{alert.phone_number[6:]}} < /span > </div >
-		                </div >
-		                <!-- replace with edit image - - >
-		                <div class = "col-3 col-md-1" >
-		                    <form name = "editButton" method = "post" >
-		                        <input type = "button" name = "edit" value = "Edit" class = "btn btn-default" data-toggle = "modal" data-target = "#alert-modal" data-alert-id = "{{ alert.id }}" data-alert-symbol = "{{ alert.symbol }}" data-alert-above = "{{ alert.above }}" data-alert-price = "{{ alert.price }}" data-alert-phone-number = "{{ alert.phone_number }}" data-alert-end-date = "{{ alert.phone_number }}>" >
-		                    </form >
-		                </div >
-		            </div >
-		            <hr >
-		            {% endfor % }
-		            <div class = "col-md-1" >
-		                    <form name = "addButton" method = "post" >
-		                        <input type = "button" name = "edit" value = "Add Alert" class = "btn btn-primary" data-toggle = "modal" data-target = "#alert-modal" data-alert-id = "-1" data-alert-symbol = "" data-alert-above = "" data-alert-price = "" data-alert-phone-number = "" >
-		                    </form >
-		            </div >
+		                    <div><b>Phone Number:</b> <span class="text-muted">{{ alert.phone_number[:3] }}-{{ alert.phone_number[3:6] }}-{{ alert.phone_number[6:] }}</span></div>
+		                </div>
+		                <!-- replace with edit image -->
+		                <div class="col-3 col-md-1">
+		                    <form name="editButton" method="post">
+		                        <input type="button" name="edit" value="Edit" class="btn btn-default" data-toggle="modal" data-target="#alert-modal" data-alert-id="{{ alert.id }}" data-alert-symbol="{{ alert.symbol }}" data-alert-above="{{ alert.above }}" data-alert-price="{{ alert.price }}" data-alert-phone-number="{{ alert.phone_number }}" data-alert-end-date="{{ alert.phone_number }}>">
+		                    </form>
+		                </div>
+		            </div>
+		            <hr>
+		            {% endfor %}
+		            <div class="col-md-1">
+		                    <form name="addButton" method="post">
+		                        <input type="button" name="edit" value="Add Alert" class="btn btn-primary" data-toggle="modal" data-target="#alert-modal" data-alert-id="-1" data-alert-symbol="" data-alert-above="" data-alert-price="" data-alert-phone-number="">
+		                    </form>
+		            </div>
 		        </div>
 	        </div>
         </div>
@@ -82,6 +82,12 @@
                                 <dd>
                                     {{ render_field(form.end_date) }}
                                 </dd>
+                                {{ form.recaptcha }}
+                                <ul>
+                                {% for error in form.recaptcha.errors %}
+                                    <li class=".recaptcha-error">{{ error }}</li>
+                                {% endfor %}
+                                </ul>
                                 </dl>
                                 <input type="submit" name="submit" value="Cancel" class="btn btn-secondary" data-dismiss="modal">
                                 <input type="submit" name="submit" value="Delete" class="btn btn-danger">

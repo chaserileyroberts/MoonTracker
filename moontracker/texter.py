@@ -41,13 +41,11 @@ class Texter(object):
             for market in supported_assets[asset]["markets"]:
                 self.check_alerts_for_coin(asset, market)
 
-   
-
     def check_date(self):
-        """Remove alert from database if past end date."""
+        """Remove alert from database if at or past end date."""
         timestamp = datetime.now().date()
         dateQuery = Alert.query.filter(
-            Alert.end_date < timestamp)
+            Alert.end_date <= timestamp)
 
         dateQuery.delete(False)
         db.session.commit()
