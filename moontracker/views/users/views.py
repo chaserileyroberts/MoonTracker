@@ -3,15 +3,14 @@ from flask import request, render_template, flash, redirect, url_for, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
 import wtforms
 from flask_wtf import RecaptchaField, Recaptcha
-from wtforms import Form, FloatField, StringField, IntegerField, SelectField
-from wtforms import DateField
+from wtforms import Form, StringField, IntegerField
 from wtforms import validators
 from sqlalchemy import exists
 from moontracker.extensions import bcrypt, db, login_manager
 from moontracker.models import User, Alert
 from moontracker.views.home.views import AlertForm
-from moontracker.assets import assets, supported_assets
-from datetime import datetime
+from moontracker.assets import supported_assets
+
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
@@ -122,9 +121,9 @@ def manage_alerts():
 
         elif request.form['submit'] == 'Save Changes' and form.validate():
             if int(form.alert_id.data) == -1:
-                print("New Alert")
+                cond_option = form.cond_option.data
                 alert = Alert(symbol=form.asset.data,
-                              condition=form.cond_option.data,
+                              condition=cond_option,
                               phone_number=form.phone_number.data,
                               market=form.market.data,
                               end_date=form.end_date.data)
@@ -132,11 +131,9 @@ def manage_alerts():
                     alert.price = form.price.data
                 elif cond_option == 2 or cond_option == 3:
                     alert.percent = form.percent.data
-                    # alert.percent_duration = form.percent_duration.data
-                    alert.percent_duration = 86400  # fix this!
-                    alert.price = 0.0
+                    alert.percent_duration = form.percent_duration.data
                 alert.user_id = current_user.id
-                db.session.merge(alert)
+                db.session.add(alert)
                 db.session.commit()
             else:
                 current_alert = None
@@ -212,19 +209,6 @@ class ManageAlertForm(AlertForm):
 
     alert_id = IntegerField(validators=[validators.Required()],
                             widget=wtforms.widgets.HiddenInput())
-
-    phone_number = StringField(
-        'Phone Number', [
-            validators.Length(
-                min=10), validators.Regexp(
-                '^[0-9]+$', message="Input characters must be numeric")])
-
-    end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
-                         format='%Y-%m-%d', default=datetime.now().date())
-
-    recaptcha = RecaptchaField(
-        'Recaptcha', validators=[
-            Recaptcha("Please do the recaptcha.")])
 
     def __init__(self, form, alerts):
         """Initialize the form."""

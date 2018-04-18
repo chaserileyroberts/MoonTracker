@@ -49,12 +49,12 @@ def test_edit():
     response = test_client.post(
         '/manage',
         data={
+            'alert_id': str(results[0].id),
             'phone_number': '1111111111',
             'asset': 'BTC',
             'market': 'gdax',
             'price': '20',
             'cond_option': '1',
-            # 'alert_id': '1',
             'submit': 'Save Changes'
         })
     assert response.status_code == 200
@@ -87,11 +87,11 @@ def test_delete():
     response = test_client.post(
         '/manage',
         data={
+            'alert_id': str(results[0].id),
             'phone_number': '1111111111',
             'asset': 'LTC',
             'cond_option': '1',
             'price': '100',
-            'alert_id': '1',
             'submit': 'Delete'
         })
     assert response.status_code == 200
@@ -127,11 +127,12 @@ def test_add():
     response = test_client.post(
         '/manage',
         data={
+            'alert_id': '-1',
             'phone_number': '1111111111',
             'asset': 'LTC',
+            'market': 'coinbase',
             'cond_option': '1',
             'price': '825',
-            'alert_id': '-1',
             'submit': 'Save Changes'
         })
     print(response.data)

@@ -43,6 +43,11 @@ def register_extensions(app):
 
     app.jinja_env.filters['datetimefmt'] = datetimefmt
 
+    def defaultnone(value, default_value=""):
+        return default_value if value is None else value
+
+    app.jinja_env.filters['defaultnone'] = defaultnone
+
 
 def register_blueprints(app):
     """Register all blueprints to the Flask application."""

@@ -25,18 +25,17 @@
                             <div class="row">
                                 <div class="col-9 col-md-10">
                                     <div><b>Asset:</b> <span class="text-muted">{{ supported_assets[alert.symbol]['name'] }}</span></div>
-                                    {% if alert.price|float != 0.0 %}
+                                    {% if alert.condition == 1 or alert.condition == 0 %}
                                     	<div><b>Target Price:</b> <span class="text-muted">{% if alert.condition == 1 %}above{% else %}below{% endif %} ${{ '%0.2f' | format(alert.price|float) }}</span></div>
-                                    {% else %}
+                                    {% elif alert.condition == 2 or alert.condition == 3 %}
                                     	<div><b>Percent Change:</b> <span class="text-muted">{{ alert.percent }}% {% if alert.condition == 2 %}increase{% else %}decrease{% endif %}</span></div>
                                     {% endif %}
-
                                     <div><b>Phone Number:</b> <span class="text-muted">{{ alert.phone_number[:3] }}-{{ alert.phone_number[3:6] }}-{{ alert.phone_number[6:] }}</span></div>
                                 </div>
                                 <!-- replace with edit image -->
                                 <div class="col-3 col-md-2">
                                     <form name="editButton" method="post">
-                                        <input type="button" name="edit" value="Edit" class="btn btn-default" data-toggle="modal" data-target="#alert-modal" data-alert-id="{{ alert.id }}" data-alert-symbol="{{ alert.symbol }}" data-alert-above="{{ alert.condition }}" data-alert-price="{{ alert.price }}" data-alert-phone-number="{{ alert.phone_number }}">
+                                        <input type="button" name="edit" value="Edit" class="btn btn-default" data-toggle="modal" data-target="#alert-modal" data-alert-id="{{ alert.id }}" data-alert-symbol="{{ alert.symbol }}" data-alert-market="{{ alert.market }}" data-alert-condition="{{ alert.condition }}" data-alert-price="{{ alert.price|defaultnone('') }}" data-alert-percent="{{ alert.percent|defaultnone('') }}" data-alert-percent_duration="{{ alert.percent_duration|defaultnone('') }}" data-alert-phone_number="{{ alert.phone_number }}" data-alert-end_date="{{ alert.end_date }}">
                                     </form>
                                 </div>
                             </div>
@@ -45,9 +44,9 @@
                     <br>
                     {% endfor %}
                     <div class="col-md-1">
-                            <form name="addButton" method="post">
-                                <input type="button" name="edit" value="Add Alert" class="btn btn-primary" data-toggle="modal" data-target="#alert-modal" data-alert-id="-1" data-alert-symbol="" data-alert-above="" data-alert-price="" data-alert-phone-number="">
-                            </form>
+                        <form name="addButton" method="post">
+                            <input type="button" name="edit" value="Add Alert" class="btn btn-primary" data-toggle="modal" data-target="#alert-modal" data-alert-id="-1" data-alert-symbol="" data-alert-condition="" data-alert-price="" data-alert-phone_number="">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -63,6 +62,10 @@
                         <div class="form-group">
                             <form method="post">
                                 <dl>
+                                    <dt></dt>
+                                    <dd>
+                                        {{ render_field(form.alert_id) }}
+                                    </dd>
                                     <dt>
                                         {{ form.phone_number.label }}
                                     </dt>
@@ -105,10 +108,7 @@
                                     <dd>
                                         {{ render_field(form.percent_duration) }}
                                     </dd>
-                                    <dt>{{ form.phone_number.label }}</dt>
-                                    <dd>{{ render_field(form.phone_number) }}</dd>
-                                    <dd>{{ render_field(form.alert_id) }}</dd>
-                                     <dt>
+                                    <dt>
                                         {{ form.end_date.label }}
                                     </dt>
                                     <dd>
