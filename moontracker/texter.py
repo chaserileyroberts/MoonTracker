@@ -1,10 +1,12 @@
 """Texting Service."""
 from twilio.rest import Client as TwilioClient
 import twilio
+
 from moontracker.price_tracker import PriceTracker
 from moontracker.assets import supported_assets
 from moontracker.extensions import db
 from moontracker.models import Alert, LastPrice
+
 from datetime import datetime
 
 
@@ -28,8 +30,6 @@ class Texter(object):
 
     def check_alerts(self):
         """Check alerts for all types of assets."""
-        self.check_date()
-
         if self.price_tracker is None:
             self.price_tracker = PriceTracker()
         if self.send_message is None:
@@ -40,15 +40,6 @@ class Texter(object):
         for asset in supported_assets:
             for market in supported_assets[asset]["markets"]:
                 self.check_alerts_for_coin(asset, market)
-
-    def check_date(self):
-        """Remove alert from database if at or past end date."""
-        timestamp = datetime.now().date()
-        dateQuery = Alert.query.filter(
-            Alert.end_date < timestamp)
-
-        dateQuery.delete(False)
-        db.session.commit()
 
     def check_alerts_for_coin(self, coin, market):
         """Check for alerts.
