@@ -91,7 +91,9 @@ class BitfinexMarket(Market):
             start_time = int(
                 (time - datetime(1970, 1, 1)).total_seconds() * 1000)
 
-            request = 'https://api.bitfinex.com/v2/candles/trade:1m:t{}USD/hist?limit=1&sort=1&start={}'.format(  # noqa: ignore=E501
+            request = (
+                'https://api.bitfinex.com/v2/candles/trade:1m:t{}' +
+                'USD/hist?limit=1&sort=1&start={}').format(
                 product, start_time)
 
             response = self._handle_request(request)
@@ -133,7 +135,9 @@ class CoinbaseMarket(Market):
         else:
             # Coinbase only allows historical prices by date.
             date = time.date().isoformat()
-            request = 'https://api.coinbase.com/v2/prices/{}-usd/spot?date={}'.format(  # noqa: ignore=E501
+            request = (
+                'https://api.coinbase.com/v2/prices/{}' +
+                '-usd/spot?date={}').format(
                 product, date)
         response = self._handle_request(request)
 
@@ -169,7 +173,9 @@ class GdaxMarket(Market):
             # The start time is arbitrarily 10 minutes behind the end time.
             start_time = time - timedelta(minutes=10)
 
-            request = 'https://api.gdax.com/products/{}-usd/candles?start={}&end={}&granularity=60'.format(  # noqa: ignore=E501
+            request = (
+                'https://api.gdax.com/products/{}' +
+                '-usd/candles?start={}&end={}&granularity=60').format(
                 product, start_time, time)
             response = self._handle_request(request)
 
@@ -214,7 +220,9 @@ class GeminiMarket(Market):
             start_time = int(
                 (time - datetime(1970, 1, 1)).total_seconds()) - 600
 
-            request = 'https://api.gemini.com/v1/trades/{}usd?since={}&limit_trades=100'.format(  # noqa: ignore=E501
+            request = (
+                'https://api.gemini.com/v1/trades/{}' +
+                'usd?since={}&limit_trades=100').format(
                 product, start_time)
             response = self._handle_request(request)
 
@@ -256,7 +264,9 @@ class NasdaqMarket(Market):
         else:
             date = time.date().strftime("%Y%m%d")
 
-            request = "https://api.iextrading.com/1.0/stock/{}/chart/date/{}".format(  # noqa: ignore=E501
+            request = (
+                "https://api.iextrading.com/1.0/stock/{}" +
+                "/chart/date/{}").format(
                 product, date)
             response = self._handle_request(request)
 
