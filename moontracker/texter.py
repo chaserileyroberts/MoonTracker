@@ -108,8 +108,6 @@ class Texter(object):
             coin: The asset to check against.
             market: String of which market to use
         """
-        timestamp = datetime.utcnow()
-
         # I need to check each supported time
         percent = self.price_tracker.get_percent_change(
            asset=coin, market=market, duration=duration[1])
@@ -140,8 +138,6 @@ class Texter(object):
             self.text_percent_decrease(
                 percent_decrease_query.all(), price, percent * -1, duration[0])
             percent_decrease_query.delete(False)
-
-        # What is last price doing and do I need it?
 
         # TODO(Chase): This will cause race condition.
         db.session.commit()

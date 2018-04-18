@@ -9,7 +9,7 @@ from wtforms import validators
 import json
 
 from moontracker.assets import supported_assets, assets, market_apis
-from moontracker.times import supported_times, times
+from moontracker.times import times
 from moontracker.extensions import db
 from moontracker.models import Alert
 

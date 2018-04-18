@@ -7,7 +7,7 @@ class Market:
     """Market default class."""
 
     def _handle_request(self, request):
-        """Helper function for get_spot_price.
+        """Is a helper function for get_spot_price.
 
         Args:
             request: The url for the request.
@@ -72,7 +72,6 @@ class BitfinexMarket(Market):
             ValueError: If the time is not supported by the API.
 
         """
-
         # Bitfinex requires the asset to be in upper case.
         product = product.upper()
 
@@ -85,13 +84,14 @@ class BitfinexMarket(Market):
             # Returns the latest trade price.
             return float(response[6])
         elif (datetime.utcnow() - time).total_seconds() > (31 * 24 * 60 * 60):
-            raise ValueError("Time must be within 31 days of the current time.")
+            raise ValueError(
+                "Time must be within 31 days of the current time.")
         else:
             # Bitfinex requires the time to be in milliseconds since epoch.
             start_time = int(
                 (time - datetime(1970, 1, 1)).total_seconds() * 1000)
 
-            request = 'https://api.bitfinex.com/v2/candles/trade:1m:t{}USD/hist?limit=1&sort=1&start={}'.format(
+            request = 'https://api.bitfinex.com/v2/candles/trade:1m:t{}USD/hist?limit=1&sort=1&start={}'.format(  # noqa: ignore=E501
                 product, start_time)
 
             response = self._handle_request(request)
@@ -124,16 +124,16 @@ class CoinbaseMarket(Market):
             ValueError: If the time is not supported by the API.
 
         """
-
         if time is None:
             request = 'https://api.coinbase.com/v2/prices/{}-usd/spot'.format(
                 product)
         elif (datetime.utcnow() - time).total_seconds() > (31 * 24 * 60 * 60):
-            raise ValueError("Time must be within 31 days of the current time.")
+            raise ValueError(
+                "Time must be within 31 days of the current time.")
         else:
             # Coinbase only allows historical prices by date.
             date = time.date().isoformat()
-            request = 'https://api.coinbase.com/v2/prices/{}-usd/spot?date={}'.format(
+            request = 'https://api.coinbase.com/v2/prices/{}-usd/spot?date={}'.format(  # noqa: ignore=E501
                 product, date)
         response = self._handle_request(request)
 
@@ -157,19 +157,19 @@ class GdaxMarket(Market):
             ValueError: If the time is not supported by the API.
 
         """
-
         if time is None:
             request = 'https://api.gdax.com/products/{}-usd/ticker'.format(
                 product)
             response = self._handle_request(request)
             return float(response['price'])
         elif (datetime.utcnow() - time).total_seconds() > (31 * 24 * 60 * 60):
-            raise ValueError("Time must be within 31 days of the current time.")
+            raise ValueError(
+                "Time must be within 31 days of the current time.")
         else:
             # The start time is arbitrarily 10 minutes behind the end time.
             start_time = time - timedelta(minutes=10)
 
-            request = 'https://api.gdax.com/products/{}-usd/candles?start={}&end={}&granularity=60'.format(
+            request = 'https://api.gdax.com/products/{}-usd/candles?start={}&end={}&granularity=60'.format(  # noqa: ignore=E501
                 product, start_time, time)
             response = self._handle_request(request)
 
@@ -201,9 +201,9 @@ class GeminiMarket(Market):
             ValueError: If the time is not supported by the API.
 
         """
-
         if time is None:
-            request = 'https://api.gemini.com/v1/pubticker/{}usd'.format(product)
+            request = 'https://api.gemini.com/v1/pubticker/{}usd'.format(
+                product)
             response = self._handle_request(request)
             return float(response['last'])
         elif (datetime.utcnow() - time).total_seconds() > (7 * 24 * 60 * 60):
@@ -211,9 +211,11 @@ class GeminiMarket(Market):
         else:
             # Gemini requires the time to be in seconds since epoch.
             # Arbitrarily 10 minutes behind the target time.
-            start_time = int((time - datetime(1970, 1, 1)).total_seconds()) - 600
+            start_time = int(
+                (time - datetime(1970, 1, 1)).total_seconds()) - 600
 
-            request = 'https://api.gemini.com/v1/trades/{}usd?since={}&limit_trades=100'.format(product, start_time)
+            request = 'https://api.gemini.com/v1/trades/{}usd?since={}&limit_trades=100'.format(  # noqa: ignore=E501
+                product, start_time)
             response = self._handle_request(request)
 
             # If there are no trades after the start time, just get the last
@@ -244,9 +246,9 @@ class NasdaqMarket(Market):
             ValueError: If the time is not supported by the API.
 
         """
-
         if time is None:
-            request = "https://api.iextrading.com/1.0/stock/{}/quote".format(product)
+            request = "https://api.iextrading.com/1.0/stock/{}/quote".format(
+                product)
             response = self._handle_request(request)
             return float(response['latestPrice'])
         elif (datetime.utcnow() - time).total_seconds() > (7 * 24 * 60 * 60):
@@ -254,7 +256,8 @@ class NasdaqMarket(Market):
         else:
             date = time.date().strftime("%Y%m%d")
 
-            request = "https://api.iextrading.com/1.0/stock/{}/chart/date/{}".format(product, date)
+            request = "https://api.iextrading.com/1.0/stock/{}/chart/date/{}".format(  # noqa: ignore=E501
+                product, date)
             response = self._handle_request(request)
 
             # If there are no trades after the start time, just get the last
