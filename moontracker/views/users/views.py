@@ -9,7 +9,8 @@ from sqlalchemy import exists
 from moontracker.extensions import bcrypt, db, login_manager
 from moontracker.models import User, Alert
 from moontracker.assets import supported_assets
-from moontracker.views.home.views import AlertForm
+from moontracker.views.alert_utils import AlertForm, make_new_alert
+
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
@@ -109,7 +110,7 @@ def manage_alerts():
     if request.method == 'POST':
         if request.form['submit'] == 'Delete' and form.alert_id.validate(form):
             current_alert = None
-            for index, alert in enumerate(alerts):
+            for alert in alerts:
                 if alert.id == int(form.alert_id.data):
                     current_alert = alert
                     break
@@ -117,17 +118,10 @@ def manage_alerts():
             if current_alert is not None:
                 db.session.delete(current_alert)
                 db.session.commit()
-
         elif request.form['submit'] == 'Save Changes' and form.validate():
             if int(form.alert_id.data) == -1:
                 print("New Alert")
-                alert = Alert(symbol=form.asset.data,
-                              price=form.target_price.data,
-                              condition=form.less_more.data,
-                              phone_number=form.phone_number.data)
-                alert.user_id = current_user.id
-                db.session.merge(alert)
-                db.session.commit()
+                make_new_alert(form)
             else:
                 current_alert = None
                 for alert in alerts:
@@ -138,13 +132,13 @@ def manage_alerts():
                 if current_alert is not None:
                     current_alert.phone_number = form.phone_number.data
                     current_alert.symbol = form.asset.data
-                    current_alert.price = form.target_price.data
-                    current_alert.condition = form.less_more.data
+                    current_alert.price = form.price.data
+                    current_alert.condition = form.cond_option.data
                     db.session.merge(current_alert)
                     db.session.commit()
                     # figure out proper way to refresh
         else:
-            print(form.alert_id.errors)
+            print(form.errors)
     # Fresh set of alerts
     alerts = Alert.query.filter(Alert.user_id == current_user.id).all()
     return render_template('manage.html', alerts=alerts,
