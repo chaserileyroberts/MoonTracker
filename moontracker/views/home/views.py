@@ -23,7 +23,7 @@ def index():
         asset = form.asset.data
         cond_option = form.cond_option.data
         phone_number = form.phone_number.data
-        market = form.market.date
+        market = form.market.data
         end_date = form.end_date
         alert = Alert(
             symbol=asset,
