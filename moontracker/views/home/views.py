@@ -6,7 +6,7 @@ from moontracker.extensions import db
 from moontracker.models import Alert
 from moontracker.assets import supported_assets
 from moontracker.views.alert_utils import (AlertForm, make_new_alert,
-                                           modify_existing_alert, 
+                                           modify_existing_alert,
                                            delete_existing_alert)
 home_blueprint = Blueprint('home', __name__, template_folder='templates')
 
