@@ -110,7 +110,7 @@ class Texter(object):
         """
         # I need to check each supported time
         percent = self.price_tracker.get_percent_change(
-           asset=coin, market=market, duration=duration[1])
+            asset=coin, market=market, duration=duration[1])
 
         price = self.price_tracker.get_spot_price(
             asset=coin, market=market)
