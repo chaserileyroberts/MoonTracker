@@ -1,9 +1,10 @@
 """Home related views."""
+from datetime import datetime
 from flask import request, render_template, flash, Blueprint
 from flask_wtf import RecaptchaField, Recaptcha
 from flask_login import current_user
 from wtforms import Form
-from wtforms import FloatField, StringField, SelectField
+from wtforms import FloatField, StringField, SelectField, DateField
 from wtforms import validators
 import json
 
@@ -24,17 +25,20 @@ def index():
         cond_option = form.cond_option.data
         phone_number = form.phone_number.data
         market = form.market.data
+        end_date = form.end_date
         alert = Alert(
             symbol=asset,
             condition=cond_option,
             phone_number=phone_number,
-            market=market)
+            market=market,
+            end_date=end_date.data)
         if cond_option == 1 or cond_option == 0:
             alert.price = form.price.data
         elif cond_option == 2 or cond_option == 3:
             alert.percent = form.percent.data
             # alert.percent_duration = form.percent_duration.data
             alert.percent_duration = 86400  # fix this!
+            alert.price = 0.0
 
         if current_user.is_authenticated:
             alert.user_id = current_user.id
@@ -93,6 +97,8 @@ class AlertForm(Form):
         'Target Change Duration',
         choices=times,
         coerce=int)
+    end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
+                         format='%Y-%m-%d', default=datetime.now().date())
 
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[

@@ -1,7 +1,9 @@
 """Percent Change Times List.
 Stores time in seconds.
 """
+# Should I make this 
 supported_times = [
+	("1 hour", 3600),
     ("24 hours", 86400),
     ("1 week", 604800)
 ]
