@@ -25,41 +25,12 @@ def index():
         phone_number = form.phone_number.data
         market = form.market.date
         end_date = form.end_date
-        had_last_price_error = False
-        if less_more == 2 or less_more == 3:
-            last_price_query = LastPrice.query.filter(
-                LastPrice.symbol == asset)
-            lp_result = last_price_query.one_or_none()
-            if lp_result is None:
-                had_last_price_error = True
-            else:
-                if less_more == 2:  # + %
-                    less_more = 1  # above
-                    target_price = lp_result.price * (
-                        target_price / 100.0 + 1.0)
-                elif less_more == 3:  # - %
-                    less_more = 0  # below
-                    target_price = lp_result.price * (
-                        1.0 - target_price / 100.0)
-
-        if had_last_price_error:
-            flash("Internal error setting percent change!", 'error')
-        else:
-            alert = Alert(symbol=asset, price=target_price,
-                          above=less_more, phone_number=phone_number,
-                          market=market, end_date=end_date.data)
-            if current_user.is_authenticated:
-                alert.user_id = current_user.id
-
-            db.session.add(alert)
-            db.session.commit()
-            flash("Alert is set!")
-
         alert = Alert(
             symbol=asset,
             condition=cond_option,
             phone_number=phone_number,
-            market=market)
+            market=market,
+            end_date=end_date.data)
         if cond_option == 1 or cond_option == 0:
             alert.price = form.price.data
         elif cond_option == 2 or cond_option == 3:

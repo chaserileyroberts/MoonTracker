@@ -67,6 +67,12 @@
                                         <dd>
                                             {{ render_field(form.percent_duration) }}
                                         </dd>
+                                        <dt>
+                                            {{ form.end_date.label }}
+                                        </dt>
+                                        <dd>
+                                            {{ render_field(form.end_date) }}
+                                        </dd>
                                     </dl>
                                     {{ form.recaptcha }}
                                     <ul>
@@ -80,61 +86,11 @@
                             {{ messages() }}
                         </div>
                     </div>
-                    <div class="form-group">
-                        <form method=post>
-                            <dl>
-                                <dt>
-                                    {{ form.phone_number.label }}
-                                </dt>
-                                <dd>
-                                    {{ render_field(form.phone_number, placeholder="Phone Number") }}
-                                </dd>
-                                <dt>
-                                    {{ form.asset.label }}
-                                </dt>
-                                <dd>
-                                    {{ render_field(form.asset) }}
-                                </dd>
-                                <dt>
-                                    {{ form.market.label }}
-                                </dt>
-                                <dd>
-                                    {{ render_field(form.market, disabled=(form.asset.data == '')) }}
-                                </dd>
-                                <dt>
-                                    {{ form.target_price.label }}
-                                </dt>
-                                <dd>
-                                    <div class="row">
-                                        <div class="col-12 col-md-3">
-                                            {{ render_field(form.less_more) }} 
-                                        </div>
-                                        <div class="col-12 col-md-9">
-                                            {{ render_field(form.target_price) }}
-                                        </div>
-                                    </div>
-                                </dd>
-
-                                <dt>
-                                    {{ form.end_date.label }}
-                                </dt>
-                                <dd>
-                                    {{ render_field(form.end_date) }}
-                                </dd>
-                            </dl>
-                            {{ form.recaptcha }}
-                            <ul>
-                            {% for error in form.recaptcha.errors %}
-                                <li class=".recaptcha-error">{{ error }}</li>
-                            {% endfor %}
-                            </ul>
-                            <input type=submit class="btn btn-primary" value=Submit>
-                        </form>
-                    </div>
-                    {{ messages() }}
+                    <br>
                 </div>
             </div>
         </div>
+
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

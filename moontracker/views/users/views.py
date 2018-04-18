@@ -124,34 +124,32 @@ def manage_alerts():
                 print("New Alert")
                 alert = Alert(symbol=form.asset.data,
                               price=form.target_price.data,
-                              above=form.less_more.data,
                               phone_number=form.phone_number.data,
-                              end_date=form.end_date.data)
-                              condition = form.less_more.data,
-                              phone_number = form.phone_number.data)
-                alert.user_id=current_user.id
+                              end_date=form.end_date.data,
+                              condition=form.less_more.data)
+                alert.user_id = current_user.id
                 db.session.merge(alert)
                 db.session.commit()
             else:
-                current_alert=None
+                current_alert = None
                 for alert in alerts:
                     if alert.id == int(form.alert_id.data):
-                        current_alert=alert
+                        current_alert = alert
                         break
 
                 if current_alert is not None:
-                    current_alert.phone_number=form.phone_number.data
-                    current_alert.symbol=form.asset.data
-                    current_alert.price=form.target_price.data
-                    current_alert.condition=form.less_more.data
+                    current_alert.phone_number = form.phone_number.data
+                    current_alert.symbol = form.asset.data
+                    current_alert.price = form.target_price.data
+                    current_alert.condition = form.less_more.data
                     db.session.merge(current_alert)
                     db.session.commit()
                     # figure out proper way to refresh
         else:
             print(form.alert_id.errors)
     # Fresh set of alerts
-    alerts=Alert.query.filter(Alert.user_id == current_user.id).all()
-    return render_template('manage.html', alerts = alerts,
+    alerts = Alert.query.filter(Alert.user_id == current_user.id).all()
+    return render_template('manage.html', alerts=alerts,
                            supported_assets=supported_assets, form=form)
 
 
