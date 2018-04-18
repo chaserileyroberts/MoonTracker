@@ -7,13 +7,12 @@ $('#alert-modal').on('show.bs.modal', function (event) {
     modal.find('#cond_option').val(button.data('alert-condition'));
     modal.find('#price').val(button.data('alert-price'));
     modal.find('#percent').val(button.data('alert-percent'));
-    modal.find('#percent_duration').val(button.data('alert-percent-duration'));
-    modal.find('#phone_number').val(button.data('alert-phone-number'));
+    modal.find('#percent_duration').val(button.data('alert-percent_duration'));
+    modal.find('#phone_number').val(button.data('alert-phone_number'));
     onAlertCondChange(button.data('alert-condition'));
 });
 
 function onAlertCondChange(cond_option) {
-    console.log(cond_option);
     var priceElem = $('#price');
     var priceLabel = $('label[for="price"]');
     var percentElem = $('#percent');

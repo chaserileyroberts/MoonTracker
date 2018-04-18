@@ -1,11 +1,13 @@
+"""Utils for creating alerts in the database."""
+from datetime import datetime
 from moontracker.models import Alert
 from moontracker.extensions import db
 from wtforms import Form
-from wtforms import FloatField, StringField, SelectField
+from wtforms import FloatField, StringField, SelectField, DateField
 from wtforms import validators
 from flask_wtf import RecaptchaField, Recaptcha
-from moontracker.assets import supported_assets, assets, market_apis
-from moontracker.times import supported_times, times
+from moontracker.assets import assets, market_apis
+from moontracker.times import times
 from flask_login import current_user
 
 
@@ -49,6 +51,8 @@ class AlertForm(Form):
         'Target Change Duration',
         choices=times,
         coerce=int)
+    end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
+                     format='%Y-%m-%d', default=datetime.now().date())
 
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
@@ -71,6 +75,7 @@ class AlertForm(Form):
 
 def make_new_alert(form):
     """Create new alert.
+
     Args:
         form: AlertForm Object.
     """
@@ -95,11 +100,3 @@ def make_new_alert(form):
 
     db.session.add(alert)
     db.session.commit()
-
-
-def modify_existing_alert(form):
-    pass
-
-
-def delete_existing_alert(form):
-    pass

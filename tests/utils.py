@@ -68,5 +68,4 @@ class price_tracker_fake():
         return self.amount
 
     def get_percent_change(self, asset, market, duration):
-        """Get fake percent change."""
-        return self.percent
+        """Get the percent."""

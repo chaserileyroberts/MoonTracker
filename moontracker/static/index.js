@@ -103,7 +103,6 @@ $.widget("custom.combobox", {
 $("#asset").combobox();
 
 function onAlertCondChange(cond_option) {
-    console.log(cond_option);
     var priceElem = $('#price');
     var priceLabel = $('label[for="price"]');
     var percentElem = $('#percent');

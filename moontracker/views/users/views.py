@@ -196,7 +196,6 @@ class ManageAlertForm(AlertForm):
 
     alert_id = IntegerField(validators=[validators.Required()],
                             widget=wtforms.widgets.HiddenInput())
-    recaptcha = None
 
     def __init__(self, form, alerts):
         """Initialize the form."""

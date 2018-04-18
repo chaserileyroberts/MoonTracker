@@ -34,9 +34,12 @@ def test_percent_above():
         })
     assert response.status_code == 200
     assert "Please do the recaptcha" not in str(response.data)
-    results = Alert.query.filter(Alert.phone_number == '5558675309',
-                                 Alert.symbol == 'BTC', Alert.percent == 100.0,
-                                 Alert.condition == 2, Alert.percent_duration).all()
+    results = Alert.query.filter(
+        Alert.phone_number == '5558675309',
+        Alert.symbol == 'BTC',
+        Alert.percent == 100.0,
+        Alert.condition == 2,
+        Alert.percent_duration).all()
     assert len(results) == 1
 
 
@@ -53,9 +56,12 @@ def test_percent_below():
         })
     assert response.status_code == 200
     assert "Please do the recaptcha" not in str(response.data)
-    results = Alert.query.filter(Alert.phone_number == '5558675309',
-                                 Alert.symbol == 'BTC', Alert.percent == 100.0,
-                                 Alert.condition == 3, Alert.percent_duration).all()
+    results = Alert.query.filter(
+        Alert.phone_number == '5558675309',
+        Alert.symbol == 'BTC',
+        Alert.percent == 100.0,
+        Alert.condition == 3,
+        Alert.percent_duration).all()
     assert len(results) == 1
 
 
@@ -76,6 +82,8 @@ def test_valid_post_below():
                                  Alert.symbol == 'BTC', Alert.price == 100.0,
                                  Alert.condition == 0).all()
     assert len(results) == 1
+
+
 def test_short_phonenumber():
     response = test_client.post(
         '/',
