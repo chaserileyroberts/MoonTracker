@@ -73,7 +73,6 @@ def index():
         db.session.commit()
         flash("Alert is set!")
 
-
     return render_template('index.html', form=form,
                            app_markets_json=json.dumps(supported_assets))
 
