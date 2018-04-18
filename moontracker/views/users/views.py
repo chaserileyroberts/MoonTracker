@@ -4,13 +4,11 @@ from flask_login import login_user, logout_user, login_required, current_user
 import wtforms
 from flask_wtf import RecaptchaField, Recaptcha
 from wtforms import Form, FloatField, StringField, IntegerField, SelectField
-from wtforms import DateField
 from wtforms import validators
 from sqlalchemy import exists
 from moontracker.extensions import bcrypt, db, login_manager
 from moontracker.models import User, Alert
 from moontracker.assets import assets, supported_assets
-from datetime import datetime
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
@@ -124,9 +122,8 @@ def manage_alerts():
                 print("New Alert")
                 alert = Alert(symbol=form.asset.data,
                               price=form.target_price.data,
-                              phone_number=form.phone_number.data,
-                              end_date=form.end_date.data,
-                              condition=form.less_more.data)
+                              condition=form.less_more.data,
+                              phone_number=form.phone_number.data)
                 alert.user_id = current_user.id
                 db.session.merge(alert)
                 db.session.commit()
@@ -215,13 +212,6 @@ class ManageAlertForm(Form):
     target_price = FloatField('Target Price', [validators.optional()])
     less_more = SelectField(
         '', choices=[(1, 'above'), (0, 'below')], coerce=int)
-
-    end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
-                         format='%Y-%m-%d', default=datetime.now().date())
-
-    recaptcha = RecaptchaField(
-        'Recaptcha', validators=[
-            Recaptcha("Please do the recaptcha.")])
 
     def __init__(self, form, alerts):
         """Initialize the form."""
