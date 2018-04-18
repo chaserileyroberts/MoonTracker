@@ -9,7 +9,7 @@ $('#alert-modal').on('show.bs.modal', function (event) {
     modal.find('#percent').val(button.data('alert-percent'));
     modal.find('#percent_duration').val(button.data('alert-percent_duration'));
     modal.find('#phone_number').val(button.data('alert-phone_number'));
-    // onAlertCondChange(button.data('alert-condition'));
+    onAlertCondChange(button.data('alert-condition'));
 });
 
 function onAlertCondChange(cond_option) {
@@ -43,8 +43,8 @@ function onAlertCondChange(cond_option) {
     }
 }
 
-// $('#cond_option').on('change', function (event) {
-//     var cond_option = event.target.value;
-//     onAlertCondChange(cond_option);
-// });
-// onAlertCondChange($('#cond_option').val());
+$('#cond_option').on('change', function (event) {
+    var cond_option = event.target.value;
+    onAlertCondChange(cond_option);
+});
+onAlertCondChange($('#cond_option').val());
