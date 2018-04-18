@@ -110,7 +110,6 @@ class Texter(object):
         """
         timestamp = datetime.utcnow()
 
-        print("checking " + coin + " in " + market + " for " + str(duration))
         # I need to check each supported time
         percent = self.price_tracker.get_percent_change(
            asset=coin, market=market, duration=duration[1])

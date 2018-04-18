@@ -124,10 +124,17 @@ def manage_alerts():
             if int(form.alert_id.data) == -1:
                 print("New Alert")
                 alert = Alert(symbol=form.asset.data,
-                              price=form.target_price.data,
+                              condition=form.cond_option.data,
                               phone_number=form.phone_number.data,
-                              end_date=form.end_date.data,
-                              condition=form.less_more.data)
+                              market=form.market.data,
+                              end_date=form.end_date.data)
+                if cond_option == 1 or cond_option == 0:
+                    alert.price = form.price.data
+                elif cond_option == 2 or cond_option == 3:
+                    alert.percent = form.percent.data
+                    # alert.percent_duration = form.percent_duration.data
+                    alert.percent_duration = 86400  # fix this!
+                    alert.price = 0.0
                 alert.user_id = current_user.id
                 db.session.merge(alert)
                 db.session.commit()
@@ -141,8 +148,8 @@ def manage_alerts():
                 if current_alert is not None:
                     current_alert.phone_number = form.phone_number.data
                     current_alert.symbol = form.asset.data
-                    current_alert.price = form.target_price.data
-                    current_alert.condition = form.less_more.data
+                    current_alert.price = form.price.data
+                    current_alert.condition = form.cond_option.data
                     db.session.merge(current_alert)
                     db.session.commit()
                     # figure out proper way to refresh
@@ -205,7 +212,12 @@ class ManageAlertForm(AlertForm):
 
     alert_id = IntegerField(validators=[validators.Required()],
                             widget=wtforms.widgets.HiddenInput())
-    recaptcha = None
+
+    phone_number = StringField(
+        'Phone Number', [
+            validators.Length(
+                min=10), validators.Regexp(
+                '^[0-9]+$', message="Input characters must be numeric")])
 
     end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
                          format='%Y-%m-%d', default=datetime.now().date())

@@ -48,15 +48,15 @@ def test_edit():
     assert '1111111111' in str(response.data)
     response = test_client.post(
         '/manage',
-        data=dict(
-            phone_number="1111111111",
-            asset="BTC",
-            less_more="1",
-            target_price="20",
-            alert_id='1',
-            submit="Save Changes"
-        ),
-        follow_redirects=True)
+        data={
+            'phone_number': '1111111111',
+            'asset': 'BTC',
+            'market': 'gdax',
+            'price': '20',
+            'cond_option': '1',
+            # 'alert_id': '1',
+            'submit': 'Save Changes'
+        })
     assert response.status_code == 200
     response = test_client.get('/manage', follow_redirects=True)
     assert '$20' in str(response.data)
@@ -86,15 +86,14 @@ def test_delete():
     assert '1111111111' in str(response.data)
     response = test_client.post(
         '/manage',
-        data=dict(
-            phone_number="1111111111",
-            asset="LTC",
-            less_more="1",
-            target_price="100",
-            alert_id='1',
-            submit="Delete"
-        ),
-        follow_redirects=True)
+        data={
+            'phone_number': '1111111111',
+            'asset': 'LTC',
+            'cond_option': '1',
+            'price': '100',
+            'alert_id': '1',
+            'submit': 'Delete'
+        })
     assert response.status_code == 200
     response = test_client.get('/manage', follow_redirects=True)
     results = Alert.query.filter(Alert.user_id == 1).all()
@@ -127,16 +126,16 @@ def test_add():
     assert "No alerts" in str(response.data)
     response = test_client.post(
         '/manage',
-        data=dict(
-            phone_number="1111111111",
-            asset="LTC",
-            less_more="1",
-            target_price="825",
-            alert_id='-1',
-            submit="Save Changes"
-        ),
-        follow_redirects=True)
+        data={
+            'phone_number': '1111111111',
+            'asset': 'LTC',
+            'cond_option': '1',
+            'price': '825',
+            'alert_id': '-1',
+            'submit': 'Save Changes'
+        })
     print(response.data)
+    response = test_client.get('/manage', follow_redirects=True)
     assert "No alerts" not in str(response.data)
     assert "$825" in str(response.data)
     assert "above" in str(response.data)
