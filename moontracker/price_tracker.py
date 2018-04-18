@@ -33,7 +33,7 @@ class PriceTracker():
         Args:
             asset: The asset of the query.
             market: String of the market to pull from.
-            time: 
+            duration:
         Returns:
             change: float percent change of the asset over 'time' seconds.
 

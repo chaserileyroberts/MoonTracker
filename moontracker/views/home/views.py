@@ -8,7 +8,7 @@ from wtforms import validators
 import json
 
 from moontracker.assets import supported_assets, assets, market_apis
-from moontracker.times import times
+from moontracker.times import supported_times, times
 from moontracker.extensions import db
 from moontracker.models import Alert
 
@@ -33,7 +33,8 @@ def index():
             alert.price = form.price.data
         elif cond_option == 2 or cond_option == 3:
             alert.percent = form.percent.data
-            alert.percent_duration = form.percent_duration.data
+            # alert.percent_duration = form.percent_duration.data
+            alert.percent_duration = 86400  # fix this!
 
         if current_user.is_authenticated:
             alert.user_id = current_user.id

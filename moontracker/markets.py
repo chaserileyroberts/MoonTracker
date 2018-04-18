@@ -19,7 +19,8 @@ class Market:
         """
         response = requests.get(request)
         if response.status_code != 200:
-            raise RuntimeError('GET {} {}'.format(request, response.status_code))
+            raise RuntimeError('GET {} {}'.format(
+                request, response.status_code))
         return response.json()
 
     def get_spot_price(self, product, time=None):
@@ -76,7 +77,8 @@ class BitfinexMarket(Market):
         product = product.upper()
 
         if time is None:
-            request = 'https://api.bitfinex.com/v2/ticker/t{}USD'.format(product)
+            request = 'https://api.bitfinex.com/v2/ticker/t{}USD'.format(
+                product)
 
             response = self._handle_request(request)
 
@@ -86,10 +88,12 @@ class BitfinexMarket(Market):
             raise ValueError("Time must be within 31 days of the current time.")
         else:
             # Bitfinex requires the time to be in milliseconds since epoch.
-            start_time = int((time - datetime(1970, 1, 1)).total_seconds() * 1000)
+            start_time = int(
+                (time - datetime(1970, 1, 1)).total_seconds() * 1000)
 
-            request = 'https://api.bitfinex.com/v2/candles/trade:1m:t{}USD/hist?limit=1&sort=1&start={}'.format(product, start_time)
-        
+            request = 'https://api.bitfinex.com/v2/candles/trade:1m:t{}USD/hist?limit=1&sort=1&start={}'.format(
+                product, start_time)
+
             response = self._handle_request(request)
 
             # If there are no trades after the start time, just get the last
@@ -122,13 +126,15 @@ class CoinbaseMarket(Market):
         """
 
         if time is None:
-            request = 'https://api.coinbase.com/v2/prices/{}-usd/spot'.format(product)
+            request = 'https://api.coinbase.com/v2/prices/{}-usd/spot'.format(
+                product)
         elif (datetime.utcnow() - time).total_seconds() > (31 * 24 * 60 * 60):
             raise ValueError("Time must be within 31 days of the current time.")
         else:
             # Coinbase only allows historical prices by date.
             date = time.date().isoformat()
-            request = 'https://api.coinbase.com/v2/prices/{}-usd/spot?date={}'.format(product, date)
+            request = 'https://api.coinbase.com/v2/prices/{}-usd/spot?date={}'.format(
+                product, date)
         response = self._handle_request(request)
 
         return float(response['data']['amount'])
@@ -151,9 +157,10 @@ class GdaxMarket(Market):
             ValueError: If the time is not supported by the API.
 
         """
-            
+
         if time is None:
-            request = 'https://api.gdax.com/products/{}-usd/ticker'.format(product)
+            request = 'https://api.gdax.com/products/{}-usd/ticker'.format(
+                product)
             response = self._handle_request(request)
             return float(response['price'])
         elif (datetime.utcnow() - time).total_seconds() > (31 * 24 * 60 * 60):
@@ -162,14 +169,14 @@ class GdaxMarket(Market):
             # The start time is arbitrarily 10 minutes behind the end time.
             start_time = time - timedelta(minutes=10)
 
-            request = 'https://api.gdax.com/products/{}-usd/candles?start={}&end={}&granularity=60'.format(product, start_time, time)
+            request = 'https://api.gdax.com/products/{}-usd/candles?start={}&end={}&granularity=60'.format(
+                product, start_time, time)
             response = self._handle_request(request)
 
             # If there are no trades after the start time, just get the last
             # trade that ever occurred for the asset.
             if len(response) == 0:
                 return self.get_spot_price(product)
-
 
             # Return the latest bucket's closing trade.
             # len(response)-1 returns the latest bucket.
