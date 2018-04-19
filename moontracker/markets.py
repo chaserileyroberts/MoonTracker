@@ -55,59 +55,6 @@ class Market:
         return (current_price - prev_price) / prev_price
 
 
-class BitfinexMarket(Market):
-    """Market Client for Bitfinex."""
-
-    def get_spot_price(self, product, time=None):
-        """Get the asset price at the specified time.
-
-        Args:
-            product: The asset you want the price of.
-            time: The time to get the price for, defaults to None.
-                  When time is None, gets the price of the latest trade.
-        Returns:
-            price: The current price of the asset as a float.
-        Raises:
-            RuntimeError: If the request doesn't return a 200 status code.
-            ValueError: If the time is not supported by the API.
-
-        """
-        # Bitfinex requires the asset to be in upper case.
-        product = product.upper()
-
-        if time is None:
-            request = 'https://api.bitfinex.com/v2/ticker/t{}USD'.format(
-                product)
-
-            response = self._handle_request(request)
-
-            # Returns the latest trade price.
-            return float(response[6])
-        elif (datetime.utcnow() - time).total_seconds() > (31 * 24 * 60 * 60):
-            raise ValueError(
-                "Time must be within 31 days of the current time.")
-        else:
-            # Bitfinex requires the time to be in milliseconds since epoch.
-            start_time = int(
-                (time - datetime(1970, 1, 1)).total_seconds() * 1000)
-            request = (
-                'https://api.bitfinex.com/v2/candles/trade:1m:t{}' +
-                'USD/hist?limit=1&sort=1&start={}').format(
-                product, start_time)
-
-            response = self._handle_request(request)
-
-            # If there are no trades after the start time, just get the last
-            # trade that ever occurred for the asset.
-            if len(response) == 0:
-                return self.get_spot_price(product)
-
-            # Return the first trade in the returned history.
-            # 0 returns the first timeframe.
-            # 2 returns the price of the last trade  in the timeframe.
-            return float(response[0][2])
-
-
 class CoinbaseMarket(Market):
     """Market Client for Coinbase."""
 
@@ -281,7 +228,6 @@ class NasdaqMarket(Market):
 def lookupMarket(market):
     """Get market class from name string."""
     markets = {
-        "bitfinex": BitfinexMarket,
         "gdax": GdaxMarket,
         "gemini": GeminiMarket,
         "nasdaq": NasdaqMarket,

@@ -2,15 +2,15 @@
 supported_assets = {
     "BTC": {
         "name": "Bitcoin",
-        "markets": ["coinbase", "gemini", "bitfinex", "gdax"]
+        "markets": ["coinbase", "gemini", "gdax"]
     },
     "ETH": {
         "name": "Ethereum",
-        "markets": ["coinbase", "gemini", "bitfinex", "gdax"]
+        "markets": ["coinbase", "gemini", "gdax"]
     },
     "LTC": {
         "name": "Litecoin",
-        "markets": ["coinbase", "bitfinex", "gdax"]
+        "markets": ["coinbase", "gdax"]
     },
     "GOOGL": {
         "name": "Google",

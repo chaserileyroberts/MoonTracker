@@ -292,27 +292,6 @@ def test_single_text_loop_increase_gemini():
     assert twilio.to[0] == '555-555-5555'
 
 
-# def test_single_text_loop_increase_bitfinex():
-#     price_tracker = price_tracker_fake("5", "5")
-#     twilio = twilio_fake()
-#     texter = Texter()
-#     texter.set_clients(price_tracker, twilio.send_message)
-
-#     alert = Alert(symbol='BTC', percent=4.0, percent_duration=86400,
-#                   condition=2, phone_number='555-555-5555',
-#                   market='bitfinex')
-#     db.session.add(alert)
-#     db.session.commit()
-
-#     texter.check_alerts()
-#     assert len(twilio.messages) == 1
-#     assert len(twilio.to) == 1
-#     assert 'increased by' in twilio.messages[0]
-#     assert '24 hours' in twilio.messages[0]
-#     assert 'BTC' in twilio.messages[0]
-#     assert twilio.to[0] == '555-555-5555'
-
-
 def test_single_entry_no_text():
     price_tracker = price_tracker_fake("45")
     twilio = twilio_fake()
@@ -366,7 +345,7 @@ def test_price_tracker_integration():
     texter = Texter()
     texter.set_clients(price_tracker, twilio.send_message)
     alert = Alert(symbol='BTC', price=100.0, condition=1,
-                  phone_number='555-555-5555')
+                  phone_number='555-555-5555', market='coinbase')
     db.session.add(alert)
     db.session.commit()
 

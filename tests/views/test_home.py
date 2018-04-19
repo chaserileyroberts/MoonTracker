@@ -27,7 +27,7 @@ def test_percent_above():
         data={
             'phone_number': '5558675309',
             'asset': 'BTC',
-            'market': 'bitfinex',
+            'market': 'coinbase',
             'cond_option': '2',
             'percent': '100',
             'percent_duration': '86400'
@@ -49,7 +49,7 @@ def test_percent_below():
         data={
             'phone_number': '5558675309',
             'asset': 'BTC',
-            'market': 'bitfinex',
+            'market': 'gemini',
             'cond_option': '3',
             'percent': '100',
             'percent_duration': '86400'
@@ -71,7 +71,7 @@ def test_valid_post_below():
         data={
             'phone_number': '5558675309',
             'asset': 'BTC',
-            'market': 'bitfinex',
+            'market': 'gemini',
             'cond_option': '0',
             'price': '100'
         })
