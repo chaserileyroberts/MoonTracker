@@ -3,7 +3,7 @@ from twilio.rest import Client as TwilioClient
 import twilio
 from moontracker.price_tracker import PriceTracker
 from moontracker.assets import supported_assets
-from moontracker.times import supported_times, supported_durations
+from moontracker.times import supported_times
 from moontracker.extensions import db
 from moontracker.models import Alert, LastPrice
 from datetime import datetime
