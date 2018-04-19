@@ -1,4 +1,6 @@
 $('#alert-modal').on('show.bs.modal', function (event) {
+    // On show modal, which occurs when clicking
+    // the edit alert button
     var button = $(event.relatedTarget);
     var modal = $(this);
     modal.find('#alert_id').val(button.data('alert-id'));
@@ -9,10 +11,13 @@ $('#alert-modal').on('show.bs.modal', function (event) {
     modal.find('#percent').val(button.data('alert-percent'));
     modal.find('#percent_duration').val(button.data('alert-percent_duration'));
     modal.find('#phone_number').val(button.data('alert-phone_number'));
+    // cond_option may have changed, so call onAlertCondChange
     onAlertCondChange(button.data('alert-condition'));
 });
 
 function onAlertCondChange(cond_option) {
+    // On alert condition change in the form
+    // Hide/show the relevant price/percent fields
     var priceElem = $('#price');
     var priceLabel = $('label[for="price"]');
     var percentElem = $('#percent');
@@ -20,6 +25,7 @@ function onAlertCondChange(cond_option) {
     var percentDurationElem = $('#percent_duration');
     var percentDurationLabel = $('label[for="percent_duration"]');
     if (cond_option == '1' || cond_option == '0') {
+        // Above or below a price
         priceElem.show();
         priceLabel.show();
         percentElem.hide();
@@ -27,6 +33,7 @@ function onAlertCondChange(cond_option) {
         percentDurationElem.hide();
         percentDurationLabel.hide();
     } else if (cond_option == '2' || cond_option == '3') {
+        // Percent increase or decrease
         priceElem.hide();
         priceLabel.hide();
         percentElem.show();
@@ -34,6 +41,7 @@ function onAlertCondChange(cond_option) {
         percentDurationElem.show();
         percentDurationLabel.show();
     } else {
+        // Otherwise, hide everything
         priceElem.hide();
         priceLabel.hide();
         percentElem.hide();
