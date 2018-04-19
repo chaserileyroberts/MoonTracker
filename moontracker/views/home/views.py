@@ -28,5 +28,5 @@ def app_markets():
 
 @home_blueprint.route('/appDurations.js', methods=['GET'])
 def app_durations():
-    """Generate JavaScript for appDurations"""
+    """Generate JavaScript for appDurations."""
     return 'appDurations = ' + json.dumps(supported_durations)
