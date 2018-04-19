@@ -3,7 +3,6 @@
 Stores time in seconds.
 """
 
-# Should I make this have objects like in assets.py?
 supported_times = [
     ("1 hour", 3600),
     ("24 hours", 86400),
@@ -11,11 +10,11 @@ supported_times = [
 ]
 
 supported_durations = {
-	"coinbase": [ "86400" ],
-	"gemini": [ "86400" ],
-	"bitfinex": [],
-	"gdax": [ "3600", "86400", "604800" ],
-	"nasdaq": []
+    "coinbase": ["86400"],
+    "gemini": ["86400"],
+    "bitfinex": [],
+    "gdax": ["3600", "86400", "604800"],
+    "nasdaq": []
 }
 
 times = []

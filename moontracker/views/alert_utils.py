@@ -49,7 +49,7 @@ class AlertForm(Form):
     percent_duration_validators = [validators.AnyOf([3600, 86400, 604800])]
     percent_duration = SelectField(
         'Target Change Duration',
-        choices=times,
+        choices=[times[1]],  # currently only supports 24 hours
         coerce=int)
     end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
                          format='%Y-%m-%d', default=datetime.now().date())
@@ -93,8 +93,8 @@ def make_new_alert(form):
         alert.price = form.price.data
     elif cond_option == 2 or cond_option == 3:
         alert.percent = form.percent.data
-        # alert.percent_duration = form.percent_duration.data
-        alert.percent_duration = 86400  # fix this!
+        # currently only supports 24 hours
+        alert.percent_duration = 86400
 
     if current_user.is_authenticated:
         alert.user_id = current_user.id

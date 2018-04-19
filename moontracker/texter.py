@@ -45,15 +45,14 @@ class Texter(object):
         # too many requests per second, keep getting 429 code
         for asset in supported_assets:
             for market in supported_assets[asset]["markets"]:
-                # This really needs to be fixed!
+                # currently only supports 24 hours
 
-                # for time in supported_times:
                 # for time in supported_durations[market]:
-                #     self.check_alerts_for_coin_percent(asset, market, int(time))
+                #     self.check_alerts_for_coin_percent(
+                #         asset, market, int(time))
 
-                if market != "bitfinex":
-                    self.check_alerts_for_coin_percent(
-                        asset, market, supported_times[1][1])
+                self.check_alerts_for_coin_percent(
+                    asset, market, supported_times[1][1])
 
     def check_date(self):
         """Remove alert from database if at or past end date."""
@@ -216,7 +215,8 @@ class Texter(object):
                         "{} price has increased by {:.2f}% over {}. "
                         "Current price is ${:.2f}"
                         .format(
-                            alert.symbol, percent, percent_duration_str, price)))
+                            alert.symbol, percent,
+                            percent_duration_str, price)))
             except twilio.base.exceptions.TwilioRestException:
                 print("Invalid number:", alert.phone_number)
 
@@ -247,6 +247,7 @@ class Texter(object):
                         "{} price has decreased by {:.2f}% over {}. "
                         "Current price is ${:.2f}"
                         .format(
-                            alert.symbol, percent, percent_duration_str, price)))
+                            alert.symbol, percent,
+                            percent_duration_str, price)))
             except twilio.base.exceptions.TwilioRestException:
                 print("Invalid number:", alert.phone_number)
