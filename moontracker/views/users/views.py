@@ -114,7 +114,6 @@ def manage_alerts():
                 if alert.id == int(form.alert_id.data):
                     current_alert = alert
                     break
-
             if current_alert is not None:
                 db.session.delete(current_alert)
                 db.session.commit()

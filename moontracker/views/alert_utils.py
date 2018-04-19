@@ -52,7 +52,7 @@ class AlertForm(Form):
         choices=times,
         coerce=int)
     end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
-                     format='%Y-%m-%d', default=datetime.now().date())
+                         format='%Y-%m-%d', default=datetime.now().date())
 
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[

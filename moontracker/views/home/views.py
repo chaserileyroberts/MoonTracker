@@ -1,5 +1,4 @@
 """Home related views."""
-from datetime import datetime
 from flask import request, render_template, flash, Blueprint
 import json
 from moontracker.assets import supported_assets

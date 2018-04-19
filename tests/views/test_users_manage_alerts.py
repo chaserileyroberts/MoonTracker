@@ -81,11 +81,14 @@ def test_delete():
 
     results = Alert.query.filter(Alert.user_id == 1).all()
     assert len(results) == 1
-
+    assert results[0].symbol == 'LTC'
+    assert results[0].condition == 1
+    assert results[0].phone_number == '1111111111'
     response = test_client.get('/manage', follow_redirects=True)
     assert '$100' in str(response.data)
     assert '1111111111' in str(response.data)
     response = test_client.post(
+        '/manage',
         data={
             'alert_id': str(results[0].id),
             'phone_number': '1111111111',
