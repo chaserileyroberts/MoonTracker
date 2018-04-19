@@ -9,11 +9,10 @@ $.widget("custom.combobox", {
         this.element.hide();
         this._createAutocomplete();
     },
-
+    // Create the auto complete text entry.
     _createAutocomplete: function() {
         var selected = this.element.children(":selected"),
             value = selected.val() ? selected.text() : "";
-
         this.input = $("<input>")
             .appendTo(this.wrapper)
             .val(value)
@@ -27,6 +26,7 @@ $.widget("custom.combobox", {
             .tooltip();
 
         this._on(this.input, {
+            // autocomplete the markets element.
             autocompleteselect: function(event, ui) {
                 var marketElem = $('#market');
                 marketElem.val('')
@@ -41,6 +41,7 @@ $.widget("custom.combobox", {
     },
 
     _source: function(request, response) {
+        // Regex match similar assets.
         var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
         response(this.element.children("option").map(function() {
             var text = $(this).text();
@@ -109,6 +110,7 @@ function onAlertCondChange(cond_option) {
     var percentLabel = $('label[for="percent"]');
     var percentDurationElem = $('#percent_duration');
     var percentDurationLabel = $('label[for="percent_duration"]');
+    // If a price change alert.
     if (cond_option == '1' || cond_option == '0') {
         priceElem.show();
         priceLabel.show();
@@ -116,6 +118,7 @@ function onAlertCondChange(cond_option) {
         percentLabel.hide();
         percentDurationElem.hide();
         percentDurationLabel.hide();
+    // If a percent change alert.
     } else if (cond_option == '2' || cond_option == '3') {
         priceElem.hide();
         priceLabel.hide();
@@ -123,6 +126,7 @@ function onAlertCondChange(cond_option) {
         percentLabel.show();
         percentDurationElem.show();
         percentDurationLabel.show();
+    // If neither, hide everthing until they pick one.
     } else {
         priceElem.hide();
         priceLabel.hide();
@@ -139,9 +143,11 @@ $('#cond_option').on('change', function (event) {
 });
 onAlertCondChange($('#cond_option').val());
 
+// Last Price Updates.
 var lplSocket = io('/lastpriceslive', { transports: ['websocket'] });
 lplSocket.on('json', function (lastPricesStr) {
     var lastPricesTableElem = $('#last-prices-table');
+    //If we have a new price, add it to the page.
     if (lastPricesTableElem.length == 0) {
         var lastPricesElem = $('#last-prices');
         lastPricesElem.append($('<h4>').text('Last Prices'));
@@ -160,6 +166,7 @@ lplSocket.on('json', function (lastPricesStr) {
         var rowFound = false;
         lastPricesTableElem.find('.table-row').each(function (index, rowElem) {
             var rowSymbol = $(rowElem).find('.last-prices-col-symbol').text();
+            // If the symbol already exists, update the price.
             if (rowSymbol == symbolText) {
                 var rowPriceElem = $(rowElem).find('.last-prices-col-price');
                 var oldPriceText = rowPriceElem.text();
@@ -172,6 +179,7 @@ lplSocket.on('json', function (lastPricesStr) {
                 return false;
             }
         });
+        // If not found, add a new price row.
         if (!rowFound) {
             var rowCElem = $('<div class="table-row">');
             var symbolText = appMarkets[lastPrice.symbol]['name'];
@@ -224,12 +232,12 @@ $.widget("custom.combobox", {
                     item: ui.item.option
                 });
             },
-
             autocompletechange: "_removeIfInvalid"
         });
     },
 
     _source: function(request, response) {
+        // Regex find near matching choices.
         var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
         response(this.element.children("option").map(function() {
             var text = $(this).text();
