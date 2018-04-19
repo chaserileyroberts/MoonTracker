@@ -3,14 +3,14 @@ from flask import request, render_template, flash, redirect, url_for, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
 import wtforms
 from flask_wtf import RecaptchaField, Recaptcha
-from wtforms import Form, FloatField, StringField, IntegerField, SelectField
-from wtforms import DateField
+from wtforms import Form, StringField, IntegerField
 from wtforms import validators
 from sqlalchemy import exists
 from moontracker.extensions import bcrypt, db, login_manager
 from moontracker.models import User, Alert
-from moontracker.assets import assets, supported_assets
-from datetime import datetime
+from moontracker.assets import supported_assets
+from moontracker.views.alert_utils import AlertForm, make_new_alert
+
 
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
 
@@ -110,26 +110,17 @@ def manage_alerts():
     if request.method == 'POST':
         if request.form['submit'] == 'Delete' and form.alert_id.validate(form):
             current_alert = None
-            for index, alert in enumerate(alerts):
+            for alert in alerts:
                 if alert.id == int(form.alert_id.data):
                     current_alert = alert
                     break
-
             if current_alert is not None:
                 db.session.delete(current_alert)
                 db.session.commit()
-
         elif request.form['submit'] == 'Save Changes' and form.validate():
             if int(form.alert_id.data) == -1:
                 print("New Alert")
-                alert = Alert(symbol=form.asset.data,
-                              price=form.target_price.data,
-                              phone_number=form.phone_number.data,
-                              end_date=form.end_date.data,
-                              condition=form.less_more.data)
-                alert.user_id = current_user.id
-                db.session.merge(alert)
-                db.session.commit()
+                make_new_alert(form)
             else:
                 current_alert = None
                 for alert in alerts:
@@ -140,13 +131,13 @@ def manage_alerts():
                 if current_alert is not None:
                     current_alert.phone_number = form.phone_number.data
                     current_alert.symbol = form.asset.data
-                    current_alert.price = form.target_price.data
-                    current_alert.condition = form.less_more.data
+                    current_alert.price = form.price.data
+                    current_alert.condition = form.cond_option.data
                     db.session.merge(current_alert)
                     db.session.commit()
                     # figure out proper way to refresh
         else:
-            print(form.alert_id.errors)
+            print(form.errors)
     # Fresh set of alerts
     alerts = Alert.query.filter(Alert.user_id == current_user.id).all()
     return render_template('manage.html', alerts=alerts,
@@ -199,29 +190,11 @@ class ChangePasswordForm(Form):
         validators.Length(min=8, message="Please enter password")])
 
 
-class ManageAlertForm(Form):
+class ManageAlertForm(AlertForm):
     """Form to manage an alert."""
 
     alert_id = IntegerField(validators=[validators.Required()],
                             widget=wtforms.widgets.HiddenInput())
-    phone_number = StringField(
-        'Phone Number', [
-            validators.Length(min=10),
-            validators.Regexp(
-                '^[0-9]+$',
-                message="Input characters must be numeric")])
-    asset = SelectField(
-        'Coin', choices=assets)
-    target_price = FloatField('Target Price', [validators.optional()])
-    less_more = SelectField(
-        '', choices=[(1, 'above'), (0, 'below')], coerce=int)
-
-    end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
-                         format='%Y-%m-%d', default=datetime.now().date())
-
-    recaptcha = RecaptchaField(
-        'Recaptcha', validators=[
-            Recaptcha("Please do the recaptcha.")])
 
     def __init__(self, form, alerts):
         """Initialize the form."""

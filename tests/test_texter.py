@@ -41,6 +41,42 @@ def test_greater_than_text():
     assert twilio.to[0] == '555-555-5555'
 
 
+def test_percent_increase_text():
+    price_tracker = price_tracker_fake("45", "5")
+    twilio = twilio_fake()
+    texter = Texter()
+    texter.set_clients(price_tracker, twilio.send_message)
+
+    alerts = [Alert(symbol='BTC', percent=4.0, percent_duration=86400,
+                    condition=2, phone_number='555-555-5555')]
+
+    texter.text_percent_increase(alerts, 4.2, 5.0, '24 hours')
+    assert len(twilio.messages) == 1
+    assert "increased by at least 5.00%" in twilio.messages[0]
+    assert "24 hours" in twilio.messages[0]
+    assert 'BTC' in twilio.messages[0]
+    assert len(twilio.to) == 1
+    assert twilio.to[0] == '555-555-5555'
+
+
+def test_percent_decrease_text():
+    price_tracker = price_tracker_fake("45", "-5")
+    twilio = twilio_fake()
+    texter = Texter()
+    texter.set_clients(price_tracker, twilio.send_message)
+
+    alerts = [Alert(symbol='BTC', percent=4.0, percent_duration=86400,
+                    condition=3, phone_number='555-555-5555')]
+
+    texter.text_percent_decrease(alerts, 3.8, 5.0, '24 hours')
+    assert len(twilio.messages) == 1
+    assert "decreased by at least 5.00%" in twilio.messages[0]
+    assert "24 hours" in twilio.messages[0]
+    assert 'BTC' in twilio.messages[0]
+    assert len(twilio.to) == 1
+    assert twilio.to[0] == '555-555-5555'
+
+
 def test_LTC():
     price_tracker = price_tracker_fake("45")
     twilio = twilio_fake()
@@ -118,6 +154,46 @@ def test_single_text_loop_below():
     assert twilio.to[0] == '555-555-5555'
 
 
+def test_single_text_loop_increase():
+    price_tracker = price_tracker_fake("5", "5")
+    twilio = twilio_fake()
+    texter = Texter()
+    texter.set_clients(price_tracker, twilio.send_message)
+
+    alert = Alert(symbol='BTC', percent=4.0, percent_duration=86400,
+                  condition=2, phone_number='555-555-5555')
+    db.session.add(alert)
+    db.session.commit()
+
+    texter.check_alerts()
+    assert len(twilio.messages) == 1
+    assert len(twilio.to) == 1
+    assert 'increased by' in twilio.messages[0]
+    assert '24 hours' in twilio.messages[0]
+    assert 'BTC' in twilio.messages[0]
+    assert twilio.to[0] == '555-555-5555'
+
+
+def test_single_text_loop_decrease():
+    price_tracker = price_tracker_fake("5", "-5")
+    twilio = twilio_fake()
+    texter = Texter()
+    texter.set_clients(price_tracker, twilio.send_message)
+
+    alert = Alert(symbol='BTC', percent=4.0, percent_duration=86400,
+                  condition=3, phone_number='555-555-5555')
+    db.session.add(alert)
+    db.session.commit()
+
+    texter.check_alerts()
+    assert len(twilio.messages) == 1
+    assert len(twilio.to) == 1
+    assert 'decreased by' in twilio.messages[0]
+    assert '24 hours' in twilio.messages[0]
+    assert 'BTC' in twilio.messages[0]
+    assert twilio.to[0] == '555-555-5555'
+
+
 def test_single_text_loop_include_market():
     price_tracker = price_tracker_fake("5")
     twilio = twilio_fake()
@@ -154,6 +230,87 @@ def test_include_market_above():
     assert 'above' in twilio.messages[0]
     assert 'ETH' in twilio.messages[0]
     assert twilio.to[0] == '1234567890'
+
+
+def test_single_text_loop_increase_coinbase():
+    price_tracker = price_tracker_fake("5", "5")
+    twilio = twilio_fake()
+    texter = Texter()
+    texter.set_clients(price_tracker, twilio.send_message)
+
+    alert = Alert(symbol='BTC', percent=4.0, percent_duration=86400,
+                  condition=2, phone_number='555-555-5555', market='coinbase')
+    db.session.add(alert)
+    db.session.commit()
+
+    texter.check_alerts()
+    assert len(twilio.messages) == 1
+    assert len(twilio.to) == 1
+    assert 'increased by' in twilio.messages[0]
+    assert '24 hours' in twilio.messages[0]
+    assert 'BTC' in twilio.messages[0]
+    assert twilio.to[0] == '555-555-5555'
+
+
+def test_single_text_loop_increase_gdax():
+    price_tracker = price_tracker_fake("5", "5")
+    twilio = twilio_fake()
+    texter = Texter()
+    texter.set_clients(price_tracker, twilio.send_message)
+
+    alert = Alert(symbol='BTC', percent=4.0, percent_duration=86400,
+                  condition=2, phone_number='555-555-5555', market='gdax')
+    db.session.add(alert)
+    db.session.commit()
+
+    texter.check_alerts()
+    assert len(twilio.messages) == 1
+    assert len(twilio.to) == 1
+    assert 'increased by' in twilio.messages[0]
+    assert '24 hours' in twilio.messages[0]
+    assert 'BTC' in twilio.messages[0]
+    assert twilio.to[0] == '555-555-5555'
+
+
+def test_single_text_loop_increase_gemini():
+    price_tracker = price_tracker_fake("5", "5")
+    twilio = twilio_fake()
+    texter = Texter()
+    texter.set_clients(price_tracker, twilio.send_message)
+
+    alert = Alert(symbol='BTC', percent=4.0, percent_duration=86400,
+                  condition=2, phone_number='555-555-5555', market='gemini')
+    db.session.add(alert)
+    db.session.commit()
+
+    texter.check_alerts()
+    assert len(twilio.messages) == 1
+    assert len(twilio.to) == 1
+    assert 'increased by' in twilio.messages[0]
+    assert '24 hours' in twilio.messages[0]
+    assert 'BTC' in twilio.messages[0]
+    assert twilio.to[0] == '555-555-5555'
+
+
+# def test_single_text_loop_increase_bitfinex():
+#     price_tracker = price_tracker_fake("5", "5")
+#     twilio = twilio_fake()
+#     texter = Texter()
+#     texter.set_clients(price_tracker, twilio.send_message)
+
+#     alert = Alert(symbol='BTC', percent=4.0, percent_duration=86400,
+#                   condition=2, phone_number='555-555-5555',
+#                   market='bitfinex')
+#     db.session.add(alert)
+#     db.session.commit()
+
+#     texter.check_alerts()
+#     assert len(twilio.messages) == 1
+#     assert len(twilio.to) == 1
+#     assert 'increased by' in twilio.messages[0]
+#     assert '24 hours' in twilio.messages[0]
+#     assert 'BTC' in twilio.messages[0]
+#     assert twilio.to[0] == '555-555-5555'
 
 
 def test_single_entry_no_text():

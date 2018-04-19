@@ -3,6 +3,7 @@ from twilio.rest import Client as TwilioClient
 import twilio
 from moontracker.price_tracker import PriceTracker
 from moontracker.assets import supported_assets
+from moontracker.times import supported_times
 from moontracker.extensions import db
 from moontracker.models import Alert, LastPrice
 from datetime import datetime
@@ -41,6 +42,20 @@ class Texter(object):
             for market in supported_assets[asset]["markets"]:
                 self.check_alerts_for_coin(asset, market)
 
+        # too many requests per second, keep getting 429 code
+        for asset in supported_assets:
+            # This might change for percent change
+            for market in supported_assets[asset]["markets"]:
+                # This really needs to be fixed!
+                # I know this looks messy right now
+
+                # for time in supported_times:
+                #     self.check_alerts_for_coin_percent(asset, market, time)
+
+                if market != "bitfinex":
+                    self.check_alerts_for_coin_percent(
+                        asset, market, supported_times[1])
+
     def check_date(self):
         """Remove alert from database if at or past end date."""
         timestamp = datetime.now().date()
@@ -55,7 +70,7 @@ class Texter(object):
 
         Args:
             coin: The asset to check against.
-            makert: String of which market to use
+            market: String of which market to use
         """
         timestamp = datetime.utcnow()
 
@@ -82,6 +97,47 @@ class Texter(object):
 
         last_price = LastPrice(symbol=coin, price=price, timestamp=timestamp)
         db.session.merge(last_price)
+
+        # TODO(Chase): This will cause race condition.
+        db.session.commit()
+
+    def check_alerts_for_coin_percent(self, coin, market, duration):
+        """Check for alerts.
+
+        Args:
+            coin: The asset to check against.
+            market: String of which market to use
+        """
+        # I need to check each supported time
+        percent = self.price_tracker.get_percent_change(
+            asset=coin, market=market, duration=duration[1])
+
+        price = self.price_tracker.get_spot_price(
+            asset=coin, market=market)
+
+        if (percent > 0):  # what if 0? did we already check for that?
+            # Get all alerts w/ increase less than the current increase
+            percent_increase_query = Alert.query.filter(
+                Alert.symbol == coin,
+                Alert.percent_duration == duration[1],
+                Alert.percent < percent,
+                Alert.condition == 2,
+                ((Alert.market == market) | (Alert.market.is_(None))))
+            self.text_percent_increase(
+                percent_increase_query.all(), price, percent, duration[0])
+            percent_increase_query.delete(False)
+        else:
+            # Get all alerts w/ decrease smaller in magnitude than
+            # the current decrease
+            percent_decrease_query = Alert.query.filter(
+                Alert.symbol == coin,
+                Alert.percent_duration == duration[1],
+                - Alert.percent > percent,
+                Alert.condition == 3,
+                ((Alert.market == market) | (Alert.market.is_(None))))
+            self.text_percent_decrease(
+                percent_decrease_query.all(), price, percent * -1, duration[0])
+            percent_decrease_query.delete(False)
 
         # TODO(Chase): This will cause race condition.
         db.session.commit()
@@ -128,5 +184,52 @@ class Texter(object):
                         "{} price is below your trigger of ${:.2f}. "
                         "Current price is ${:.2f}"
                         .format(alert.symbol, alert.price, price)))
+            except twilio.base.exceptions.TwilioRestException:
+                print("Invalid number:", alert.phone_number)
+
+    def text_percent_increase(self, alerts, price, percent, percent_duration):
+        """Send text message for percent increase triggers.
+
+        Args:
+            alerts: The alerts to send. Should be type Alert.
+            price: The current asset price.
+            percent:
+            percent_duration:
+        """
+        for alert in alerts:
+            print("Sending text to %s" % alert.phone_number)
+            try:
+                # should switch percent w/ alert.percent
+                self.send_message(
+                    to=alert.phone_number,
+                    from_="+15072003597",
+                    body=(
+                        "{} price has increased by at least {:.2f}% over {}. "
+                        "Current price is ${:.2f}"
+                        .format(
+                            alert.symbol, percent, percent_duration, price)))
+            except twilio.base.exceptions.TwilioRestException:
+                print("Invalid number:", alert.phone_number)
+
+    def text_percent_decrease(self, alerts, price, percent, percent_duration):
+        """Send text message for percent decrease triggers.
+
+        Args:
+            alerts: The alerts to send. Should be type Alert.
+            price: The current asset price.
+            percent:
+            percent_duration:
+        """
+        for alert in alerts:
+            print("Sending text to %s" % alert.phone_number)
+            try:
+                self.send_message(
+                    to=alert.phone_number,
+                    from_="+15072003597",
+                    body=(
+                        "{} price has decreased by at least {:.2f}% over {}. "
+                        "Current price is ${:.2f}"
+                        .format(
+                            alert.symbol, percent, percent_duration, price)))
             except twilio.base.exceptions.TwilioRestException:
                 print("Invalid number:", alert.phone_number)
