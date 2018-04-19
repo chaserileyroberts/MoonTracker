@@ -110,9 +110,6 @@ class Texter(object):
         percent = self.price_tracker.get_percent_change(
             asset=coin, market=market, duration=duration)
 
-        price = self.price_tracker.get_spot_price(
-            asset=coin, market=market)
-
         if (percent > 0):  # what if 0? did we already check for that?
             # Get all alerts w/ increase less than the current increase
             percent_increase_query = Alert.query.filter(
@@ -123,7 +120,7 @@ class Texter(object):
                 ((Alert.market == market) | (Alert.market.is_(None))))
             if percent_increase_query.count() > 0:
                 self.text_percent_increase(
-                    percent_increase_query.all(), price, percent)
+                    percent_increase_query.all(), percent)
             percent_increase_query.delete(False)
         else:
             # Get all alerts w/ decrease smaller in magnitude than
@@ -136,7 +133,7 @@ class Texter(object):
                 ((Alert.market == market) | (Alert.market.is_(None))))
             if percent_decrease_query.count() > 0:
                 self.text_percent_decrease(
-                    percent_decrease_query.all(), price, percent * -1)
+                    percent_decrease_query.all(), percent * -1)
             percent_decrease_query.delete(False)
 
         # TODO(Chase): This will cause race condition.
@@ -187,7 +184,7 @@ class Texter(object):
             except twilio.base.exceptions.TwilioRestException:
                 print("Invalid number:", alert.phone_number)
 
-    def text_percent_increase(self, alerts, price, percent):
+    def text_percent_increase(self, alerts, percent):
         """Send text message for percent increase triggers.
 
         Args:
@@ -213,14 +210,13 @@ class Texter(object):
                     from_="+15072003597",
                     body=(
                         "{} price has increased by {:.2f}% over {}. "
-                        "Current price is ${:.2f}"
                         .format(
                             alert.symbol, percent,
-                            percent_duration_str, price)))
+                            percent_duration_str)))
             except twilio.base.exceptions.TwilioRestException:
                 print("Invalid number:", alert.phone_number)
 
-    def text_percent_decrease(self, alerts, price, percent):
+    def text_percent_decrease(self, alerts, percent):
         """Send text message for percent decrease triggers.
 
         Args:
@@ -245,9 +241,8 @@ class Texter(object):
                     from_="+15072003597",
                     body=(
                         "{} price has decreased by {:.2f}% over {}. "
-                        "Current price is ${:.2f}"
                         .format(
                             alert.symbol, percent,
-                            percent_duration_str, price)))
+                            percent_duration_str)))
             except twilio.base.exceptions.TwilioRestException:
                 print("Invalid number:", alert.phone_number)
