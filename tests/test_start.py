@@ -1,7 +1,6 @@
-from start import parse, main
-from flask import current_app
-from moontracker.extensions import scheduler
+from start import parse
 import sys
+
 
 def test_parse_default():
     sys.argv = ['start.py']
