@@ -129,10 +129,19 @@ def manage_alerts():
                         break
 
                 if current_alert is not None:
+                    cond_option = form.cond_option.data
                     current_alert.phone_number = form.phone_number.data
                     current_alert.symbol = form.asset.data
-                    current_alert.price = form.price.data
-                    current_alert.condition = form.cond_option.data
+                    current_alert.condition = cond_option
+                    if cond_option == 1 or cond_option == 0:
+                        current_alert.price = form.price.data
+                        current_alert.percent = None
+                        current_alert.percent_duration = None
+                    elif cond_option == 2 or cond_option == 3:
+                        current_alert.price = None
+                        current_alert.percent = form.percent.data
+                        # currently only supports 24 hours
+                        current_alert.percent_duration = 86400
                     current_alert.end_date = form.end_date.data
                     db.session.merge(current_alert)
                     db.session.commit()
