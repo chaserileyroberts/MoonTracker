@@ -182,3 +182,111 @@ lplSocket.on('json', function (lastPricesStr) {
         }
     });
 });
+
+
+
+
+// make this work for appDurations
+$.widget("custom.combobox", {
+    _create: function() {
+        this.wrapper = $("<span>")
+            .addClass("custom-combobox")
+            .insertAfter(this.element);
+        this.element.val("");
+        var durationElem = $('#duration');
+        durationElem.val('');
+        this.element.hide();
+        this._createAutocomplete();
+    },
+
+    _createAutocomplete: function() {
+        var selected = this.element.children(":selected"),
+            value = selected.val() ? selected.text() : "";
+
+        this.input = $("<input>")
+            .appendTo(this.wrapper)
+            .val(value)
+            .attr("title", "")
+            .addClass("custom-combobox-input form-control")
+            .autocomplete({
+                delay: 0,
+                minLength: 0,
+                source: $.proxy(this, "_source")
+            })
+            .tooltip();
+
+        this._on(this.input, {
+            autocompleteselect: function(event, ui) {
+                var durationElem = $('#duration');
+                durationElem.val('')
+                ui.item.option.selected = true;
+                this._trigger("select", event, {
+                    item: ui.item.option
+                });
+            },
+
+            autocompletechange: "_removeIfInvalid"
+        });
+    },
+
+    _source: function(request, response) {
+        var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+        response(this.element.children("option").map(function() {
+            var text = $(this).text();
+            if (this.value && (!request.term || matcher.test(text)))
+                return {
+                    label: text,
+                    value: text,
+                    option: this
+                };
+        }));
+    },
+
+    _removeIfInvalid: function(event, ui) {
+        // Search for a match (case-insensitive)
+
+        var market = "";
+        var value = this.input.val(),
+            valueLowerCase = value.toLowerCase(),
+            valid = false;
+        
+        var durationElem = $('#duration');
+        durationElem.val('')
+        this.element.children("option").each(function() {
+            if ($(this).text().toLowerCase() === valueLowerCase) {
+                market = $(this).val();
+                this.selected = valid = true;
+                return false;
+            }
+        });
+        // Found a match, nothing to do
+        if (valid) {
+            durationElem.prop('disabled', false);
+            durationElem.empty();
+            durationElem.append($("<option />").val('').text(''));
+            $.each(appDurations[market], function (index, duration) {
+                durationElem.append($("<option />").val(duration).text(duration));
+            });
+            return;
+        }
+        // Disable if not valid
+        durationElem.empty();
+        durationElem.prop('disabled', true);
+        // Remove invalid value
+        this.input
+            .val("")
+            .attr("title", value + " didn't match any item")
+            .tooltip("open");
+        this.element.val("");
+        this._delay(function() {
+            this.input.tooltip("close").attr("title", "");
+        }, 2500);
+        this.input.autocomplete("instance").term = "";
+    },
+
+    _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+    }
+});
+$("#market").combobox();

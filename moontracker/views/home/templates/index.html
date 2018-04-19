@@ -65,6 +65,7 @@
                                             {{ form.percent_duration.label }}
                                         </dt>
                                         <dd>
+                                            <!-- {{ render_field(form.percent_duration, disabled=(form.market.data == '')) }} -->
                                             {{ render_field(form.percent_duration) }}
                                         </dd>
                                         <dt>
@@ -97,6 +98,7 @@
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
         <script src="/appMarkets.js"></script>
+        <script src="/appDurations.js"></script>
         <script src="{{ url_for('static', filename='index.js') }}"></script>
     </body>
 </html>

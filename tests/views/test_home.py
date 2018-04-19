@@ -30,7 +30,7 @@ def test_percent_above():
             'market': 'bitfinex',
             'cond_option': '2',
             'percent': '100',
-            'percent_duration': '0'
+            'percent_duration': '3600'
         })
     assert response.status_code == 200
     assert "Please do the recaptcha" not in str(response.data)
@@ -52,7 +52,7 @@ def test_percent_below():
             'market': 'bitfinex',
             'cond_option': '3',
             'percent': '100',
-            'percent_duration': '0'
+            'percent_duration': '3600'
         })
     assert response.status_code == 200
     assert "Please do the recaptcha" not in str(response.data)

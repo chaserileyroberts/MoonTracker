@@ -46,7 +46,7 @@ class AlertForm(Form):
     percent_validators = [validators.InputRequired()]
     percent = FloatField('Target Percent Change')
 
-    percent_duration_validators = [validators.AnyOf([0, 1, 2, 3])]
+    percent_duration_validators = [validators.AnyOf([3600, 86400, 604800])]
     percent_duration = SelectField(
         'Target Change Duration',
         choices=times,
