@@ -1,4 +1,5 @@
 from moontracker.price_tracker import PriceTracker
+import pytest
 
 
 def test_btc():
@@ -29,3 +30,13 @@ def test_googl():
     pt = PriceTracker()
     price = pt.get_spot_price("GOOGL")
     assert isinstance(price, float)
+
+
+def test_not_implemented_error():
+    pt = PriceTracker()
+
+    with pytest.raises(NotImplementedError) as err:
+        pt.get_spot_price("BTC", "FAKE")
+
+    with pytest.raises(NotImplementedError) as err:
+        pt.get_percent_change("BTC", "FAKE")
