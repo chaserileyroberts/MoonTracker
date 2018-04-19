@@ -87,7 +87,8 @@ def make_new_alert(form):
         symbol=asset,
         condition=cond_option,
         phone_number=phone_number,
-        market=market)
+        market=market,
+        end_date=form.end_date.data)
     if cond_option == 1 or cond_option == 0:
         alert.price = form.price.data
     elif cond_option == 2 or cond_option == 3:

@@ -31,6 +31,7 @@
                                     	<div><b>Percent Change:</b> <span class="text-muted">{{ alert.percent }}% {% if alert.condition == 2 %}increase{% else %}decrease{% endif %}</span></div>
                                     {% endif %}
                                     <div><b>Phone Number:</b> <span class="text-muted">{{ alert.phone_number[:3] }}-{{ alert.phone_number[3:6] }}-{{ alert.phone_number[6:] }}</span></div>
+                                    <div><b>End date:</b> <span class="text-muted">{{ alert.end_date }}</span></div>
                                 </div>
                                 <!-- replace with edit image -->
                                 <div class="col-3 col-md-2">

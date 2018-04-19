@@ -3,7 +3,7 @@
 Stores time in seconds.
 """
 
-# Should I make this
+# Should I make this have objects like in assets.py?
 supported_times = [
     ("1 hour", 3600),
     ("24 hours", 86400),

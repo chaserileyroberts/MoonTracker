@@ -133,9 +133,9 @@ def manage_alerts():
                     current_alert.symbol = form.asset.data
                     current_alert.price = form.price.data
                     current_alert.condition = form.cond_option.data
+                    current_alert.end_date = form.end_date.data
                     db.session.merge(current_alert)
                     db.session.commit()
-                    # figure out proper way to refresh
         else:
             print(form.errors)
     # Fresh set of alerts

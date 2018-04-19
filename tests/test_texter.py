@@ -52,7 +52,7 @@ def test_percent_increase_text():
 
     texter.text_percent_increase(alerts, 4.2, 5.0, '24 hours')
     assert len(twilio.messages) == 1
-    assert "increased by at least 5.00%" in twilio.messages[0]
+    assert "increased by 5.00%" in twilio.messages[0]
     assert "24 hours" in twilio.messages[0]
     assert 'BTC' in twilio.messages[0]
     assert len(twilio.to) == 1
@@ -70,7 +70,7 @@ def test_percent_decrease_text():
 
     texter.text_percent_decrease(alerts, 3.8, 5.0, '24 hours')
     assert len(twilio.messages) == 1
-    assert "decreased by at least 5.00%" in twilio.messages[0]
+    assert "decreased by 5.00%" in twilio.messages[0]
     assert "24 hours" in twilio.messages[0]
     assert 'BTC' in twilio.messages[0]
     assert len(twilio.to) == 1

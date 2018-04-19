@@ -204,7 +204,7 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "{} price has increased by at least {:.2f}% over {}. "
+                        "{} price has increased by {:.2f}% over {}. "
                         "Current price is ${:.2f}"
                         .format(
                             alert.symbol, percent, percent_duration, price)))
@@ -227,7 +227,7 @@ class Texter(object):
                     to=alert.phone_number,
                     from_="+15072003597",
                     body=(
-                        "{} price has decreased by at least {:.2f}% over {}. "
+                        "{} price has decreased by {:.2f}% over {}. "
                         "Current price is ${:.2f}"
                         .format(
                             alert.symbol, percent, percent_duration, price)))
