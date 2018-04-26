@@ -73,4 +73,4 @@ python start.py
 
 ### Coding Standards
 
-Python code should follow PEP 8 style guide found at https://www.python.org/dev/peps/pep-0008/ and PEP 257 docstring convensions found at https://www.python.org/dev/peps/pep-0257/
+Python code should follow PEP 8 style guide found at https://www.python.org/dev/peps/pep-0008/ and PEP 257 docstring conventions found at https://www.python.org/dev/peps/pep-0257/.
