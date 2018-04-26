@@ -181,7 +181,8 @@ class NewAccountForm(Form):
     phone_number = StringField(
         'Phone Number', [
             validators.Length(
-                min=10), validators.Regexp(
+                min=10, max=10, message='Please enter a valid phone number'),
+            validators.Regexp(
                 '^[0-9]+$', message="Input characters must be numeric")])
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[

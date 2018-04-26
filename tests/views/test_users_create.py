@@ -33,7 +33,7 @@ def test_short_password():
 def test_short_phonenumber():
     response = register('test_user', '12345678', '11111111')
     assert response.status_code == 200
-    assert 'Field must be at least 10 characters long' in str(response.data)
+    assert 'Please enter a valid phone number' in str(response.data)
 
 
 def test_nonint_phonenumber():

@@ -26,6 +26,22 @@ def test_correct_num_alerts():
     assert '1111111111' in str(response.data)
 
 
+def test_bad_market():
+    response = register('test_user', '12345678', '1111111111')
+    assert response.status_code == 200
+
+    response = test_client.post(
+        '/',
+        data={
+            'phone_number': '1111111111',
+            'asset': 'LTC',
+            'market': 'nasdaq',
+            'cond_option': '1',
+            'price': '100'
+        })
+    assert response.status_code == 200
+
+
 def test_edit():
     response = register('test_user', '12345678', '1111111111')
     assert response.status_code == 200
@@ -73,7 +89,7 @@ def test_delete():
         data={
             'phone_number': '1111111111',
             'asset': 'LTC',
-            'market': 'gemini',
+            'market': 'coinbase',
             'cond_option': '1',
             'price': '100'
         })

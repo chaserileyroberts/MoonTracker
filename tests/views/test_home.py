@@ -95,7 +95,7 @@ def test_short_phonenumber():
             'price': '100'
         })
     assert response.status_code == 200
-    assert 'Field must be at least 10 characters long' in str(response.data)
+    assert 'Please enter a valid phone number' in str(response.data)
 
     results = Alert.query.filter().all()
     assert len(results) == 0
@@ -112,7 +112,7 @@ def test_nonint_phonenumber():
             'price': '100'
         })
     assert response.status_code == 200
-    assert 'Input characters must be numeric' in str(response.data)
+    assert 'Please enter a valid phone number' in str(response.data)
 
     results = Alert.query.filter().all()
     assert len(results) == 0
@@ -153,3 +153,18 @@ def test_product_page():
                                  Alert.condition == 1,
                                  Alert.market == 'coinbase').all()
     assert len(results) == 1
+
+
+def test_bad_market_page():
+    response = test_client.post(
+        '/',
+        data={
+            'phone_number': '5558675309',
+            'asset': 'BTC',
+            'market': 'nasdaq',
+            'cond_option': '1',
+            'price': '100'
+        })
+    assert response.status_code == 200
+    print(str(response.data))
+    assert "Invalid value, must be one of:" in str(response.data)

@@ -6,7 +6,7 @@ from wtforms import Form
 from wtforms import FloatField, StringField, SelectField, DateField
 from wtforms import validators
 from flask_wtf import RecaptchaField, Recaptcha
-from moontracker.assets import assets, market_apis
+from moontracker.assets import supported_assets, assets, market_apis
 from moontracker.times import times
 from flask_login import current_user
 
@@ -17,18 +17,17 @@ class AlertForm(Form):
     phone_number = StringField(
         'Phone Number', [
             validators.Length(
-                min=10), validators.Regexp(
-                '^[0-9]+$', message="Input characters must be numeric")])
+                min=10, max=10, message="Please enter a valid phone number"),
+            validators.Regexp(
+                '^[0-9]+$', message="Input characters must be only numeric")])
 
     asset = SelectField(
         'Coin', choices=assets)
-
-    market_validators = [validators.AnyOf([m for m in market_apis])]
     market = SelectField('Market',
                          choices=[('', '')] + [(m, m) for m in market_apis],
-                         default='', validators=market_validators)
+                         default='')
 
-    cond_option_validators = [validators.AnyOf([1, 0, 2, 3])]
+    cond_option_validators = [validators.AnyOf([0, 1, 2, 3])]
     cond_option = SelectField(
         'Condition Option',
         choices=[
@@ -69,7 +68,12 @@ class AlertForm(Form):
             self.percent.validators = AlertForm.percent_validators
             pdv = AlertForm.percent_duration_validators
             self.percent_duration.validators = pdv
-
+        market_validators = [
+            validators.AnyOf(
+                [m for m in supported_assets[self.asset.data]['markets']]
+            )
+        ]
+        self.market.validators = market_validators
         return super().validate(**kwargs)
 
 
