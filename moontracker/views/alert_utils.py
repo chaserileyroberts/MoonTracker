@@ -22,8 +22,7 @@ class AlertForm(Form):
                 '^[0-9]+$', message="Input characters must be only numeric")])
 
     asset = SelectField(
-        'Coin', choices=assets) 
-        #validators=[validators.AnyOf(assets)])
+        'Coin', choices=assets)
     market = SelectField('Market',
                          choices=[('', '')] + [(m, m) for m in market_apis],
                          default='')
