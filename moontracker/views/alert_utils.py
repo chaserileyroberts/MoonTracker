@@ -22,7 +22,8 @@ class AlertForm(Form):
                 '^[0-9]+$', message="Input characters must be only numeric")])
 
     asset = SelectField(
-        'Coin', choices=assets)
+        'Coin', choices=assets) 
+        #validators=[validators.AnyOf(assets)])
     market = SelectField('Market',
                          choices=[('', '')] + [(m, m) for m in market_apis],
                          default='')
@@ -68,12 +69,13 @@ class AlertForm(Form):
             self.percent.validators = AlertForm.percent_validators
             pdv = AlertForm.percent_duration_validators
             self.percent_duration.validators = pdv
-        market_validators = [
-            validators.AnyOf(
-                [m for m in supported_assets[self.asset.data]['markets']]
-            )
-        ]
-        self.market.validators = market_validators
+        if self.asset.data in supported_assets:
+            market_validators = [
+                validators.AnyOf(
+                    [m for m in supported_assets[self.asset.data]['markets']]
+                )
+            ]
+            self.market.validators = market_validators
         return super().validate(**kwargs)
 
 

@@ -166,5 +166,17 @@ def test_bad_market_page():
             'price': '100'
         })
     assert response.status_code == 200
-    print(str(response.data))
     assert "Invalid value, must be one of:" in str(response.data)
+
+
+def test_no_asset_choice():
+    response = test_client.post(
+        '/',
+        data={
+            'phone_number': '5558675309',
+            'market': 'nasdaq',
+            'cond_option': '1',
+            'price': '100'
+        })
+    assert response.status_code == 200
+    assert "Not a valid choice" in str(response.data)
