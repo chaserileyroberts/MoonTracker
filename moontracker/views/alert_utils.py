@@ -53,9 +53,7 @@ class AlertForm(Form):
     end_date = DateField(
         "Enter end date for alert (YYYY/MM/DD)",
         format='%Y-%m-%d',
-        default=lambda :(
-            datetime.now() +
-            timedelta(days=7)))
+        default=lambda: datetime.now() + timedelta(days=7))
 
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
