@@ -1,5 +1,5 @@
 """Utils for creating alerts in the database."""
-from datetime import datetime
+from datetime import datetime, timedelta
 from moontracker.models import Alert
 from moontracker.extensions import db
 from wtforms import Form
@@ -50,8 +50,12 @@ class AlertForm(Form):
         'Target Change Duration',
         choices=[times[1]],  # currently only supports 24 hours
         coerce=int)
-    end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
-                         format='%Y-%m-%d', default=datetime.now().date())
+    end_date = DateField(
+        "Enter end date for alert (YYYY/MM/DD)",
+        format='%Y-%m-%d',
+        default=lambda :(
+            datetime.now() +
+            timedelta(days=7)))
 
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
