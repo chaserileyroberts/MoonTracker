@@ -1,5 +1,5 @@
 """Utils for creating alerts in the database."""
-from datetime import datetime
+from datetime import datetime, timedelta
 from moontracker.models import Alert
 from moontracker.extensions import db
 from wtforms import Form
@@ -22,7 +22,7 @@ class AlertForm(Form):
                 '^[0-9]+$', message="Input characters must be only numeric")])
 
     asset = SelectField(
-        'Coin', choices=assets)
+        'Asset', choices=assets)
     market = SelectField('Market',
                          choices=[('', '')] + [(m, m) for m in market_apis],
                          default='')
@@ -50,8 +50,10 @@ class AlertForm(Form):
         'Target Change Duration',
         choices=[times[1]],  # currently only supports 24 hours
         coerce=int)
-    end_date = DateField("Enter end date for alert (YYYY/MM/DD)",
-                         format='%Y-%m-%d', default=datetime.now().date())
+    end_date = DateField(
+        "Enter end date for alert (YYYY/MM/DD)",
+        format='%Y-%m-%d',
+        default=lambda: datetime.now() + timedelta(days=7))
 
     recaptcha = RecaptchaField(
         'Recaptcha', validators=[
@@ -68,12 +70,13 @@ class AlertForm(Form):
             self.percent.validators = AlertForm.percent_validators
             pdv = AlertForm.percent_duration_validators
             self.percent_duration.validators = pdv
-        market_validators = [
-            validators.AnyOf(
-                [m for m in supported_assets[self.asset.data]['markets']]
-            )
-        ]
-        self.market.validators = market_validators
+        if self.asset.data in supported_assets:
+            market_validators = [
+                validators.AnyOf(
+                    [m for m in supported_assets[self.asset.data]['markets']]
+                )
+            ]
+            self.market.validators = market_validators
         return super().validate(**kwargs)
 
 
