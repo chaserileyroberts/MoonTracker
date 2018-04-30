@@ -146,6 +146,10 @@ onAlertCondChange($('#cond_option').val());
 // Last Price Updates.
 var lplSocket = io('/lastpriceslive', { transports: ['websocket'] });
 lplSocket.on('json', function (lastPricesStr) {
+    function formatPrice(price) {
+        return '$' + price.toFixed(2);
+    }
+
     var lastPricesTableElem = $('#last-prices-table');
     //If we have a new price, add it to the page.
     if (lastPricesTableElem.length == 0) {
@@ -170,8 +174,9 @@ lplSocket.on('json', function (lastPricesStr) {
             if (rowSymbol == symbolText) {
                 var rowPriceElem = $(rowElem).find('.last-prices-col-price');
                 var oldPriceText = rowPriceElem.text();
-                rowPriceElem.text('$' + lastPrice.price);
-                if (rowPriceElem.text() !== oldPriceText) {
+                var newPriceText = formatPrice(lastPrice.price);
+                rowPriceElem.text(newPriceText);
+                if (newPriceText !== oldPriceText) {
                     rowPriceElem.addClass('last-prices-flash-update', 0);
                     rowPriceElem.removeClass('last-prices-flash-update', 800);
                 }
@@ -184,7 +189,7 @@ lplSocket.on('json', function (lastPricesStr) {
             var rowCElem = $('<div class="table-row">');
             var symbolText = appMarkets[lastPrice.symbol]['name'];
             rowCElem.append($('<div class="table-col last-prices-col-0-2 last-prices-col-symbol">').text(symbolText));
-            var priceText = '$' + lastPrice.price;
+            var priceText = formatPrice(lastPrice.price);
             rowCElem.append($('<div class="table-col last-prices-col-1-2 last-prices-col-price">').text(priceText));
             lastPricesTableElem.append(rowCElem);
         }
