@@ -1,5 +1,7 @@
 """Home related views."""
-from flask import request, render_template, flash, Blueprint
+import os
+from flask import request, render_template, flash, Blueprint, current_app
+from flask import send_from_directory
 import json
 from moontracker.assets import supported_assets
 from moontracker.times import supported_durations
@@ -30,3 +32,11 @@ def app_markets():
 def app_durations():
     """Generate JavaScript for appDurations."""
     return 'appDurations = ' + json.dumps(supported_durations)
+
+
+@home_blueprint.route('/favicon.ico')
+def favicon():
+    """Get the favicon."""
+    return send_from_directory(os.path.join(current_app.root_path, 'static'),
+                               'favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
