@@ -157,7 +157,7 @@ lplSocket.on('json', function (lastPricesStr) {
         lastPricesElem.append($('<h4>').text('Last Prices'));
         var tableCElem = $('<div id="last-prices-table" class="table">');
         var headerCElem = $('<div class="table-header table-row">');
-        headerCElem.append($('<div class="table-col last-prices-col-0-2">').text('Coin'));
+        headerCElem.append($('<div class="table-col last-prices-col-0-2">').text('Asset'));
         headerCElem.append($('<div class="table-col last-prices-col-1-2">').text('Price'));
         tableCElem.append(headerCElem);
         lastPricesElem.append(tableCElem);
