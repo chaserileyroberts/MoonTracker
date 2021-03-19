@@ -18,7 +18,7 @@ Flask-WTF==0.14.2
 eventlet==0.22.1
 idna==2.6
 itsdangerous==0.24
-Jinja2==2.10
+Jinja2==2.11.3
 MarkupSafe==1.0
 mccabe==0.6.1
 pluggy==0.6.0
